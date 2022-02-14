@@ -1,0 +1,25 @@
+# Needs python path
+ref:
+    python.yml
+
+config:
+    # Needs git CLI tool
+    requiredTools:
+        git:
+            apt: git
+
+    # The git version itself
+    gitVersion:
+        __resolver__: nmk_base.resolvers.GitVersionResolver
+
+    # Update git version stamp file
+    gitVersionStamp: ${CACHEDIR}/.gitversion
+
+task:
+    # To refresh git version stamp file
+    refresh-git-version:
+        description: Refreshing git version
+        emoji: paperclip
+        output: ${gitVersionStamp}
+        requiredConfig:
+            gitVersion: str
