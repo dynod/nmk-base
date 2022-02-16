@@ -1,6 +1,6 @@
 # Needs python path
-ref:
-    python.yml
+refs:
+    - python.yml
 
 config:
     # Needs git CLI tool
@@ -21,5 +21,5 @@ task:
         description: Refreshing git version
         emoji: paperclip
         output: ${gitVersionStamp}
-        requiredConfig:
-            gitVersion: str
+        params:
+            version: ${gitVersion}

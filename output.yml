@@ -1,6 +1,6 @@
 # Needs python path
-ref:
-    python.yml
+refs:
+    - python.yml
 
 config:
     # Output build directory
@@ -11,6 +11,6 @@ tasks:
     clean:
         description: Clean build output
         emoji: broom
-        builder: nmk_base.builders.CleanOutputBuilder
-        requiredConfig:
-            outputDir: str
+        builder: nmk_base.builders.CleanBuilder
+        params:
+            path: ${outputDir}
