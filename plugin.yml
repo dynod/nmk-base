@@ -4,3 +4,4 @@ refs:
     #git.yml         # Git version/requirement
     - output.yml    # Output dir/clean
     - tasks.yml     # Meta tasks definition
+    - loadme.yml    # Loadme scripts generation

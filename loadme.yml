@@ -1,0 +1,31 @@
+# Needs python path
+refs:
+    - python.yml
+
+config:
+    # Bootstrap scripts for Linux/Windows
+    linuxLoadMe: ${PROJECTDIR}/loadme.sh
+    windowsLoadMe: ${PROJECTDIR}/loadme.bat
+
+    # Required system dependencies (must be a dict)
+    sysDeps: {}
+
+    # Python version to call to bootstrap venv (on Linux)
+    pythonForVenv: python3
+
+tasks:
+    # Generate bootstrap scripts
+    loadme:
+        description: Generating "loadme" scripts
+        emoji: rocket
+        appendToDeps: setup
+        input:
+            - ${BASEDIR}/templates/loadme.sh
+            - ${BASEDIR}/templates/loadme.bat
+        output:
+            - ${linuxLoadMe}
+            - ${windowsLoadMe}
+        params:
+            deps: ${sysDeps}
+            venv_python: ${pythonForVenv}
+        builder: nmk_base.builders.BuildLoadMe
