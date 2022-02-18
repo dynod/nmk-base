@@ -10,8 +10,9 @@ config:
     # Required system dependencies (must be a dict)
     sysDeps: {}
 
-    # Python version to call to bootstrap venv (on Linux)
-    pythonForVenv: python3
+    # Python versions to call to bootstrap venv
+    pythonForLinuxVenv: python3
+    pythonForWindowsVenv: python
 
 tasks:
     # Generate bootstrap scripts
@@ -27,5 +28,7 @@ tasks:
             - ${windowsLoadMe}
         params:
             deps: ${sysDeps}
-            venv_python: ${pythonForVenv}
+            venv_pythons:
+                - ${pythonForLinuxVenv}
+                - ${pythonForWindowsVenv}
         builder: nmk_base.builders.BuildLoadMe

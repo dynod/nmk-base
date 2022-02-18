@@ -1,6 +1,6 @@
 import shutil
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
 from jinja2 import Template
 
@@ -21,12 +21,12 @@ class CleanBuilder(NmkTaskBuilder):
 
 
 class BuildLoadMe(NmkTaskBuilder):
-    def build(self, deps: Dict[str, str], venv_python: str):
+    def build(self, deps: Dict[str, str], venv_pythons: List[str]):
         # Iterate on outputs
-        for template, output in zip(self.task.inputs, self.task.outputs):
+        for template, output, venv_python in zip(self.task.inputs, self.task.outputs, venv_pythons):
             # Load template
             self.logger.debug(f"Generating {output} from template {template}")
             with template.open() as f, output.open("w") as o:
                 # Render it
                 t = Template(f.read())
-                o.write(t.render({"linuxVenvPython": venv_python}))
+                o.write(t.render({"pythonForVenv": venv_python}))

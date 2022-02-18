@@ -5,7 +5,7 @@
 # Create venv if not done yet
 if test ! -d venv; then
     # Create it
-    {{ linuxVenvPython }} -m venv venv
+    {{ pythonForVenv }} -m venv venv
 
     # Load it
     source venv/bin/activate
@@ -13,9 +13,9 @@ if test ! -d venv; then
     # Bootstrap it
     pip install pip wheel --upgrade
 
-    # Patch it
+    # Patch it for nmk completion
     echo ' ' >> venv/bin/activate
-    echo 'eval $(register-python-argcomplete nmk)' >> venv/bin/activate
+    echo 'eval "$(register-python-argcomplete nmk)"' >> venv/bin/activate
 fi
 
 # Just load it
