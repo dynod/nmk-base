@@ -1,0 +1,32 @@
+config:
+    # Plugin versions dict
+    nmkPluginsVersions:
+        base: 1.0.0
+
+    # Plugin help links dict
+    nmkPluginsDocs:
+        base: https://github.com/dynod/nmk/wiki/nmk-base-plugin
+
+tasks:
+
+    # Displays nmk version (+plugins)
+    version:
+        description: Display used nmk + plugins versions
+        emoji: ":label: "
+        builder: nmk_base.builders.VersionBuilder
+        params:
+            plugins: ${nmkPluginsVersions}
+
+    # Displays documentation links
+    help:
+        description: Display online help links
+        emoji: sos
+        builder: nmk_base.builders.HelpBuilder
+        params:
+            links: ${nmkPluginsDocs}
+
+    # Displays all available tasks
+    tasks:
+        description: List all available tasks
+        emoji: ":card_file_box: "
+        builder: nmk_base.builders.TaskListBuilder

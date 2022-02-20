@@ -17,7 +17,7 @@ config:
 tasks:
     # Generate bootstrap scripts
     loadme:
-        description: Generating "loadme" scripts
+        description: Generate "loadme" scripts
         emoji: rocket
         appendToDeps: setup
         input:
