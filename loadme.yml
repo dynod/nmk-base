@@ -3,16 +3,23 @@ refs:
     - python.yml
 
 config:
-    # Bootstrap scripts for Linux/Windows
-    linuxLoadMe: ${PROJECTDIR}/loadme.sh
-    windowsLoadMe: ${PROJECTDIR}/loadme.bat
+    # Bootstrap target scripts for Linux/Windows
+    loadMeTargets:
+        - ${PROJECTDIR}/loadme.sh
+        - ${PROJECTDIR}/loadme.bat
 
-    # Required system dependencies (must be a dict)
-    sysDeps: {}
+    # Bootstrap template scripts for Linux/Windows
+    loadMeTemplates:
+        - ${BASEDIR}/templates/loadme.sh
+        - ${BASEDIR}/templates/loadme.bat
 
     # Python versions to call to bootstrap venv
-    pythonForLinuxVenv: python3
-    pythonForWindowsVenv: python
+    loadMeVenvPython:
+        - python3
+        - python
+
+    # Required system dependencies (must be a dict)
+    loadMeSysDeps: {}
 
 tasks:
     # Generate bootstrap scripts
@@ -20,15 +27,9 @@ tasks:
         description: Generate "loadme" scripts
         emoji: rocket
         appendToDeps: setup
-        input:
-            - ${BASEDIR}/templates/loadme.sh
-            - ${BASEDIR}/templates/loadme.bat
-        output:
-            - ${linuxLoadMe}
-            - ${windowsLoadMe}
+        input: ${loadMeTemplates}
+        output: ${loadMeTargets}
         params:
-            deps: ${sysDeps}
-            venv_pythons:
-                - ${pythonForLinuxVenv}
-                - ${pythonForWindowsVenv}
+            deps: ${loadMeSysDeps}
+            venv_pythons: ${loadMeVenvPython}
         builder: nmk_base.builders.BuildLoadMe

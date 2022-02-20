@@ -1,3 +1,7 @@
+# Needs python path
+refs:
+    - python.yml
+
 config:
     # Plugin versions dict
     nmkPluginsVersions:
