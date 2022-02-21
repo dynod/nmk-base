@@ -23,15 +23,34 @@ class CleanBuilder(NmkTaskBuilder):
 
 
 class BuildLoadMe(NmkTaskBuilder):
-    def build(self, deps: Dict[str, str], venv_pythons: List[str]):
-        # Iterate on outputs
+    def prepare_deps(self, deps: Dict[str, Dict[str, str]], source: str) -> Dict[str, str]:
+        return {
+            name: " ".join(sources[source]) if isinstance(sources[source], list) else sources[source]
+            for name, sources in filter(lambda t: source in t[1], deps.items())
+        }
+
+    def build(self, deps: Dict[str, Dict[str, str]], venv_pythons: List[str]):
+        # Prepare sysdeps list per keys
+        apt_deps = self.prepare_deps(deps, "apt")
+        url_deps = self.prepare_deps(deps, "url")
+
+        # Iterate on combination of templates, outputs and venv command
         for template, output, venv_python in zip(self.task.inputs, self.task.outputs, venv_pythons):
             # Load template
             self.logger.debug(f"Generating {output} from template {template}")
             with template.open() as f, output.open("w") as o:
                 # Render it
                 t = Template(f.read())
-                o.write(t.render({"pythonForVenv": venv_python}))
+                o.write(
+                    t.render(
+                        {
+                            "nmkBaseVersion": self.model.config["nmkPluginsVersions"].value["base"],
+                            "pythonForVenv": venv_python,
+                            "aptDeps": apt_deps,
+                            "urlDeps": url_deps,
+                        }
+                    )
+                )
 
 
 class VersionBuilder(NmkTaskBuilder):
