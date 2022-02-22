@@ -27,3 +27,9 @@ tasks:
         silent: true
         builder: nmk_base.builders.GitVersionRefresh
         appendToDeps: setup
+
+    # Deep clean (remove all git ignored stuff)
+    deepclean:
+        description: Deep clean project
+        emoji: ":broom::broom::broom:"
+        builder: nmk_base.builders.GitClean

@@ -1,4 +1,5 @@
 import shutil
+import subprocess
 from pathlib import Path
 from typing import Dict, List
 
@@ -6,7 +7,9 @@ from jinja2 import Template
 from rich.emoji import Emoji
 
 from nmk import __version__
+from nmk.errors import NmkStopHereError
 from nmk.model.builder import NmkTaskBuilder
+from nmk.model.keys import NmkRootConfig
 
 
 class CleanBuilder(NmkTaskBuilder):
@@ -97,3 +100,11 @@ class GitVersionRefresh(NmkTaskBuilder):
                 f.write(version)
         else:
             self.logger.debug("Persisted git version already up to date")
+
+
+class GitClean(NmkTaskBuilder):
+    def build(self):
+        # Full clean, just warn before
+        self.logger.warning("Clean all git ignored files; use loadme script to setup the project again")
+        subprocess.run(["git", "clean", "-fdX"], cwd=self.model.config[NmkRootConfig.PROJECT_DIR].value, check=True)
+        raise NmkStopHereError()
