@@ -35,7 +35,7 @@ class BuildLoadMe(NmkTaskBuilder):
         url_deps = self.prepare_deps(deps, "url")
 
         # Iterate on combination of templates, outputs and venv command
-        for template, output, venv_python in zip(self.task.inputs, self.task.outputs, venv_pythons):
+        for template, output, venv_python in zip(self.inputs, self.outputs, venv_pythons):
             # Load template
             self.logger.debug(f"Generating {output} from template {template}")
             with template.open() as f, output.open("w") as o:
@@ -76,3 +76,24 @@ class TaskListBuilder(NmkTaskBuilder):
         # Iterate on all model tasks
         for name, task in self.model.tasks.items():
             self.logger.info(task.emoji, f" {Emoji('backhand_index_pointing_right')} {name}: {task.description}")
+
+
+class GitVersionRefresh(NmkTaskBuilder):
+    def build(self, version: str):
+        # Check if update is needed
+        self.logger.debug(f"New version: {version}")
+        do_update = True
+        stamp_file = self.main_output
+        if stamp_file.is_file():
+            with stamp_file.open() as f:
+                persisted_version = f.read().splitlines(keepends=False)[0]
+                self.logger.debug(f"Previously persisted version: {persisted_version}")
+                do_update = version != persisted_version
+        if do_update:
+            # Yep, update persisted version
+            self.logger.info(self.task.emoji, self.task.description)
+            stamp_file.parent.mkdir(exist_ok=True, parents=True)
+            with stamp_file.open("w") as f:
+                f.write(version)
+        else:
+            self.logger.debug("Persisted git version already up to date")

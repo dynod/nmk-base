@@ -1,7 +1,7 @@
 # Base plugin definition
 refs:
     - python.yml    # Python path contribution
-    #git.yml         # Git version/requirement
+    - git.yml       # Git version/requirement
     - output.yml    # Output dir/clean
     - tasks.yml     # Meta tasks definition
     - loadme.yml    # Loadme scripts generation

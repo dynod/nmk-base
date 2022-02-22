@@ -13,14 +13,17 @@ config:
     gitVersion:
         __resolver__: nmk_base.resolvers.GitVersionResolver
 
-    # Update git version stamp file
-    gitVersionStamp: ${CACHEDIR}/.gitversion
+    # Git version stamp file
+    gitVersionStamp: ${outputDir}/.gitversion
 
-task:
+tasks:
     # To refresh git version stamp file
-    refresh-git-version:
-        description: Refreshing git version
+    gitVersion:
+        description: Refresh git version
         emoji: paperclip
         output: ${gitVersionStamp}
         params:
             version: ${gitVersion}
+        silent: true
+        builder: nmk_base.builders.GitVersionRefresh
+        appendToDeps: setup
