@@ -1,5 +1,7 @@
 import subprocess
 
+from nmk_base.common import run_with_logs
+
 from nmk.errors import NmkStopHereError
 from nmk.model.builder import NmkTaskBuilder
 from nmk.model.keys import NmkRootConfig
@@ -37,7 +39,19 @@ class GitClean(NmkTaskBuilder):
 class GitVersionResolver(NmkStrConfigResolver):
     def get_value(self, name: str) -> str:
         # Get version from git
-        cp = subprocess.run(
-            ["git", "describe", "--tags", "--dirty"], cwd=self.model.config[NmkRootConfig.PROJECT_DIR].value, capture_output=True, text=True, check=True
-        )
-        return cp.stdout.splitlines(keepends=False)[0]
+        cwd = self.model.config[NmkRootConfig.PROJECT_DIR].value
+        cp = run_with_logs(["git", "describe", "--tags", "--dirty"], cwd=cwd, check=False)
+        if cp.returncode == 0:
+            # At least one tag
+            return cp.stdout.splitlines(keepends=False)[0]
+        else:
+            # Probably no tags, build the version by hand
+            # 1. get latest commit
+            ref = run_with_logs(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=cwd).stdout.splitlines(keepends=False)[0]
+            # 2. get revisions count
+            rev_count = run_with_logs(["git", "rev-list", "--count", ref], cwd=cwd).stdout.splitlines(keepends=False)[0]
+            # 3. get hash
+            rev_hash = run_with_logs(["git", "describe", "--always", "--dirty"], cwd=cwd).stdout.splitlines(keepends=False)[0]
+
+            # Build version from parts
+            return f"0.0.0-{rev_count}-g{rev_hash}"

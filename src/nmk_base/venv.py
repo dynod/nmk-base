@@ -1,10 +1,9 @@
 import re
-import subprocess
 import sys
 from pathlib import Path
 from typing import List
 
-from nmk_base.common import TemplateBuilder
+from nmk_base.common import TemplateBuilder, run_with_logs
 
 from nmk.model.builder import NmkTaskBuilder
 
@@ -30,15 +29,7 @@ class VenvRequirementsBuilder(TemplateBuilder):
 class VenvUpdateBuilder(NmkTaskBuilder):
     def pip(self, args: List[str]) -> str:
         all_args = [sys.executable, "-m", "pip"] + args
-        self.logger.debug(f"Call pip: {all_args}")
-        cp = subprocess.run(all_args, check=False, capture_output=True, text=True, encoding="utf-8")
-        self.logger.debug(f">> rc: {cp.returncode}")
-        self.logger.debug(">> stderr:")
-        list(map(self.logger.debug, cp.stderr.splitlines(keepends=False)))
-        self.logger.debug(">> stdout:")
-        list(map(self.logger.debug, cp.stdout.splitlines(keepends=False)))
-        assert cp.returncode == 0, f"pip returned {cp.returncode}"
-        return cp.stdout
+        return run_with_logs(all_args, self.logger).stdout
 
     def build(self, pip_args: str):
         # Prepare outputs
