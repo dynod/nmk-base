@@ -5,7 +5,7 @@ refs:
 config:
 
     # Venv dependencies list (direct packages dependencies)
-    venvPkgDeps: []
+    venvPkgDeps: ["nmk"]  # Default: at least nmk itself!
 
     # Venv archives list (direct archive dependencies)
     venvArchiveDeps: []
