@@ -11,6 +11,14 @@ tasks:
     clean:
         description: Clean build output
         emoji: broom
-        builder: nmk_base.builders.CleanBuilder
+        builder: nmk_base.output.CleanBuilder
         params:
             path: ${outputDir}
+
+    # Create output folder
+    out:
+        description: Create output folder
+        emoji: file_folder
+        silent: true
+        builder: nmk_base.output.OutputMkdir
+        output: ${outputDir}

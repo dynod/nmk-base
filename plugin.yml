@@ -6,3 +6,4 @@ refs:
     - tasks.yml     # Meta tasks definition
     - loadme.yml    # Loadme scripts generation
     - helpers.yml   # Some "helper" tasks (version, help, etc...)
+    - venv.yml      # Python venv handling

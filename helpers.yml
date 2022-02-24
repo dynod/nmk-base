@@ -17,7 +17,7 @@ tasks:
     version:
         description: Display used nmk + plugins versions
         emoji: ":label: "
-        builder: nmk_base.builders.VersionBuilder
+        builder: nmk_base.helpers.VersionBuilder
         params:
             plugins: ${nmkPluginsVersions}
 
@@ -25,7 +25,7 @@ tasks:
     help:
         description: Display online help links
         emoji: sos
-        builder: nmk_base.builders.HelpBuilder
+        builder: nmk_base.helpers.HelpBuilder
         params:
             links: ${nmkPluginsDocs}
 
@@ -33,4 +33,4 @@ tasks:
     tasks:
         description: List all available tasks
         emoji: ":card_file_box: "
-        builder: nmk_base.builders.TaskListBuilder
+        builder: nmk_base.helpers.TaskListBuilder

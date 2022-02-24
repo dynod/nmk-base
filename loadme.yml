@@ -36,4 +36,7 @@ tasks:
         params:
             deps: ${loadMeSysDeps}
             venv_pythons: ${loadMeVenvPython}
-        builder: nmk_base.builders.BuildLoadMe
+            venv_name: ${venvName}
+            venv_pip_args: ${venvPipArgs}
+            venv_requirements: ${venvRequirements}
+        builder: nmk_base.loadme.BuildLoadMe

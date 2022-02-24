@@ -11,25 +11,27 @@ config:
 
     # The git version itself
     gitVersion:
-        __resolver__: nmk_base.resolvers.GitVersionResolver
+        __resolver__: nmk_base.git.GitVersionResolver
 
     # Git version stamp file
     gitVersionStamp: ${outputDir}/.gitversion
 
 tasks:
     # To refresh git version stamp file
-    gitVersion:
+    git.version:
         description: Refresh git version
-        emoji: paperclip
+        emoji: ":regional_indicator_symbol_letter_g: .:label: "
         output: ${gitVersionStamp}
         params:
             version: ${gitVersion}
         silent: true
-        builder: nmk_base.builders.GitVersionRefresh
+        builder: nmk_base.git.GitVersionRefresh
+        deps:
+            - out
         appendToDeps: setup
 
     # Deep clean (remove all git ignored stuff)
-    deepclean:
+    git.clean:
         description: Deep clean project
-        emoji: ":broom::broom::broom:"
-        builder: nmk_base.builders.GitClean
+        emoji: ":regional_indicator_symbol_letter_g: .:broom:"
+        builder: nmk_base.git.GitClean

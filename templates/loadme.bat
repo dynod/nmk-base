@@ -14,20 +14,23 @@ if %MISSING_DEPS% equ 1 (
 )
 
 REM Create venv if not done yet
-if exist venv\ (
+if exist {{ venvName }}\ (
     REM Just load it
     echo Load venv
-    venv\Scripts\Activate.bat
+    {{ venvName }}\Scripts\Activate.bat
 ) else (
     REM Create it
     echo Create venv
-    {{ pythonForVenv }} -m venv venv
+    {{ pythonForVenv }} -m venv {{ venvName }}
 
     REM Load it
-    venv\Scripts\Activate.bat
+    {{ venvName }}\Scripts\Activate.bat
     
     REM Bootstrap it
-    python -m pip install pip wheel --upgrade
+    python -m pip install pip wheel --upgrade {{ venvPipArgs }}
+
+    REM Install requirements
+    python -m pip install -r {{ venvRequirements }} {{ venvPipArgs }}
 )
 
 REM End of main

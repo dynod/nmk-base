@@ -51,22 +51,25 @@ unset __checkSysDeps
 unset __installSysDeps
 
 # Create venv if not done yet
-if test ! -d venv; then
+if test ! -d {{ venvName }}; then
     # Create it
     echo Create venv...
-    {{ pythonForVenv }} -m venv venv
+    {{ pythonForVenv }} -m venv {{ venvName }}
 
     # Load it
-    source venv/bin/activate
+    source {{ venvName }}/bin/activate
     
     # Bootstrap it
-    pip install pip wheel argcomplete --upgrade
+    pip install pip wheel --upgrade {{ venvPipArgs }}
+
+    # Install requirements
+    pip install -r {{ venvRequirements }} {{ venvPipArgs }}
 
     # Patch it for nmk completion
-    echo ' ' >> venv/bin/activate
-    echo 'eval "$(register-python-argcomplete nmk)"' >> venv/bin/activate
+    echo ' ' >> {{ venvName }}/bin/activate
+    echo 'eval "$(register-python-argcomplete nmk)"' >> {{ venvName }}/bin/activate
 fi
 
 # Finally load venv
 echo Load venv
-source venv/bin/activate
+source {{ venvName }}/bin/activate
