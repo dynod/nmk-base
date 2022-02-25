@@ -47,7 +47,12 @@ class GitVersionResolver(NmkStrConfigResolver):
         else:
             # Probably no tags, build the version by hand
             # 1. get latest commit
-            ref = run_with_logs(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=cwd).stdout.splitlines(keepends=False)[0]
+            cp = run_with_logs(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=cwd, check=False)
+            if cp.returncode != 0:
+                # Definitely not a git repo; use a default version
+                return "0.0.0"
+            ref = cp.stdout.splitlines(keepends=False)[0]
+
             # 2. get revisions count
             rev_count = run_with_logs(["git", "rev-list", "--count", ref], cwd=cwd).stdout.splitlines(keepends=False)[0]
             # 3. get hash

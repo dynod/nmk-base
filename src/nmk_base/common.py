@@ -16,7 +16,7 @@ def run_with_logs(args: List[str], logger=NmkLogger, check: bool = True, cwd: Pa
     list(map(logger.debug, cp.stderr.splitlines(keepends=False)))
     logger.debug(">> stdout:")
     list(map(logger.debug, cp.stdout.splitlines(keepends=False)))
-    assert not check or cp.returncode == 0, f"pip returned {cp.returncode}"
+    assert not check or cp.returncode == 0, f"command returned {cp.returncode}"
     return cp
 
 
