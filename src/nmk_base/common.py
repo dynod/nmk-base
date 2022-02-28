@@ -25,7 +25,7 @@ class TemplateBuilder(NmkTaskBuilder):
     Common builder logic to generate files from templates
     """
 
-    def build_from_template(self, template: Path, output: Path, kwargs: Dict[str, str]):
+    def build_from_template(self, template: Path, output: Path, kwargs: Dict[str, str]) -> str:
         # Prepare keywords
         all_kw = {"nmkBaseVersion": self.model.config["nmkPluginsVersions"].value["base"]}
         all_kw.update(kwargs)
@@ -35,4 +35,6 @@ class TemplateBuilder(NmkTaskBuilder):
         with template.open() as f, output.open("w") as o:
             # Render it
             t = Template(f.read())
-            o.write(t.render(all_kw))
+            out = t.render(all_kw)
+            o.write(out)
+            return out

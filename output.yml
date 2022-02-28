@@ -6,6 +6,10 @@ config:
     # Output build directory
     outputDir: ${PROJECTDIR}/out
 
+    # Contribute to ignored files
+    gitIgnoredFiles:
+        - ${outputDir}
+
 tasks:
     # Clean task
     clean:

@@ -28,6 +28,10 @@ config:
     # Template for merged requirements file
     venvRequirementsTemplate: ${BASEDIR}/templates/requirements.txt
 
+    # Contribute to ignored files
+    gitIgnoredFiles:
+        - ${venvName}
+
 tasks:
 
     # Generate merged requirements file
