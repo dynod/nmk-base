@@ -25,6 +25,10 @@ config:
         python:
             url: https://www.python.org/downloads/
 
+    # Contribute to generated git attributes
+    gitFileAttributes:
+        "*.bat": "text eol=crlf" # Bat files are Windows files
+
 tasks:
     # Generate bootstrap scripts
     loadme:

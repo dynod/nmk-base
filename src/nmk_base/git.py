@@ -1,6 +1,6 @@
 import subprocess
 from pathlib import Path
-from typing import List
+from typing import Dict, List
 
 from nmk_base.common import TemplateBuilder, run_with_logs
 
@@ -64,7 +64,48 @@ class GitVersionResolver(NmkStrConfigResolver):
             return f"0.0.0-{rev_count}-g{rev_hash}"
 
 
-class GitIgnore(TemplateBuilder):
+class GitFileFragmentUpdater(TemplateBuilder):
+    def allow_missing_input(self, missing_input: Path) -> bool:
+        # Allow project root .gitignore/.gitattributes to be missing
+        return missing_input == self.main_input
+
+    def build_fragment(self, kwargs: Dict[str, str], template: str):
+        # Generate fragment (in stamp file)
+        fragment = self.build_from_template(Path(template), self.outputs[1], kwargs)
+
+        # Read (eventually manually modified) file
+        fragment_lines = list(filter(len, fragment.splitlines(keepends=False)))
+        if self.main_input.is_file():
+            fragment_header = fragment_lines[0]
+            fragment_footer = fragment_lines[-1]
+            with self.main_input.open() as f:
+                file_content = f.read().splitlines(keepends=False)
+
+            # Delete fragment, if any
+            if fragment_header in file_content:
+                insert_pos = file_content.index(fragment_header)
+                footer_pos = (file_content.index(fragment_footer) + 1) if fragment_footer in file_content else len(file_content)
+                self.logger.debug(f"Merge {self.main_output.name} content by replacing fragment at lines {insert_pos+1}-{footer_pos}")
+                del file_content[insert_pos:footer_pos]
+            else:
+                self.logger.debug(f"Insert generated fragment at and of existing {self.main_output.name} file")
+                insert_pos = len(file_content)
+        else:
+            self.logger.debug(f"Create new {self.main_output.name} file")
+            file_content = []
+            insert_pos = 0
+
+        # Insert fragment
+        for p in range(len(fragment_lines)):
+            file_content.insert(insert_pos + p, fragment_lines[p])
+
+        # Write final content
+        with self.main_output.open("w") as f:
+            self.logger.debug(f"Update {self.main_output.name} file")
+            f.write("\n".join(file_content + [""]))
+
+
+class GitIgnore(GitFileFragmentUpdater):
     def prepare_ignored_file(self, ignored_file: str) -> str:
         p = Path(ignored_file)
 
@@ -79,43 +120,12 @@ class GitIgnore(TemplateBuilder):
 
         return p.as_posix() + ("/" if p.is_dir() else "")
 
-    def allow_missing_input(self, missing_input: Path) -> bool:
-        # Allow project root .gitignore to be missing
-        return missing_input == self.main_input
-
     def build(self, ignored_files: List[str], template: str):
-        # Generate gitignore fragment (in stamp file)
-        fragment = self.build_from_template(
-            Path(template), self.outputs[1], {"gitIgnoredFiles": list(filter(lambda p: p is not None, map(self.prepare_ignored_file, ignored_files)))}
-        )
+        # Generate gitignore
+        self.build_fragment({"gitIgnoredFiles": list(filter(lambda p: p is not None, map(self.prepare_ignored_file, ignored_files)))}, template)
 
-        # Read (eventually manually modified) gitignore
-        fragment_lines = list(filter(len, fragment.splitlines(keepends=False)))
-        if self.main_input.is_file():
-            fragment_header = fragment_lines[0]
-            fragment_footer = fragment_lines[-1]
-            with self.main_input.open() as f:
-                gitignore_content = f.read().splitlines(keepends=False)
 
-            # Delete fragment, if any
-            if fragment_header in gitignore_content:
-                insert_pos = gitignore_content.index(fragment_header)
-                footer_pos = (gitignore_content.index(fragment_footer) + 1) if fragment_footer in gitignore_content else len(gitignore_content)
-                self.logger.debug(f"Merge .gitignore content by replacing fragment at lines {insert_pos+1}-{footer_pos}")
-                del gitignore_content[insert_pos:footer_pos]
-            else:
-                self.logger.debug("Insert generated fragment at and of existing file")
-                insert_pos = len(gitignore_content)
-        else:
-            self.logger.debug("Create new .gitignore file")
-            gitignore_content = []
-            insert_pos = 0
-
-        # Insert fragment
-        for p in range(len(fragment_lines)):
-            gitignore_content.insert(insert_pos + p, fragment_lines[p])
-
-        # Write final gitignore content
-        with self.main_output.open("w") as f:
-            self.logger.debug(f"Update .gitignore file: {self.main_output}")
-            f.write("\n".join(gitignore_content + [""]))
+class GitAttributes(GitFileFragmentUpdater):
+    def build(self, attributes: Dict[str, str], template: str):
+        # Generate gitattributes
+        self.build_fragment({"gitFileAttributes": attributes}, template)
