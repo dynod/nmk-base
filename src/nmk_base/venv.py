@@ -37,7 +37,7 @@ class VenvUpdateBuilder(NmkTaskBuilder):
         venv_status = self.outputs[1]
 
         # Call pip and touch output folder
-        self.pip(["install", "-r", str(self.main_input)] + (pip_args.split(" ") if len(pip_args) else []))
+        self.pip(["install"] + (["-r"] if self.main_input.suffix == ".txt" else []) + [str(self.main_input)] + (pip_args.split(" ") if len(pip_args) else []))
         venv_folder.touch()
 
         # Dump installed packages
