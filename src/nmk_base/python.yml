@@ -1,7 +1,7 @@
 config:
     # Contribute to python path
     pythonPath:
-        - ${BASEDIR}/src
+        - ${BASEDIR}/..
 
     # Python dependencies for contributed resolvers/builders
     venvPkgDeps:

@@ -1,7 +1,3 @@
-# Needs python path
-refs:
-    - python.yml
-
 config:
     # Needs git CLI tool
     loadMeSysDeps:

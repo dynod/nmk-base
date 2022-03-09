@@ -1,7 +1,3 @@
-# Needs python path
-refs:
-    - python.yml
-
 config:
     # Bootstrap target scripts for Linux/Windows
     loadMeTargets:

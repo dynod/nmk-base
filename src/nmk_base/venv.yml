@@ -1,7 +1,3 @@
-# Needs python path
-refs:
-    - python.yml
-
 config:
 
     # Venv dependencies list (direct packages dependencies)
