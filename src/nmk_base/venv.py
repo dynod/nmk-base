@@ -1,11 +1,11 @@
 import re
-import sys
 from pathlib import Path
 from typing import List
 
-from nmk_base.common import TemplateBuilder, run_with_logs
+from nmk_base.common import TemplateBuilder
 
 from nmk.model.builder import NmkTaskBuilder
+from nmk.utils import run_pip
 
 # Pattern for pip list lines
 PIP_LIST_PATTERN = re.compile("^([^ ]+) +([0-9][^ ]*)$")
@@ -27,21 +27,17 @@ class VenvRequirementsBuilder(TemplateBuilder):
 
 
 class VenvUpdateBuilder(NmkTaskBuilder):
-    def pip(self, args: List[str]) -> str:
-        all_args = [sys.executable, "-m", "pip"] + args
-        return run_with_logs(all_args, self.logger).stdout
-
     def build(self, pip_args: str):
         # Prepare outputs
         venv_folder = self.main_output
         venv_status = self.outputs[1]
 
         # Call pip and touch output folder
-        self.pip(["install"] + (["-r"] if self.main_input.suffix == ".txt" else []) + [str(self.main_input)] + (pip_args.split(" ") if len(pip_args) else []))
+        run_pip(["install"] + (["-r"] if self.main_input.suffix == ".txt" else []) + [str(self.main_input)] + (pip_args.split(" ") if len(pip_args) else []))
         venv_folder.touch()
 
         # Dump installed packages
-        raw_pkg_list = self.pip(["list"])
+        raw_pkg_list = run_pip(["list"])
         pkg_list = ["# Packages installed for project build"] + list(
             map(lambda m: f"{m.group(1)}=={m.group(2)}", filter(lambda m: m is not None, map(PIP_LIST_PATTERN.match, raw_pkg_list.splitlines(keepends=False))))
         )
