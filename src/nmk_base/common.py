@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Dict, List
 
 from jinja2 import Template
-
 from nmk.model.builder import NmkTaskBuilder
 
 

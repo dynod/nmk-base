@@ -2,13 +2,13 @@ import subprocess
 from pathlib import Path
 from typing import Dict, List
 
-from nmk_base.common import TemplateBuilder
-
 from nmk.errors import NmkStopHereError
 from nmk.model.builder import NmkTaskBuilder
 from nmk.model.keys import NmkRootConfig
 from nmk.model.resolver import NmkStrConfigResolver
 from nmk.utils import run_with_logs
+
+from nmk_base.common import TemplateBuilder
 
 
 class GitVersionRefresh(NmkTaskBuilder):

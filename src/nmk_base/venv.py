@@ -2,10 +2,10 @@ import re
 from pathlib import Path
 from typing import List
 
-from nmk_base.common import TemplateBuilder
-
 from nmk.model.builder import NmkTaskBuilder
 from nmk.utils import run_pip
+
+from nmk_base.common import TemplateBuilder
 
 # Pattern for pip list lines
 PIP_LIST_PATTERN = re.compile("^([^ ]+) +([0-9][^ ]*)$")
