@@ -33,11 +33,17 @@ class VenvUpdateBuilder(NmkTaskBuilder):
         venv_status = self.outputs[1]
 
         # Call pip and touch output folder
-        run_pip(["install"] + (["-r"] if self.main_input.suffix == ".txt" else []) + [str(self.main_input)] + (pip_args.split(" ") if len(pip_args) else []))
+        run_pip(
+            ["install"]
+            + (["-r"] if self.main_input.suffix == ".txt" else [])
+            + [str(self.main_input)]
+            + (pip_args.strip().split(" ") if len(pip_args) else []),
+            logger=self.logger,
+        )
         venv_folder.touch()
 
         # Dump installed packages
-        raw_pkg_list = run_pip(["list"])
+        raw_pkg_list = run_pip(["list"], logger=self.logger)
         pkg_list = ["# Packages installed for project build"] + list(
             map(lambda m: f"{m.group(1)}=={m.group(2)}", filter(lambda m: m is not None, map(PIP_LIST_PATTERN.match, raw_pkg_list.splitlines(keepends=False))))
         )
