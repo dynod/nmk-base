@@ -1,11 +1,15 @@
 config:
+    # Plugin version
+    nmkBasePluginVersion:
+        __resolver__: nmk_base.version.NmkBaseVersionResolver
+
     # Plugin versions dict
     nmkPluginsVersions:
-        base: 1.0.0
+        nmk-base: ${nmkBasePluginVersion}
 
     # Plugin help links dict
     nmkPluginsDocs:
-        base: https://github.com/dynod/nmk/wiki/nmk-base-plugin
+        nmk-base: https://github.com/dynod/nmk/wiki/nmk-base-plugin
 
 tasks:
 

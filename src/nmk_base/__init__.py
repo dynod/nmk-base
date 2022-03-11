@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pkg_resources import DistributionNotFound, get_distribution
 
-__title__ = "nmk-python"
+__title__ = "nmk-base"
 try:
     __version__ = get_distribution(__title__).version
 except DistributionNotFound:  # pragma: no cover
@@ -14,4 +14,4 @@ except DistributionNotFound:  # pragma: no cover
             c.read_file(f.readlines())
             __version__ = c.get("metadata", "version")
     except Exception:
-        pass
+        __version__ = "unknown"

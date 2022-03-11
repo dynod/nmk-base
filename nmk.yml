@@ -12,6 +12,7 @@ config:
     
     # Nmk dependencies
     pythonPackageRequirements:
+        - Jinja2
         - nmk
 
     # Extra setup data

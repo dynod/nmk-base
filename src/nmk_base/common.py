@@ -15,8 +15,7 @@ class TemplateBuilder(NmkTaskBuilder):
 
     def build_from_template(self, template: Path, output: Path, kwargs: Dict[str, str]) -> str:
         # Prepare keywords
-        all_kw = {"nmkBaseVersion": self.model.config["nmkPluginsVersions"].value["base"]}
-        all_kw.update(kwargs)
+        all_kw = dict(kwargs)
 
         # Load template
         self.logger.debug(f"Generating {output} from template {template}")

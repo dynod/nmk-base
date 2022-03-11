@@ -2,7 +2,3 @@ config:
     # Contribute to python path
     pythonPath:
         - ${BASEDIR}/..
-
-    # Python dependencies for contributed resolvers/builders
-    venvPkgDeps:
-        - Jinja2
