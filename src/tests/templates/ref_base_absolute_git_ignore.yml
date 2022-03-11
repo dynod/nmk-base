@@ -1,0 +1,6 @@
+refs:
+    - pip://nmk-base!plugin.yml
+
+config:
+    gitIgnoredFiles:
+        - /tmp/some/ignored/file
