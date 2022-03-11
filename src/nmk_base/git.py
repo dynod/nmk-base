@@ -114,12 +114,12 @@ class GitIgnore(GitFileFragmentUpdater):
         if p.is_absolute():
             try:
                 # Assume path is relative to project
-                p = p.relative_to(self.model.config[NmkRootConfig.PROJECT_DIR].value)
+                return p.relative_to(self.model.config[NmkRootConfig.PROJECT_DIR].value).as_posix()
             except ValueError:
                 self.logger.warning(f"Can't ignore non project-relative absolute path: {ignored_file}")
                 return None
 
-        return p.as_posix() + ("/" if p.is_dir() else "")
+        return ignored_file
 
     def build(self, ignored_files: List[str], template: str):
         # Generate gitignore

@@ -1,9 +1,8 @@
 from typing import Dict
 
+from nmk import __version__
 from nmk.model.builder import NmkTaskBuilder
 from rich.emoji import Emoji
-
-from nmk import __version__
 
 
 class VersionBuilder(NmkTaskBuilder):

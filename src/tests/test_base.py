@@ -3,6 +3,7 @@ import subprocess
 import time
 
 from nmk import __version__
+
 from tests.utils import NmkTester
 
 
