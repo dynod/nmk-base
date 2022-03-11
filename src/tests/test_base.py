@@ -121,7 +121,7 @@ class TestBasePlugin(NmkBaseTester):
         # Verify generated file
         with (self.test_folder / "requirements.txt").open() as f:
             content = f.read()
-            assert "Jinja2" in content
+            assert "nmk" in content
             assert "SomeFakePackage" in content
             assert "somearchive.tar.gz" in content
 
@@ -130,7 +130,9 @@ class TestBasePlugin(NmkBaseTester):
         monkeypatch.setattr(
             subprocess,
             "run",
-            lambda all_args, check, capture_output, text, encoding, cwd: subprocess.CompletedProcess(all_args, 0, "Fake packages list\nsomePackage  1.2.3", ""),
+            lambda all_args, check, capture_output, text, encoding, cwd: subprocess.CompletedProcess(
+                all_args, 0, "# Fake packages list\nsomePackage==1.2.3", ""
+            ),
         )
 
         # Test a simple venv update

@@ -43,9 +43,6 @@ class VenvUpdateBuilder(NmkTaskBuilder):
         venv_folder.touch()
 
         # Dump installed packages
-        raw_pkg_list = run_pip(["list"], logger=self.logger)
-        pkg_list = ["# Packages installed for project build"] + list(
-            map(lambda m: f"{m.group(1)}=={m.group(2)}", filter(lambda m: m is not None, map(PIP_LIST_PATTERN.match, raw_pkg_list.splitlines(keepends=False))))
-        )
+        pkg_list = run_pip(["freeze"], logger=self.logger)
         with venv_status.open("w") as f:
-            f.write("\n".join(pkg_list))
+            f.write(pkg_list)
