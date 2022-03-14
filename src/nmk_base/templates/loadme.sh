@@ -78,3 +78,7 @@ fi
 # Finally load venv
 echo Load venv
 source {{ venvName }}/bin/activate
+
+# Run command specified as parameter, if any
+"$@"
+
