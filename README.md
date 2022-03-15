@@ -6,7 +6,7 @@ Base plugin for nmk build system
 To reference this plug-in in your **`nmk`** project, insert this reference:
 ```
 refs:
-    - github://dynod/nmk-base/1.0.0/plugin.yml
+    - pip://nmk-base/plugin.yml
 ```
 
 ## Documentation
