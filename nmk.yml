@@ -5,6 +5,14 @@ refs:
     - python-plugin:
         remote: github://dynod/nmk-python/main
         local: ../python
+    - <github-plugin>/src/nmk_github/plugin.yml
+    - github-plugin:
+        remote: github://dynod/nmk-github/main
+        local: ../github
+    - <workspace>/shared.yml
+    - workspace:
+        local: ../../../../shared
+        remote: github://dynod/workspace/main/shared
 
 config:
     # Python package
