@@ -57,7 +57,7 @@ class GitVersionResolver(NmkStrConfigResolver):
             ref = cp.stdout.splitlines(keepends=False)[0]
 
             # 2. get revisions count
-            rev_count = run_with_logs(["git", "rev-list", "--count", ref], cwd=cwd).stdout.splitlines(keepends=False)[0]
+            rev_count = run_with_logs(["git", "rev-list", "--count", ref, "--"], cwd=cwd).stdout.splitlines(keepends=False)[0]
             # 3. get hash
             rev_hash = run_with_logs(["git", "describe", "--always", "--dirty"], cwd=cwd).stdout.splitlines(keepends=False)[0]
 
