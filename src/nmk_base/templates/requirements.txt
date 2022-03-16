@@ -8,17 +8,17 @@
 
 {% for line in fileDeps %}{{ line }}
 {% endfor %}
-{% endif %}{% if packageDeps|length > 0 %}#
+{% endif %}{% if venvPkgDeps|length > 0 %}#
 # Package dependencies from nmk project files
 #
 
-{% for line in packageDeps %}{{ line }}
+{% for line in venvPkgDeps %}{{ line }}
 {% endfor %}
-{% endif %}{% if archiveDeps|length > 0 %}#
+{% endif %}{% if venvArchiveDeps|length > 0 %}#
 # Archive dependencies from nmk project files
 #
 
-{% for line in archiveDeps %}{{ line }}
+{% for line in venvArchiveDeps %}{{ line }}
 {% endfor %}
 {% endif %}
 

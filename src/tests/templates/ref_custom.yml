@@ -1,0 +1,5 @@
+refs:
+    - pip://nmk-base!plugin.yml
+
+config:
+    venvRequirementsTemplate: ${BASEDIR}/customTemplate.txt

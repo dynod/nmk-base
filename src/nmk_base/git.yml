@@ -90,5 +90,4 @@ tasks:
         appendToDeps: setup
         builder: nmk_base.git.GitAttributes
         params:
-            attributes: ${gitFileAttributes}
             template: ${gitAttributesTemplate}

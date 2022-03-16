@@ -40,8 +40,6 @@ tasks:
             - ${venvRequirementsTemplate}
         output: ${PROJECTDIR}/${venvRequirements}
         params:
-            package_deps: ${venvPkgDeps}
-            archive_deps: ${venvArchiveDeps}
             file_deps: ${venvFileDeps}
             template: ${venvRequirementsTemplate}
         builder: nmk_base.venv.VenvRequirementsBuilder
