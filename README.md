@@ -11,7 +11,7 @@ Base plugin for nmk build system
 To reference this plug-in in your **`nmk`** project, insert this reference:
 ```
 refs:
-    - pip://nmk-base/plugin.yml
+    - pip://nmk-base!plugin.yml
 ```
 
 ## Documentation
