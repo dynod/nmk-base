@@ -1,11 +1,11 @@
 refs:
     # Base+python plugins
     - src/nmk_base/plugin.yml
-    - <python-plugin>/src/nmk_python/plugin.yml
+    - <python-plugin>/src/nmk_python/plugin-defs.yml
     - python-plugin:
         remote: github://dynod/nmk-python/main
         local: ../python
-    - <github-plugin>/src/nmk_github/plugin.yml
+    - <github-plugin>/src/nmk_github/plugin-defs.yml
     - github-plugin:
         remote: github://dynod/nmk-github/main
         local: ../github

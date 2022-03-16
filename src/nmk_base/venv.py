@@ -12,7 +12,7 @@ PIP_LIST_PATTERN = re.compile("^([^ ]+) +([0-9][^ ]*)$")
 
 
 class VenvRequirementsBuilder(TemplateBuilder):
-    def build(self, package_deps: List[str], archive_deps: List[str], file_deps: List[str], template: str):
+    def build(self, file_deps: List[str], template: str):
         file_requirements = []
 
         # Merge all files content
@@ -23,7 +23,7 @@ class VenvRequirementsBuilder(TemplateBuilder):
                 file_requirements.append("")
 
         # Write merged requirements file
-        self.build_from_template(Path(template), self.main_output, {"fileDeps": file_requirements, "packageDeps": package_deps, "archiveDeps": archive_deps})
+        self.build_from_template(Path(template), self.main_output, {"fileDeps": file_requirements})
 
 
 class VenvUpdateBuilder(NmkTaskBuilder):

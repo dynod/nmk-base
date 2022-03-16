@@ -127,6 +127,6 @@ class GitIgnore(GitFileFragmentUpdater):
 
 
 class GitAttributes(GitFileFragmentUpdater):
-    def build(self, attributes: Dict[str, str], template: str):
+    def build(self, template: str):
         # Generate gitattributes
-        self.build_fragment({"gitFileAttributes": attributes}, template)
+        self.build_fragment({}, template)

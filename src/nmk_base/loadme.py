@@ -10,16 +10,13 @@ class BuildLoadMe(TemplateBuilder):
             for name, sources in filter(lambda t: source in t[1], deps.items())
         }
 
-    def build(self, deps: Dict[str, Dict[str, str]], venv_pythons: List[str], venv_name: str, venv_pip_args: str, venv_requirements: str):
+    def build(self, deps: Dict[str, Dict[str, str]], venv_pythons: List[str]):
         # Prepare sysdeps list per keys
         apt_deps = self.prepare_deps(deps, "apt")
         url_deps = self.prepare_deps(deps, "url")
         kwargs = {
             "aptDeps": apt_deps,
             "urlDeps": url_deps,
-            "venvName": venv_name,
-            "venvPipArgs": venv_pip_args,
-            "venvRequirements": venv_requirements,
         }
 
         # Iterate on combination of templates, outputs and venv command
