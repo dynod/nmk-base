@@ -5,6 +5,10 @@ refs:
     - python-plugin:
         remote: github://dynod/nmk-python/main
         local: ../python
+    - <vscode-plugin>/src/nmk_vscode/plugin-defs.yml
+    - vscode-plugin:
+        remote: github://dynod/nmk-vscode/main
+        local: ../vscode
     - <github-plugin>/src/nmk_github/plugin-defs.yml
     - github-plugin:
         remote: github://dynod/nmk-github/main

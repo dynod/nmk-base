@@ -26,5 +26,5 @@ class HelpBuilder(NmkTaskBuilder):
 class TaskListBuilder(NmkTaskBuilder):
     def build(self):
         # Iterate on all model tasks
-        for name, task in map(lambda k: (k, self.model.tasks[k]), sorted(self.model.tasks.keys())):
+        for name, task in ((k, self.model.tasks[k]) for k in sorted(self.model.tasks.keys())):
             self.logger.info(task.emoji, f" {Emoji('backhand_index_pointing_right')} {name}: {task.description}")
