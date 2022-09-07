@@ -47,6 +47,12 @@ class TestBasePlugin(NmkBaseTester):
         with loadme.open() as f:
             assert "python3 -m venv venv" in f.read()
 
+        # Check generated git-bash loadme
+        loadme = self.test_folder / "loadme-git-bash.sh"
+        assert loadme.is_file()
+        with loadme.open() as f:
+            assert "python -m venv venv" in f.read()
+
         # Check generated Windows loadme
         loadme = self.test_folder / "loadme.bat"
         assert loadme.is_file()

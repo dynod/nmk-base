@@ -1,17 +1,20 @@
 config:
-    # Bootstrap target scripts for Linux/Windows
+    # Bootstrap target scripts for Linux/Windows (git bash)/Windows (cmd)
     loadMeTargets:
         - ${PROJECTDIR}/loadme.sh
+        - ${PROJECTDIR}/loadme-git-bash.sh
         - ${PROJECTDIR}/loadme.bat
 
-    # Bootstrap template scripts for Linux/Windows
+    # Bootstrap template scripts for Linux/Windows (git bash)/Windows (cmd)
     loadMeTemplates:
         - ${BASEDIR}/templates/loadme.sh
+        - ${BASEDIR}/templates/loadme-git-bash.sh
         - ${BASEDIR}/templates/loadme.bat
 
     # Python versions to call to bootstrap venv
     loadMeVenvPython:
         - python3
+        - python
         - python
 
     # Required system dependencies (at least python!)
