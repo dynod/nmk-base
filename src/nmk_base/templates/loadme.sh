@@ -5,12 +5,20 @@
 __checkSysDeps() {
     local cmd="${1}"
     local packages="${2}"
+    local url="${3}"
     
     # Command found?
     echo -n "Check ${cmd} "
     if test -z "$(which "${cmd}" 2>/dev/null || true)"; then
         echo "[missing]"
-        NMK_APT_DEPS="${NMK_APT_DEPS} ${packages}"
+        if test -n "${packages}"; then
+            # APT mode
+            NMK_APT_DEPS="${NMK_APT_DEPS} ${packages}"
+        else
+            # URL mode
+            echo "Please install from ${url}"
+            MISSING_DEPS=1
+        fi
     else
         echo "[OK]"
     fi
@@ -40,27 +48,47 @@ __installSysDeps() {
     fi
 }
 
-# Check system dependencies
-{% for cmd in aptDeps.keys() %}__checkSysDeps {{ cmd }} "{{ aptDeps[cmd] }}"
-{% endfor %}
-# Perform installs if needed
-__installSysDeps || return $?
+# Test for git-bash mode
+if test -f /git-bash.exe; then
+    # Windows-style venv
+    IS_GIT_BASH=1
+    VENV_DIR={{ venvName }}/Scripts
+    PYTHON_EXE=python
+else
+    # Linux-style venv
+    VENV_DIR={{ venvName }}/bin
+    PYTHON_EXE={{ pythonForVenv }}
+fi
 
-# Clean useless stuff from terminal context
-unset __checkSysDeps
-unset __installSysDeps
+# Check system dependencies
+if test -n "${IS_GIT_BASH}"; then
+    # git-bash mode
+    MISSING_DEPS=0
+    {% for cmd in urlDeps.keys() %}__checkSysDeps {{ cmd }} "" "{{ urlDeps[cmd] }}"
+    {% endfor %}
+    # Stop if something is missing
+    if test ${MISSING_DEPS} -ne 0; then
+        return 1
+    fi
+else
+    # Linux mode
+    {% for cmd in aptDeps.keys() %}__checkSysDeps {{ cmd }} "{{ aptDeps[cmd] }}"
+    {% endfor %}
+    # Perform installs if needed
+    __installSysDeps || return $?
+fi
 
 # Create venv if not done yet
 if test ! -d {{ venvName }}; then
     # Create it
     echo Create venv...
-    {{ pythonForVenv }} -m venv {{ venvName }}
+    ${PYTHON_EXE} -m venv {{ venvName }}
 
     # Load it
-    source {{ venvName }}/bin/activate
+    source ${VENV_DIR}/activate
     
     # Bootstrap it
-    pip install pip wheel --upgrade
+    python -m pip install pip wheel --upgrade
 
     # Install requirements (if present)
     if test -f "{{ venvRequirements }}"; then
@@ -71,13 +99,26 @@ if test ! -d {{ venvName }}; then
     fi
 
     # Patch it for nmk completion
-    echo ' ' >> {{ venvName }}/bin/activate
-    echo 'eval "$(register-python-argcomplete nmk)"' >> {{ venvName }}/bin/activate
+    echo ' ' >> ${VENV_DIR}/activate
+    if test -n "${IS_GIT_BASH}"; then
+        # On git bash, handle completion through temporary files rather than descriptors
+        # see https://github.com/kislyuk/argcomplete#git-bash-support
+        echo 'export ARGCOMPLETE_USE_TEMPFILES=1' >> ${VENV_DIR}/activate
+    fi
+    echo 'eval "$(register-python-argcomplete nmk)"' >> ${VENV_DIR}/activate
 fi
 
 # Finally load venv
 echo Load venv
-source {{ venvName }}/bin/activate
+source ${VENV_DIR}/activate
+
+# Clean useless stuff from terminal context
+unset __checkSysDeps
+unset __installSysDeps
+unset VENV_DIR
+unset PYTHON_EXE
+unset IS_GIT_BASH
+unset MISSING_DEPS
 
 # Run command specified as parameter, if any
 "$@"
