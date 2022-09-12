@@ -1,3 +1,4 @@
+import os
 import subprocess
 from pathlib import Path
 from typing import Dict, List
@@ -72,7 +73,8 @@ class GitFileFragmentUpdater(TemplateBuilder):
 
     def build_fragment(self, kwargs: Dict[str, str], template: str):
         # Generate fragment (in stamp file)
-        fragment = self.build_from_template(Path(template), self.outputs[1], kwargs)
+        stamp_file = self.outputs[1]
+        fragment = self.build_from_template(Path(template), stamp_file, kwargs)
 
         # Read (eventually manually modified) file
         fragment_lines = list(filter(len, fragment.splitlines(keepends=False)))
@@ -104,6 +106,10 @@ class GitFileFragmentUpdater(TemplateBuilder):
         with self.main_output.open("w") as f:
             self.logger.debug(f"Update {self.main_output.name} file")
             f.write("\n".join(file_content + [""]))
+
+        # Make sure that stamp file and main output have the same update time
+        stamp_stats = stamp_file.stat()
+        os.utime(self.main_output, (stamp_stats.st_atime, stamp_stats.st_mtime))
 
 
 class GitIgnore(GitFileFragmentUpdater):
