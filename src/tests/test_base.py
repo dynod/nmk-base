@@ -1,4 +1,5 @@
 # Tests for base plugin
+import re
 import subprocess
 import time
 from pathlib import Path
@@ -16,11 +17,11 @@ class TestBasePlugin(NmkBaseTester):
 
     def test_output(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--print", "outputDir"])
-        self.check_logs(f'Config dump: {{ "outputDir": "{self.test_folder}/out" }}')
+        self.check_logs(re.compile('Config dump: { "outputDir": "[^"]+/out" }'))
 
     def test_clean_missing(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["clean"])
-        self.check_logs(f"Nothing to clean (folder not found: {self.test_folder}/out)")
+        self.check_logs(f"Nothing to clean (folder not found: {self.test_folder/'out'})")
 
     def test_clean_folder(self):
         fake_out = self.test_folder / "out"
@@ -32,11 +33,11 @@ class TestBasePlugin(NmkBaseTester):
 
     def test_build(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run"])
-        self.check_logs_order(["setup]] INFO 🛫 - Setup project configuration", "build]] INFO 🛠  - Build project artifacts", "9 built tasks"])
+        self.check_logs(["setup]] INFO 🛫 - Setup project configuration", "build]] INFO 🛠  - Build project artifacts", "9 built tasks"], check_order=True)
 
     def test_test(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "tests"])
-        self.check_logs_order(["tests]] INFO 🤞 - Run automated tests", "10 built tasks"])
+        self.check_logs(["tests]] INFO 🤞 - Run automated tests", "10 built tasks"], check_order=True)
 
     def test_loadme(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["loadme"])
@@ -189,7 +190,7 @@ class TestBasePlugin(NmkBaseTester):
         self.nmk(self.prepare_project("ref_base_absolute_git_ignore.yml"), extra_args=["git.ignore"])
         assert gitignore.is_file()
         assert (self.test_folder / "out" / ".gitignore").is_file()
-        self.check_logs(["Create new .gitignore file", "Can't ignore non project-relative absolute path: /tmp/some/ignored/file"])
+        self.check_logs(["Create new .gitignore file", "Can't ignore non project-relative absolute path:"])
 
     def test_git_attributes(self):
         gitattributes = self.test_folder / ".gitattributes"

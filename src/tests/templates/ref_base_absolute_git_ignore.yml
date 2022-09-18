@@ -4,3 +4,4 @@ refs:
 config:
     gitIgnoredFiles:
         - /tmp/some/ignored/file
+        - D:/tmp/some/ignored/file
