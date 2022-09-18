@@ -8,7 +8,7 @@ Base plugin for nmk build system
 
 ## Usage
 
-To reference this plug-in in your **`nmk`** project, insert this reference:
+To use this plugin in your **`nmk`** project, insert this reference:
 ```
 refs:
     - pip://nmk-base!plugin.yml

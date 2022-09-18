@@ -28,5 +28,9 @@ config:
         - nmk
 
     # Extra setup data
-    pythonSetupCfgFiles:
-        - nmk.cfg
+    pythonSetupItems:
+        metadata:
+            description: Base plugin for nmk build system
+        options.package_data:
+            nmk_base: "*.yml"
+            nmk_base.templates: "*"
