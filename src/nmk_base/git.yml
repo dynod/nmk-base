@@ -25,18 +25,6 @@ config:
     # Template for .gitignore fragment
     gitIgnoreTemplate: ${BASEDIR}/templates/gitignore
 
-    # Git attributes
-    gitFileAttributes: {}
-
-    # Generated .gitattributes
-    gitAttributes: ${PROJECTDIR}/.gitattributes
-
-    # Generated .gitattributes stamp file
-    gitAttributesStamp: ${outputDir}/.gitattributes
-
-    # Template for .gitattributes fragment
-    gitAttributesTemplate: ${BASEDIR}/templates/gitattributes
-
 tasks:
     # To refresh git version stamp file
     git.version:
@@ -74,20 +62,3 @@ tasks:
         params:
             ignored_files: ${gitIgnoredFiles}
             template: ${gitIgnoreTemplate}
-
-    # Update git attributes
-    git.attributes:
-        description: Refresh git attributes
-        emoji: ":regional_indicator_symbol_letter_g: .:white_medium_star:"
-        input:
-            - ${gitAttributes}  # .gitattributes is also an input as it may be updated manually
-            - ${gitAttributesTemplate}
-        output:
-            - ${gitAttributes}
-            - ${gitAttributesStamp}
-        deps:
-            - out
-        appendToDeps: setup
-        builder: nmk_base.git.GitAttributes
-        params:
-            template: ${gitAttributesTemplate}

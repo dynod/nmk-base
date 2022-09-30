@@ -130,9 +130,3 @@ class GitIgnore(GitFileFragmentUpdater):
     def build(self, ignored_files: List[str], template: str):
         # Generate gitignore
         self.build_fragment({"gitIgnoredFiles": list(filter(lambda p: p is not None, map(self.prepare_ignored_file, ignored_files)))}, template)
-
-
-class GitAttributes(GitFileFragmentUpdater):
-    def build(self, template: str):
-        # Generate gitattributes
-        self.build_fragment({}, template)

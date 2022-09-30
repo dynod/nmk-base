@@ -33,11 +33,11 @@ class TestBasePlugin(NmkBaseTester):
 
     def test_build(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run"])
-        self.check_logs(["setup]] INFO 🛫 - Setup project configuration", "build]] INFO 🛠  - Build project artifacts", "9 built tasks"], check_order=True)
+        self.check_logs(["setup]] INFO 🛫 - Setup project configuration", "build]] INFO 🛠  - Build project artifacts", "8 built tasks"], check_order=True)
 
     def test_test(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "tests"])
-        self.check_logs(["tests]] INFO 🤞 - Run automated tests", "10 built tasks"], check_order=True)
+        self.check_logs(["tests]] INFO 🤞 - Run automated tests", "9 built tasks"], check_order=True)
 
     def test_loadme(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["loadme"])
@@ -47,12 +47,6 @@ class TestBasePlugin(NmkBaseTester):
         assert loadme.is_file()
         with loadme.open() as f:
             assert "${PYTHON_EXE} -m venv venv" in f.read()
-
-        # Check generated Windows loadme
-        loadme = self.test_folder / "loadme.bat"
-        assert loadme.is_file()
-        with loadme.open() as f:
-            assert "python -m venv venv" in f.read()
 
     def test_version(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["version"])
@@ -191,11 +185,3 @@ class TestBasePlugin(NmkBaseTester):
         assert gitignore.is_file()
         assert (self.test_folder / "out" / ".gitignore").is_file()
         self.check_logs(["Create new .gitignore file", "Can't ignore non project-relative absolute path:"])
-
-    def test_git_attributes(self):
-        gitattributes = self.test_folder / ".gitattributes"
-        assert not gitattributes.exists()
-        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["git.attributes"])
-        assert gitattributes.is_file()
-        assert (self.test_folder / "out" / ".gitattributes").is_file()
-        self.check_logs("Create new .gitattributes file")

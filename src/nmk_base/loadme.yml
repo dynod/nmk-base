@@ -1,18 +1,15 @@
 config:
-    # Bootstrap target scripts for Linux/Windows
+    # Bootstrap target script for Linux
     loadMeTargets:
         - ${PROJECTDIR}/loadme.sh
-        - ${PROJECTDIR}/loadme.bat
 
-    # Bootstrap template scripts for Linux/Windows
+    # Bootstrap template script for Linux
     loadMeTemplates:
         - ${BASEDIR}/templates/loadme.sh
-        - ${BASEDIR}/templates/loadme.bat
 
     # Python versions to call to bootstrap venv
     loadMeVenvPython:
         - python3
-        - python
 
     # Required system dependencies (at least python!)
     loadMeSysDeps:
@@ -20,10 +17,6 @@ config:
             apt: ["python3", "python3-venv"]
         python:
             url: https://www.python.org/downloads/
-
-    # Contribute to generated git attributes
-    gitFileAttributes:
-        "*.bat": "text eol=crlf" # Bat files are Windows files
 
 tasks:
     # Generate bootstrap scripts
