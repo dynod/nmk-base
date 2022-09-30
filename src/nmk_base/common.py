@@ -38,7 +38,7 @@ class TemplateBuilder(NmkTaskBuilder):
             return [self.relative_path(p) for p in v]
 
         # Probably nothing to do with path, use raw value
-        return v
+        return v  # pragma: no cover
 
     def render_template(self, template: Path, kwargs: Dict[str, str]) -> str:
         # Load template
