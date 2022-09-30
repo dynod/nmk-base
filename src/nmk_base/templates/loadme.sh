@@ -60,28 +60,29 @@ else
     PYTHON_EXE={{ pythonForVenv }}
 fi
 
-# Check system dependencies
-if test -n "${IS_GIT_BASH}"; then
-    # git-bash mode
-    MISSING_DEPS=0
-    {% for cmd in urlDeps.keys() %}__checkSysDeps {{ cmd }} "" "{{ urlDeps[cmd] }}"
-    {% endfor %}
-    # Stop if something is missing
-    if test ${MISSING_DEPS} -ne 0; then
-        return 1
-    fi
-else
-    # Linux mode
-    {% for cmd in aptDeps.keys() %}__checkSysDeps {{ cmd }} "{{ aptDeps[cmd] }}"
-    {% endfor %}
-    # Perform installs if needed
-    __installSysDeps || return $?
-fi
-
 # Create venv if not done yet
-if test ! -d {{ venvName }}; then
-    # Create it
+if test ! -f {{ venvName }}/venvOK; then
+    # Check system dependencies
+    if test -n "${IS_GIT_BASH}"; then
+        # git-bash mode
+        MISSING_DEPS=0
+        {% for cmd in urlDeps.keys() %}__checkSysDeps {{ cmd }} "" "{{ urlDeps[cmd] }}"
+        {% endfor %}
+        # Stop if something is missing
+        if test ${MISSING_DEPS} -ne 0; then
+            return 1
+        fi
+    else
+        # Linux mode
+        {% for cmd in aptDeps.keys() %}__checkSysDeps {{ cmd }} "{{ aptDeps[cmd] }}"
+        {% endfor %}
+        # Perform installs if needed
+        __installSysDeps || return $?
+    fi
+
+    # Create venv
     echo Create venv...
+    rm -Rf {{ venvName }}
     ${PYTHON_EXE} -m venv {{ venvName }}
 
     # Load it
@@ -106,10 +107,12 @@ if test ! -d {{ venvName }}; then
         echo 'export ARGCOMPLETE_USE_TEMPFILES=1' >> ${VENV_DIR}/activate
     fi
     echo 'eval "$(register-python-argcomplete nmk)"' >> ${VENV_DIR}/activate
+
+    # Done, mark venv as "ready"
+    touch {{ venvName }}/venvOK
 fi
 
 # Finally load venv
-echo Load venv
 source ${VENV_DIR}/activate
 
 # Clean useless stuff from terminal context
