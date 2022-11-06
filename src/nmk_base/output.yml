@@ -1,4 +1,7 @@
 config:
+    # Main source directory
+    sourceDir: ${PROJECTDIR}/src
+    
     # Output build directory
     outputDir: ${PROJECTDIR}/out
 
