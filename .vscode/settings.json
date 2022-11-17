@@ -30,7 +30,8 @@
         "sdist",
         "venv",
         "loadme",
-        "dynod"
+        "dynod",
+        "nmk"
     ],
     "python.analysis.extraPaths": [
         "src"
@@ -41,5 +42,10 @@
     },
     "editor.formatOnSave": true,
     "task.allowAutomaticTasks": "on",
-    "terminal.integrated.defaultProfile.windows": "Git Bash"
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "cSpell.allowCompoundWords": true,
+    "cSpell.enableFiletypes": [
+        "yaml",
+        "python"
+    ]
 }

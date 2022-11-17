@@ -14,7 +14,7 @@ config:
 
     # Git ignored files
     gitIgnoredFiles:
-        - .nmk/
+        - ${PROJECTDIR_NMK}/
 
     # Generated .gitignore
     gitIgnore: ${PROJECTDIR}/.gitignore
