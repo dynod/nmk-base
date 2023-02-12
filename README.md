@@ -2,7 +2,7 @@
 Base plugin for nmk build system
 
 <!-- NMK-BADGES-BEGIN -->
-[![License: MPL](https://img.shields.io/github/license/dynod/nmk-base)](https://github.com/dynod/nmk-base/blob/main/LICENSE)
+[![License: MPL](https://img.shields.io/github/license/dynod/nmk-base?color=green)](https://github.com/dynod/nmk-base/blob/main/LICENSE)
 [![Checks](https://img.shields.io/github/actions/workflow/status/dynod/nmk-base/build.yml?branch=main&label=build%20%26%20u.t.)](https://github.com/dynod/nmk-base/actions?query=branch%3Amain)
 [![Issues](https://img.shields.io/github/issues-search/dynod/nmk?label=issues&query=is%3Aopen+is%3Aissue+label%3Aplugin%3Abase)](https://github.com/dynod/nmk/issues?q=is%3Aopen+is%3Aissue+label%3Aplugin%3Abase)
 [![Supported python versions](https://img.shields.io/badge/python-3.8%20--%203.11-blue)](https://www.python.org/)
