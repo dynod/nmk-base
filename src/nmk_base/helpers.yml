@@ -11,6 +11,10 @@ config:
     nmkPluginsDocs:
         nmk-base: https://github.com/dynod/nmk/wiki/nmk-base-plugin
 
+    # Some default things about the project
+    projectName: MyProject
+    projectAuthor: "Project Author"
+
 tasks:
 
     # Displays nmk version (+plugins)
