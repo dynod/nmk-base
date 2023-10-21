@@ -1,3 +1,7 @@
+"""
+Python module for **nmk-base** output tasks.
+"""
+
 import shutil
 from pathlib import Path
 
@@ -5,7 +9,18 @@ from nmk.model.builder import NmkTaskBuilder
 
 
 class CleanBuilder(NmkTaskBuilder):
+    """
+    Builder for **clean** task
+    """
+
     def build(self, path: str):
+        """
+        Build logic for **clean** task:
+        delete (recursively) provided directory, if it exists
+
+        :param path: Directory to be deleted
+        """
+
         # Check path
         to_delete = Path(path)
         if to_delete.is_dir():
@@ -18,6 +33,15 @@ class CleanBuilder(NmkTaskBuilder):
 
 
 class OutputMkdir(NmkTaskBuilder):
+    """
+    Builder for **out** task
+    """
+
     def build(self):
+        """
+        Build logic for **out** task:
+        create output directory (main output of the task)
+        """
+
         # Create output directory
         self.main_output.mkdir(parents=True, exist_ok=True)

@@ -1,3 +1,7 @@
+"""
+Python module for **nmk-base** git related resolvers and builders.
+"""
+
 import os
 import subprocess
 from pathlib import Path
@@ -13,7 +17,18 @@ from nmk_base.common import TemplateBuilder
 
 
 class GitVersionRefresh(NmkTaskBuilder):
+    """
+    Builder for **git.version** task
+    """
+
     def build(self, version: str):
+        """
+        Build logic for **git.version** task:
+        update .gitversion only if it doesn't exist or if its content doesn't match current version.
+
+        :param version: Current build version
+        """
+
         # Check if update is needed
         self.logger.debug(f"New version: {version}")
         do_update = True
@@ -33,7 +48,18 @@ class GitVersionRefresh(NmkTaskBuilder):
 
 
 class GitClean(NmkTaskBuilder):
+    """
+    Builder for **git.clean** task
+    """
+
     def build(self):
+        """
+        Build logic for **git.clean** task:
+        simply run **git clean -fdX** command, and stop build
+
+        :throw: NmkStopHereError to interrupt current build now
+        """
+
         # Full clean, just warn before
         self.logger.warning("Clean all git ignored files; use loadme script to setup the project again")
         subprocess.run(["git", "clean", "-fdX"], cwd=self.model.config[NmkRootConfig.PROJECT_DIR].value, check=True)
@@ -41,7 +67,19 @@ class GitClean(NmkTaskBuilder):
 
 
 class GitVersionResolver(NmkStrConfigResolver):
+    """
+    Resolver for **gitVersion** config item
+    """
+
     def get_value(self, name: str) -> str:
+        """
+        Resolution logic for **gitVersion** config item:
+        call commands to deduce version from last git tag
+
+        :param name: Config item name
+        :returns: Config item value
+        """
+
         # Get version from git
         cwd = self.model.config[NmkRootConfig.PROJECT_DIR].value
         cp = run_with_logs(["git", "describe", "--tags", "--dirty"], cwd=cwd, check=False)
@@ -67,11 +105,27 @@ class GitVersionResolver(NmkStrConfigResolver):
 
 
 class GitFileFragmentUpdater(TemplateBuilder):
+    """
+    Abstract builder for git-related files
+    """
+
     def allow_missing_input(self, missing_input: Path) -> bool:
-        # Allow project root .gitignore/.gitattributes to be missing
+        """
+        Tells nmk that project root .gitignore/.gitattributes can be missing
+
+        :param missing_input: path to missing input
+        :returns: True if this is the task main input (e.g. .gitIgnore)
+        """
         return missing_input == self.main_input
 
     def build_fragment(self, kwargs: Dict[str, str], template: str):
+        """
+        Build fragment to be inserted in file that can be also manually edited
+
+        :param kwargs: keywords for template rendering
+        :param template: Path to generated file template
+        """
+
         # Generate fragment (in stamp file)
         stamp_file = self.outputs[1]
         fragment = self.build_from_template(Path(template), stamp_file, kwargs)
@@ -113,7 +167,17 @@ class GitFileFragmentUpdater(TemplateBuilder):
 
 
 class GitIgnore(GitFileFragmentUpdater):
+    """
+    Builder for **git.ignore** task
+    """
+
     def prepare_ignored_file(self, ignored_file: str) -> str:
+        """
+        Prepare ignored file path by making it relative to project path (is possible)
+
+        :param ignored_file: Path to ignored file
+        :returns: Projet relative path if possible, unchanged input value otherwise
+        """
         p = Path(ignored_file)
 
         # Just prepare ignored absolute project-relative paths
@@ -128,5 +192,10 @@ class GitIgnore(GitFileFragmentUpdater):
         return ignored_file
 
     def build(self, ignored_files: List[str], template: str):
-        # Generate gitignore
+        """
+        Generate .gitignore file fragment from template
+
+        :param ignored_files: List of files to be ignored
+        :param template: Path to generated file template
+        """
         self.build_fragment({"gitIgnoredFiles": list(filter(lambda p: p is not None, map(self.prepare_ignored_file, ignored_files)))}, template)

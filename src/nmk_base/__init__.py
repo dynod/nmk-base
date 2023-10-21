@@ -1,11 +1,22 @@
+"""
+Python module for **nmk-base** plugin code.
+"""
+
 from configparser import ConfigParser
 from pathlib import Path
 
 from pkg_resources import DistributionNotFound, get_distribution
 
 __title__ = "nmk-base"
+"""
+Module name
+"""
+
 try:
     __version__ = get_distribution(__title__).version
+    """
+    Module version, dynamically resolved from installed package
+    """
 except DistributionNotFound:  # pragma: no cover
     # For debug
     try:

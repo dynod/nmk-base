@@ -30,6 +30,7 @@
         "sdist",
         "venv",
         "loadme",
+        "rtype",
         "dynod",
         "nmk",
         "pypi"
