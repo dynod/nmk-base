@@ -9,7 +9,7 @@ config:
 
     # Plugin help links dict
     nmkPluginsDocs:
-        nmk-base: https://github.com/dynod/nmk/wiki/nmk-base-plugin
+        nmk-base: https://nmk-base.readthedocs.io/en/stable
 
     # Some default things about the project
     projectName: MyProject

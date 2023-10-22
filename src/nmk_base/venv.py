@@ -1,4 +1,7 @@
-import re
+"""
+Python module for **nmk-base** venv tasks.
+"""
+
 from pathlib import Path
 from typing import List
 
@@ -7,12 +10,21 @@ from nmk.utils import run_pip
 
 from nmk_base.common import TemplateBuilder
 
-# Pattern for pip list lines
-PIP_LIST_PATTERN = re.compile("^([^ ]+) +([0-9][^ ]*)$")
-
 
 class VenvRequirementsBuilder(TemplateBuilder):
+    """
+    Builder for **py.req** task
+    """
+
     def build(self, file_deps: List[str], template: str):
+        """
+        Build logic for **py.req** task:
+        generates venv requirements file from template.
+
+        :param file_deps: List of requirement files dependencies; merged content will be provided to template as **fileDeps** keyword
+        :param template: Template file used for generation
+        """
+
         file_requirements = []
 
         # Merge all files content
@@ -27,7 +39,18 @@ class VenvRequirementsBuilder(TemplateBuilder):
 
 
 class VenvUpdateBuilder(NmkTaskBuilder):
+    """
+    Builder for **py.venv** task
+    """
+
     def build(self, pip_args: str):
+        """
+        Build logic for **py.venv** task:
+        calls **pip install** with generated requirements file, then **pip freeze** to list all dependencies in secondary output file.
+
+        :param pip_args: Extra arguments to be used when invoking **pip install**
+        """
+
         # Prepare outputs
         venv_folder = self.main_output
         venv_status = self.outputs[1]

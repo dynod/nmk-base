@@ -17,6 +17,10 @@ refs:
     - vscode-plugin:
         remote: github://dynod/nmk-vscode/main
         local: ../vscode
+    - <doc-plugin>/src/nmk_doc/plugin-defs.yml
+    - doc-plugin:
+        remote: github://dynod/nmk-doc/main
+        local: ../doc
     - <workspace>/shared.yml
     - workspace:
         local: ../../../../shared
