@@ -25,6 +25,9 @@ config:
     # Template for .gitignore fragment
     gitIgnoreTemplate: ${BASEDIR}/templates/gitignore
 
+    # Enable dirty check?
+    gitEnableDirtyCheck: false
+
 tasks:
     # To refresh git version stamp file
     git.version:
@@ -62,3 +65,11 @@ tasks:
         params:
             ignored_files: ${gitIgnoredFiles}
             template: ${gitIgnoreTemplate}
+
+    # Check if folder is not dirty after build
+    git.dirty:
+        description: Check for modified files
+        emoji: ":regional_indicator_symbol_letter_g: .:magnifying_glass_tilted_left:"
+        appendToDeps: tests
+        builder: nmk_base.git.GitIsDirty
+        if: ${gitEnableDirtyCheck}

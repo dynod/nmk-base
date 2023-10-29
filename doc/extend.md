@@ -86,3 +86,13 @@ It generates a requirements file (typically a **requirements.txt** file in the p
       - some-generated-folder/
       - some-generated-files.*
   ```
+
+## Dirty check enablement
+
+By default, the **{ref}`git.dirty<git.dirty>`** task is disabled. **`nmk`** projects or plugins may override the **{ref}`gitEnableDirtyCheck<gitEnableDirtyCheck>`** item to implement a logic able to toggle this check in certain conditions (e.g. in automated builds).
+
+Example:
+```yaml
+gitEnableDirtyCheck:
+    __resolver__: path.to.my.resolver
+```

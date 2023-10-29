@@ -141,6 +141,15 @@ Stamp file for generated **`.gitignore`** fragment.
 
 List of files/folders to be added when generating **`.gitignore`** file.
 
+(gitEnableDirtyCheck)=
+### **`gitEnableDirtyCheck`** -- enable git dirty folder check
+
+| Type | Default value |
+|-     |-
+| bool | false
+
+Enablement flag for **{ref}`git.dirty<git.dirty>`** task (disabled by default).
+
 ## Python venv
 
 (venvPkgDeps)=

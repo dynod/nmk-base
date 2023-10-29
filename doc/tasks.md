@@ -222,3 +222,17 @@ It also generates a dump ({ref}`${venvState}<venvState>`) of all installed packa
 | output   | {ref}`${outputDir}<outputDir>` folder
 
 This task simply silently creates the {ref}`${outputDir}<outputDir>` folder. All tasks aiming to create files in this folder should reference this task.
+
+## Test tasks
+
+All tasks in this chapter are dependencies of the main **{ref}`tests<tests>`** task.
+
+(git.dirty)=
+### **`git.dirty`** -- check for dirty project folder
+
+| Property | Value/description |
+|-         |-
+| builder  | {py:class}`nmk_base.git.GitIsDirty`
+| if       | {ref}`${gitEnableDirtyCheck}<gitEnableDirtyCheck>` folder
+
+This task verifies if project folder is dirty (e.g. contains not committed files). In this case, it makes the build failing.
