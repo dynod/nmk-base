@@ -1,8 +1,8 @@
-# Configuration
+# Configuration Reference
 
 The **`nmk-base`** plugin handles the configuration items listed in this page.
 
-All of them are initiliazed with convenient default values, so that you don't need to setup them for a default working behavior. You can anyway override them in your projet if you need to fine tune the plugin behavior.
+All of them are initiliazed with convenient default values, so that you don't need to setup them for a default working behavior. You can anyway override them in your projet if you need to fine tune the plugin behavior. [Some items](extend.md) are specifically designed to be extended by **`nmk`** projects and plugins.
 
 ## Paths and files
 
