@@ -1,4 +1,4 @@
-# Documentation for nmk-doc plugin
+# Documentation for nmk-base plugin
 
 This plugin provides base features for **`nmk`** build, which by design don't need to be part of the **`nmk`** core implementation.
 
@@ -6,8 +6,10 @@ This plugin provides base features for **`nmk`** build, which by design don't ne
 :caption: 'Contents'
 :maxdepth: 2
 usage
-config
 tasks
+dependencies
+extend
+config
 ```
 
 ## Indices and tables

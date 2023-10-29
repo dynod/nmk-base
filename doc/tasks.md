@@ -1,3 +1,4 @@
+(allTasks)=
 # Tasks
 
 The **`nmk-base`** plugin defines the tasks described below.
@@ -15,6 +16,8 @@ The **`setup`** task aims to be the first phase of the build, allowing to perfor
 ### **`build`** task
 
 The **`build`** task shall be used to perform all operation that build temporary and/or artifact files for the current project.
+
+It is the **default** build task (i.e. this is the built task when **`nmk`** is invoked without argument).
 
 It depends on the **{ref}`setup<setup>`** task.
 
@@ -82,6 +85,7 @@ The **`help`** task will list the help page URL of **`nmk`** itself, plus all pl
 > 2022-02-20 14:42:24 (I) nmk 🏁 - Done
 > ```
 
+(tasks)=
 ### **`tasks`** -- list known tasks
 
 | Property | Value/description |
@@ -134,12 +138,12 @@ Note that the generated **`.sh`** script for Linux support is compatible with **
 
 The task execution will zip these lists together to generate the scripts. This supposes that all the lists have the same elements count. If a list is shorter, extra elements in the other lists will be simply ignored.
 
-The generated script will also verify system dependencies before creating the python venv. The dependencies to be verified are set in the {ref}`${loadMeSysDeps}<loadMeSysDeps>` config item. This item is an object, indexed by commands to be checked. Each command defines another object, providing instructions on how to install the command if it's not found. Supported keys are:
+The generated script will also verify system dependencies before creating the python venv. The dependencies to be verified are set in the **{ref}`${loadMeSysDeps}<loadMeSysDeps>`** config item. This item is an object, indexed by commands to be checked. Each command defines another object, providing instructions on how to install the command if it's not found. Supported keys are:
 * **`apt`**: provides a string or a list of string, all being apt package names to be installed (used on Linux)
 * **`url`**: provides an URL string, pointing to instructions on how to install the command (used on Windows)
 
 > Example:
-> ```
+> ```yaml
 > config:
 >     loadMeSysDeps:
 >         python3:

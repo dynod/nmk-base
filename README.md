@@ -18,7 +18,7 @@ This plugin provides base features for **`nmk`** build, which by design don't ne
 ## Usage
 
 To use this plugin in your **`nmk`** project, insert this reference:
-```
+```yaml
 refs:
     - pip://nmk-base!plugin.yml
 ```
