@@ -37,7 +37,7 @@ class TestBasePlugin(NmkBaseTester):
 
     def test_test(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "tests"])
-        self.check_logs(["tests]] INFO 🤞 - Run automated tests", "9 built tasks"], check_order=True)
+        self.check_logs(["tests]] INFO 🤞 - Run automated tests", "10 built tasks"], check_order=True)
 
     def test_loadme(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["loadme"])
@@ -98,6 +98,27 @@ class TestBasePlugin(NmkBaseTester):
         monkeypatch.setattr(subprocess, "run", lambda args, cwd, check: None)
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["git.clean"])
         self.check_logs("Clean all git ignored files")
+
+    def test_git_dirty(self, monkeypatch):
+        # Stub to have "git status" command with empty return
+        monkeypatch.setattr(subprocess, "run", lambda all_args, check, capture_output, text, encoding, cwd: subprocess.CompletedProcess(all_args, 0, "", ""))
+        prj = self.prepare_project("ref_base.yml")
+        self.nmk(prj, extra_args=["git.dirty", "--config", '{"gitEnableDirtyCheck":true}'])
+        self.check_logs("Check for modified files")
+
+        # Stub to have "git status" command with some dirty files
+        monkeypatch.setattr(
+            subprocess,
+            "run",
+            lambda all_args, check, capture_output, text, encoding, cwd: subprocess.CompletedProcess(
+                all_args, 0, " M src/nmk_base/git.py\n M src/nmk_base/git.yml", ""
+            ),
+        )
+        self.nmk(
+            prj,
+            extra_args=["git.dirty", "--config", '{"gitEnableDirtyCheck":true}'],
+            expected_error="An error occurred during task git.dirty build: Current folder is dirty:",
+        )
 
     def test_venv_merged_requirements(self):
         # Prepare some fake files

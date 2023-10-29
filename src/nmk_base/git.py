@@ -199,3 +199,17 @@ class GitIgnore(GitFileFragmentUpdater):
         :param template: Path to generated file template
         """
         self.build_fragment({"gitIgnoredFiles": list(filter(lambda p: p is not None, map(self.prepare_ignored_file, ignored_files)))}, template)
+
+
+class GitIsDirty(NmkTaskBuilder):
+    """
+    Builder for **git.dirty** task
+    """
+
+    def build(self):
+        """
+        Build logic for **git.dirty** task: verifies if **git status --porcelain** output is empty
+        """
+        cwd = self.model.config[NmkRootConfig.PROJECT_DIR].value
+        status_output = run_with_logs(["git", "status", "--porcelain"], cwd=cwd).stdout.splitlines(keepends=False)
+        assert len(status_output) == 0, "Current folder is dirty:\n" + "\n".join(status_output)
