@@ -3,7 +3,7 @@ Python module for **nmk-base** utility classes.
 """
 
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from jinja2 import Environment, Template, meta
 from nmk.model.builder import NmkTaskBuilder
@@ -14,14 +14,6 @@ class TemplateBuilder(NmkTaskBuilder):
     """
     Common builder logic to generate files from templates
     """
-
-    def get_windows_endings_files(self) -> List[str]:
-        """
-        Get file extensions typically known to use Windows line endings (CR+LF)
-
-        :return: List of file extensions
-        """
-        return [".bat"]
 
     def relative_path(self, v: str) -> str:
         """
@@ -95,9 +87,23 @@ class TemplateBuilder(NmkTaskBuilder):
         :throw: AssertionError if unknown keyword is referenced in template
         """
 
+        # By default, keep system-defined line endings
+        line_endings = None
+        if output.suffix is not None:  # pragma: no branch
+            # Check for forced line endings
+            suffix = output.suffix.lower()
+
+            if suffix in self.model.config["linuxLineEndings"].value:
+                # Always generate with Linux line endings
+                line_endings = "\n"
+
+            if suffix in self.model.config["windowsLineEndings"].value:  # pragma: no branch
+                # Always generate with Windows line endings
+                line_endings = "\r\n"  # pragma: no cover
+
         # Load template
         self.logger.debug(f"Generating {output} from template {template}")
-        with output.open("w", newline="\r\n" if (output.suffix is not None and output.suffix.lower() in self.get_windows_endings_files()) else "\n") as o:
+        with output.open("w", newline=line_endings) as o:
             # Render it
             out = self.render_template(template, kwargs)
             o.write(out)

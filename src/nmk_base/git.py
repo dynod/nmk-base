@@ -201,6 +201,22 @@ class GitIgnore(GitFileFragmentUpdater):
         self.build_fragment({"gitIgnoredFiles": list(filter(lambda p: p is not None, map(self.prepare_ignored_file, ignored_files)))}, template)
 
 
+class GitAttributes(GitFileFragmentUpdater):
+    """
+    Builder for **git.attributes** task
+    """
+
+    def build(self, template: str):
+        """
+        Generate .gitattributes file fragment from template
+
+        :param template: Path to generated file template
+        """
+
+        # Generate gitattributes
+        self.build_fragment({}, template)
+
+
 class GitIsDirty(NmkTaskBuilder):
     """
     Builder for **git.dirty** task

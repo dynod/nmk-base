@@ -141,6 +141,51 @@ Stamp file for generated **`.gitignore`** fragment.
 
 List of files/folders to be added when generating **`.gitignore`** file.
 
+(gitAttributes)=
+### **`gitAttributes`** -- generated .gitattributes file
+
+| Type      | Default value |
+|-          |-
+| str  | "${PROJECTDIR}/.gitattributes"
+
+Target generated **`.gitattributes`** file.
+
+(gitAttributesTemplate)=
+### **`gitAttributesTemplate`** -- .gitattributes template file
+
+| Type      | Default value |
+|-          |-
+| str  | "${BASEDIR}/templates/gitattributes"
+
+Template used by **{ref}`git.attributes<git.attributes>`** task to generate **`.gitattributes`** fragment.
+
+(gitAttributesStamp)=
+### **`gitAttributesStamp`** -- .gitattributes generated stamp file
+
+| Type | Default value |
+|-     |-
+| str  | {ref}`${outputDir}<outputDir>`/.gitattributes
+
+Stamp file for generated **`.gitattributes`** fragment.
+
+(linuxLineEndings)=
+### **`linuxLineEndings`** -- files with Linux line endings
+
+| Type      | Default value |
+|-          |-
+| List[str] | [ ".sh" ]
+
+List of files extensions (".xxx" format) with Linux line endings; will be declared with "**text eol=lf**" attribute in generated **`.gitattributes`** fragment.
+
+(windowsLineEndings)=
+### **`windowsLineEndings`** -- files with Windows line endings
+
+| Type      | Default value |
+|-          |-
+| List[str] | [ ".bat", ".cmd" ]
+
+List of files extensions (".xxx" format) with Windows line endings; will be declared with "**text eol=crlf**" attribute in generated **`.gitattributes`** fragment.
+
 (gitEnableDirtyCheck)=
 ### **`gitEnableDirtyCheck`** -- enable git dirty folder check
 
