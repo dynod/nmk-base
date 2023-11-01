@@ -179,6 +179,19 @@ Notes:
 * Project-relative paths are automatically made relative to project root.
 * Non project-relative absolute paths are ignored when generating the fragment.
 
+(git.attributes)=
+### **`git.attributes`** -- generate .gitattributes file
+
+| Property | Value/description |
+|-         |-
+| builder  | {py:class}`nmk_base.git.GitAttributes`
+| output   | {ref}`${gitAttributes}<gitAttributes>` & {ref}`${gitAttributesStamp}<gitAttributesStamp>` files
+| deps     | {ref}`out<out>` task
+
+This task is used to update the {ref}`${gitAttributes}<gitAttributes>` file with a fragment generated from the following config items:
+* {ref}`${linuxLineEndings}<linuxLineEndings>`: list of file extensions (".xxx" format) requiring to be systematically handled with Linux line endings
+* {ref}`${windowsLineEndings}<windowsLineEndings>`: list of file extensions (".xxx" format) requiring to be systematically handled with Windows line endings
+
 (py.req)=
 ### **`py.req`** -- generate python venv requirements file
 

@@ -87,6 +87,23 @@ It generates a requirements file (typically a **requirements.txt** file in the p
       - some-generated-files.*
   ```
 
+## Line endings handling
+
+**`nmk`** projects or plugins that want to identify some file types for which the line endings must be kept can contribute to the following items:
+
+* **{ref}`linuxLineEndings<linuxLineEndings>`**: list of file extensions which must be kept with Linux line endings.
+  Example:
+  ```yaml
+  linuxLineEndings:
+      - .csh
+  ```
+* **{ref}`windowsLineEndings<windowsLineEndings>`**: list of file extensions which must be kept with Windows line endings.
+  Example:
+  ```yaml
+  windowsLineEndings:
+      - .ps
+  ```
+
 ## Dirty check enablement
 
 By default, the **{ref}`git.dirty<git.dirty>`** task is disabled. **`nmk`** projects or plugins may override the **{ref}`gitEnableDirtyCheck<gitEnableDirtyCheck>`** item to implement a logic able to toggle this check in certain conditions (e.g. in automated builds).
