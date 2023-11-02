@@ -50,15 +50,15 @@ class TestBasePlugin(NmkBaseTester):
 
     def test_version(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["version"])
-        self.check_logs(f" 👉 nmk: {nmk_version}")
+        self.check_logs(f" 👉 nmk     : {nmk_version}")
 
     def test_help(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["help"])
-        self.check_logs(" 👉 nmk: https://github.com/dynod/nmk/wiki")
+        self.check_logs(" 👉 nmk     : https://github.com/dynod/nmk/wiki")
 
     def test_tasks(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["tasks"])
-        self.check_logs(" 👉 tasks: List all available tasks")
+        self.check_logs(" 👉 tasks         : 🗃  - List all available tasks")
 
     def test_git_version_config(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--print", "gitVersion"])
