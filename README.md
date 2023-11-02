@@ -25,7 +25,7 @@ refs:
 
 ## Documentation
 
-This plugin documentation is available [here](https://nmk-base.readthedocs.io/en/stable)
+This plugin documentation is available [here](https://nmk-base.readthedocs.io/)
 
 ## Issues
 

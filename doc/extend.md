@@ -57,6 +57,22 @@ It generates a requirements file (typically a **requirements.txt** file in the p
       - ${PROJECTDIR}/test-requirements.txt
   ```
 
+## Project information
+
+**`nmk`** plugins or project can override to the following items to give information about the project:
+
+* **{ref}`projectName<projectName>`**: string giving the name of the project
+  Example:
+  ```yaml
+  projectName: MyAwesomeProject
+  ```
+
+* **{ref}`projectAuthor<projectAuthor>`**: string giving the author of the project
+  Example:
+  ```yaml
+  projectAuthor: The project team name
+  ```
+
 ## Plugin information
 
 **`nmk`** plugins can contribute to the following items to give version/doc information:
