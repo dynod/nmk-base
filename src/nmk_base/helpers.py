@@ -9,7 +9,27 @@ from nmk.model.builder import NmkTaskBuilder
 from rich.emoji import Emoji
 
 
-class VersionBuilder(NmkTaskBuilder):
+class InfoBuilder(NmkTaskBuilder):
+    """
+    Common implementation for information display tasks
+    """
+
+    def display_info(self, info: Dict[str, str]):
+        """
+        Iterate on information dictionnary content, and display it with aligned colons
+
+        :param info: Information dictionnary
+        """
+
+        # Prepare spaces padding
+        max_len = max([len(n) for n in info.keys()])
+
+        # Display all information
+        for name, version in info.items():
+            self.logger.info(self.task.emoji, f" {Emoji('backhand_index_pointing_right')} {name}{' '*(max_len-len(name))}: {version}")
+
+
+class VersionBuilder(InfoBuilder):
     """
     Builder implementation for **version** task
     """
@@ -22,14 +42,13 @@ class VersionBuilder(NmkTaskBuilder):
         :param plugins: Map of plugins versions
         """
 
-        # Displays all versions
+        # Display all versions
         all_versions = {"nmk": __version__}
         all_versions.update(plugins)
-        for name, version in all_versions.items():
-            self.logger.info(self.task.emoji, f" {Emoji('backhand_index_pointing_right')} {name}: {version}")
+        self.display_info(all_versions)
 
 
-class HelpBuilder(NmkTaskBuilder):
+class HelpBuilder(InfoBuilder):
     """
     Builder implementation for **help** task
     """
@@ -45,11 +64,10 @@ class HelpBuilder(NmkTaskBuilder):
         # Displays all online help links
         all_links = {"nmk": "https://github.com/dynod/nmk/wiki"}
         all_links.update(links)
-        for name, link in all_links.items():
-            self.logger.info(self.task.emoji, f" {Emoji('backhand_index_pointing_right')} {name}: {link}")
+        self.display_info(all_links)
 
 
-class TaskListBuilder(NmkTaskBuilder):
+class TaskListBuilder(InfoBuilder):
     """
     Builder implementation for **tasks** task
     """
@@ -61,5 +79,5 @@ class TaskListBuilder(NmkTaskBuilder):
         """
 
         # Iterate on all model tasks
-        for name, task in ((k, self.model.tasks[k]) for k in sorted(self.model.tasks.keys())):
-            self.logger.info(task.emoji, f" {Emoji('backhand_index_pointing_right')} {name}: {task.description}")
+        all_tasks = {k: f"{self.model.tasks[k].emoji} - {self.model.tasks[k].description}" for k in sorted(self.model.tasks.keys())}
+        self.display_info(all_tasks)
