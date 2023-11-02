@@ -46,3 +46,6 @@ config:
     # Github issues logged in nmk project
     githubIssuesRepo: nmk
     githubIssuesLabel: "plugin:base"
+
+    # Minor version increment
+    docVersionIncrement: "0.0.1"

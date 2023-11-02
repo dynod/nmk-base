@@ -9,7 +9,7 @@ config:
 
     # Plugin help links dict
     nmkPluginsDocs:
-        nmk-base: https://nmk-base.readthedocs.io/en/stable
+        nmk-base: https://nmk-base.readthedocs.io/
 
     # Some default things about the project
     projectName: MyProject

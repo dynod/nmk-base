@@ -25,6 +25,24 @@ Output folder used to generate build artifacts, temporary files, tools reports, 
 
 ## Helper contributions
 
+(projectName)=
+### **`projectName`** -- project name
+
+| Type          | Default value |
+|-              |-
+| str | MyProject
+
+Name of the project
+
+(projectAuthor)=
+### **`projectAuthor`** -- project author
+
+| Type          | Default value |
+|-              |-
+| str | "Project Author"
+
+Author of the project
+
 (nmkPluginsVersions)=
 ### **`nmkPluginsVersions`** -- referenced plugins versions
 
