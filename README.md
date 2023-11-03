@@ -10,7 +10,7 @@ Base plugin for nmk build system
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Flake8 analysis result](https://img.shields.io/badge/flake8-0-green)](https://flake8.pycqa.org/)
 [![Code coverage](https://img.shields.io/codecov/c/github/dynod/nmk-base)](https://app.codecov.io/gh/dynod/nmk-base)
-[![Documentation Status](https://readthedocs.org/projects/nmk-base/badge/?version=stable)](https://nmk-base.readthedocs.io/en/stable/?badge=stable)
+[![Documentation Status](https://readthedocs.org/projects/nmk-base/badge/?version=stable)](https://nmk-base.readthedocs.io/)
 <!-- NMK-BADGES-END -->
 
 This plugin provides base features for **`nmk`** build, which by design don't need to be part of the **`nmk`** core implementation.

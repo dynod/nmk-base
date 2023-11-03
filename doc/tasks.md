@@ -197,7 +197,7 @@ This task is used to update the {ref}`${gitAttributes}<gitAttributes>` file with
 
 | Property | Value/description |
 |-         |-
-| builder  | {py:class}`nmk_base.venv.VenvRequirementsBuilder`
+| builder  | {py:class}`nmk_base.common.TemplateBuilder`
 | input    | {ref}`${venvArchiveDeps}<venvArchiveDeps>` & {ref}`${venvFileDeps}<venvFileDeps>` & {ref}`${venvRequirementsTemplate}<venvRequirementsTemplate>` files
 | output   | ${PROJECTDIR}/{ref}`${venvRequirements}<venvRequirements>` file
 
@@ -231,7 +231,7 @@ It also generates a dump ({ref}`${venvState}<venvState>`) of all installed packa
 
 | Property | Value/description |
 |-         |-
-| builder  | {py:class}`nmk_base.output.OutputMkdir`
+| builder  | {py:class}`nmk_base.common.MkdirBuilder`
 | output   | {ref}`${outputDir}<outputDir>` folder
 
 This task simply silently creates the {ref}`${outputDir}<outputDir>` folder. All tasks aiming to create files in this folder should reference this task.

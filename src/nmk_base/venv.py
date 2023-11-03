@@ -6,36 +6,30 @@ from pathlib import Path
 from typing import List
 
 from nmk.model.builder import NmkTaskBuilder
+from nmk.model.resolver import NmkListConfigResolver
 from nmk.utils import run_pip
 
-from nmk_base.common import TemplateBuilder
 
-
-class VenvRequirementsBuilder(TemplateBuilder):
+class FileDepsContentResolver(NmkListConfigResolver):
     """
-    Builder for **py.req** task
+    Resolver class for **venvFileDepsContent** config item
     """
 
-    def build(self, file_deps: List[str], template: str):
+    def get_value(self, name: str) -> List[str]:
         """
-        Build logic for **py.req** task:
-        generates venv requirements file from template.
-
-        :param file_deps: List of requirement files dependencies; merged content will be provided to template as **fileDeps** keyword
-        :param template: Template file used for generation
+        Resolution logic: merge content from files listed in **venvFileDeps** config item
         """
 
         file_requirements = []
 
         # Merge all files content
-        for req_file in map(Path, file_deps):
+        for req_file in map(Path, self.model.config["venvFileDeps"].value):
             with req_file.open() as f:
                 # Append file content + one empty line
                 file_requirements.extend(f.read().splitlines(keepends=False))
                 file_requirements.append("")
 
-        # Write merged requirements file
-        self.build_from_template(Path(template), self.main_output, {"fileDeps": file_requirements})
+        return file_requirements
 
 
 class VenvUpdateBuilder(NmkTaskBuilder):

@@ -12,7 +12,7 @@ from nmk.model.keys import NmkRootConfig
 
 class TemplateBuilder(NmkTaskBuilder):
     """
-    Common builder logic to generate files from templates
+    Generic builder logic to generate files from templates
     """
 
     def relative_path(self, v: str) -> str:
@@ -108,3 +108,28 @@ class TemplateBuilder(NmkTaskBuilder):
             out = self.render_template(template, kwargs)
             o.write(out)
             return out
+
+    def build(self, template: str):
+        """
+        Default build behavior: generate main output file from provided template
+
+        :param template: Path to the Jinja template to use for generation
+        """
+
+        # Just build from template
+        self.build_from_template(Path(template), self.main_output, {})
+
+
+class MkdirBuilder(NmkTaskBuilder):
+    """
+    Generic builder logic to create directory
+    """
+
+    def build(self):
+        """
+        Build logic:
+        create output directory (main output of the task)
+        """
+
+        # Create directory
+        self.main_output.mkdir(parents=True, exist_ok=True)
