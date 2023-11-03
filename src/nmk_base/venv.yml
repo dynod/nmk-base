@@ -9,6 +9,10 @@ config:
     # Venv requirement files list
     venvFileDeps: []
 
+    # Venv requirement files merged content
+    venvFileDepsContent:
+        __resolver__: nmk_base.venv.FileDepsContentResolver
+
     # Venv folder name
     venvName: venv
 
@@ -40,9 +44,8 @@ tasks:
             - ${venvRequirementsTemplate}
         output: ${PROJECTDIR}/${venvRequirements}
         params:
-            file_deps: ${venvFileDeps}
             template: ${venvRequirementsTemplate}
-        builder: nmk_base.venv.VenvRequirementsBuilder
+        builder: nmk_base.common.TemplateBuilder
 
     # Update venv from dependencies
     py.venv:

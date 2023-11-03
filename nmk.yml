@@ -47,5 +47,5 @@ config:
     githubIssuesRepo: nmk
     githubIssuesLabel: "plugin:base"
 
-    # Minor version increment
-    docVersionIncrement: "0.0.1"
+    # Next version increment
+    docVersionIncrement: "0.1.0"

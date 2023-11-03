@@ -23,5 +23,5 @@ tasks:
         description: Create output folder
         emoji: file_folder
         silent: true
-        builder: nmk_base.output.OutputMkdir
+        builder: nmk_base.common.MkdirBuilder
         output: ${outputDir}
