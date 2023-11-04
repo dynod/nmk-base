@@ -7,8 +7,6 @@ from pathlib import Path
 
 from nmk.model.builder import NmkTaskBuilder
 
-from nmk_base.common import MkdirBuilder
-
 
 class CleanBuilder(NmkTaskBuilder):
     """
@@ -32,7 +30,3 @@ class CleanBuilder(NmkTaskBuilder):
         else:
             # Nothing to clean
             self.logger.debug(f"Nothing to clean (folder not found: {to_delete})")
-
-
-# Deprecated class, may be removed from next version
-OutputMkdir = MkdirBuilder
