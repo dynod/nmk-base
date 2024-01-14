@@ -28,6 +28,13 @@ The **`tests`** task shall be used to perform all automated testing operations o
 
 It depends on the **{ref}`build<build>`** task.
 
+(publish)=
+### **`publish`** task
+
+The **`publish`** task shall be used to publish built artifacts where they should be stored, as decided by the project.
+
+It depends on the **{ref}`build<build>`** task.
+
 ## Cleaning tasks
 
 ### **`clean`** -- output cleaning
