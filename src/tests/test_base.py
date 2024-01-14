@@ -1,4 +1,5 @@
 # Tests for base plugin
+import os
 import re
 import shutil
 import subprocess
@@ -244,3 +245,26 @@ class TestBasePlugin(NmkBaseTester):
         assert (self.test_folder / "buildenv.cmd").is_file()
         assert (self.test_folder / "buildenv-loader.py").is_file()
         assert (fake_venv_activate / "01_nmk.sh").is_file()
+
+    def test_dirty_check(self):
+        # Get current value
+        already_in_ci = "CI" in os.environ
+        if already_in_ci:
+            old_value = os.environ["CI"]
+            del os.environ["CI"]
+
+        # Without CI env var
+        p = self.prepare_project("ref_base.yml")
+        self.nmk(p, extra_args=["--print", "gitEnableDirtyCheck"])
+        self.check_logs('Config dump: { "gitEnableDirtyCheck": false }')
+
+        # With CI env var
+        os.environ["CI"] = "true"
+        self.nmk(p, extra_args=["--print", "gitEnableDirtyCheck"])
+        self.check_logs('Config dump: { "gitEnableDirtyCheck": true }')
+
+        # Restore environment
+        if already_in_ci:
+            os.environ["CI"] = old_value
+        else:
+            del os.environ["CI"]
