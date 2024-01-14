@@ -20,3 +20,10 @@ tasks:
         emoji: crossed_fingers
         deps:
             - build
+
+    # Main publish task, once build is done
+    publish:
+        description: Publish artifacts
+        emoji: delivery_truck
+        deps:
+            - build
