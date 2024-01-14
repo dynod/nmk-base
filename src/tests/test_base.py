@@ -1,13 +1,16 @@
 # Tests for base plugin
 import re
+import shutil
 import subprocess
 import time
 from pathlib import Path
 
 from nmk import __version__ as nmk_version
 from nmk.tests.tester import NmkBaseTester
+from nmk.utils import is_windows
 
 from nmk_base import __version__
+from nmk_base.buildenv import BuildenvInitBuilder
 
 
 class TestBasePlugin(NmkBaseTester):
@@ -39,15 +42,6 @@ class TestBasePlugin(NmkBaseTester):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "tests"])
         self.check_logs(["tests]] INFO 🤞 - Run automated tests", "11 built tasks"], check_order=True)
 
-    def test_loadme(self):
-        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["loadme"])
-
-        # Check generated Linux loadme
-        loadme = self.test_folder / "loadme.sh"
-        assert loadme.is_file()
-        with loadme.open() as f:
-            assert "${PYTHON_EXE} -m venv venv" in f.read()
-
     def test_version(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["version"])
         self.check_logs(f" 👉 nmk     : {nmk_version}")
@@ -70,7 +64,7 @@ class TestBasePlugin(NmkBaseTester):
         monkeypatch.setattr(
             subprocess,
             "run",
-            lambda all_args, check, capture_output, text, encoding, cwd: subprocess.CompletedProcess(all_args, 1, "", "")
+            lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(all_args, 1, "", "")
             if all_args[:3] == ["git", "describe", "--tags"]
             else real_run(all_args, check=check, capture_output=capture_output, text=text, encoding=encoding, cwd=cwd),
         )
@@ -79,7 +73,9 @@ class TestBasePlugin(NmkBaseTester):
 
     def test_git_version_config_no_git(self, monkeypatch):
         # Fake git subprocess behavior, to make all "git" commands failing
-        monkeypatch.setattr(subprocess, "run", lambda all_args, check, capture_output, text, encoding, cwd: subprocess.CompletedProcess(all_args, 1, "", ""))
+        monkeypatch.setattr(
+            subprocess, "run", lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(all_args, 1, "", "")
+        )
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--print", "gitVersion"])
         self.check_logs('Config dump: { "gitVersion": "0.0.0" }')
 
@@ -101,7 +97,9 @@ class TestBasePlugin(NmkBaseTester):
 
     def test_git_dirty(self, monkeypatch):
         # Stub to have "git status" command with empty return
-        monkeypatch.setattr(subprocess, "run", lambda all_args, check, capture_output, text, encoding, cwd: subprocess.CompletedProcess(all_args, 0, "", ""))
+        monkeypatch.setattr(
+            subprocess, "run", lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(all_args, 0, "", "")
+        )
         prj = self.prepare_project("ref_base.yml")
         self.nmk(prj, extra_args=["git.dirty", "--config", '{"gitEnableDirtyCheck":true}'])
         self.check_logs("Check for modified files")
@@ -110,7 +108,7 @@ class TestBasePlugin(NmkBaseTester):
         monkeypatch.setattr(
             subprocess,
             "run",
-            lambda all_args, check, capture_output, text, encoding, cwd: subprocess.CompletedProcess(
+            lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(
                 all_args, 0, " M src/nmk_base/git.py\n M src/nmk_base/git.yml", ""
             ),
         )
@@ -146,7 +144,7 @@ class TestBasePlugin(NmkBaseTester):
         monkeypatch.setattr(
             subprocess,
             "run",
-            lambda all_args, check, capture_output, text, encoding, cwd: subprocess.CompletedProcess(
+            lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(
                 all_args, 0, "# Fake packages list\nsomePackage==1.2.3", ""
             ),
         )
@@ -214,3 +212,31 @@ class TestBasePlugin(NmkBaseTester):
         assert gitattributes.is_file()
         assert (self.test_folder / "out" / ".gitattributes").is_file()
         self.check_logs("Create new .gitattributes file")
+
+    def test_buildenv_init(self, monkeypatch):
+        # Fake pip subprocess behavior
+        monkeypatch.setattr(
+            subprocess,
+            "run",
+            lambda all_args, check, capture_output, text=False, encoding="utf-8", cwd=None, errors=None: subprocess.CompletedProcess(
+                all_args, 0, "# Fake packages list\nsomePackage==1.2.3", ""
+            ),
+        )
+
+        # Fake venv path
+        fake_venv = self.test_folder / "fakeVenv"
+        if fake_venv.is_dir():
+            shutil.rmtree(fake_venv)
+        fake_venv_bin = fake_venv / ("Scripts" if is_windows() else "bin")
+        fake_venv_activate = fake_venv_bin / "activate.d"
+        fake_venv_activate.mkdir(parents=True, exist_ok=True)
+        (fake_venv_activate / "00_init.sh").touch()
+        (fake_venv_activate / "00_init.bat").touch()
+        monkeypatch.setattr(BuildenvInitBuilder, "_venv_bin_path", lambda _: fake_venv_bin)
+
+        # Force buildend loading scripts
+        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["buildenv", "--config", '{"buildenvInitForce": true}'])
+        assert (self.test_folder / "buildenv.sh").is_file()
+        assert (self.test_folder / "buildenv.cmd").is_file()
+        assert (self.test_folder / "buildenv-loader.py").is_file()
+        assert (fake_venv_activate / "01_nmk.sh").is_file()

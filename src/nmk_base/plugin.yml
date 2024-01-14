@@ -4,6 +4,6 @@ refs:
     - git.yml       # Git version/requirement
     - output.yml    # Output dir/clean
     - tasks.yml     # Meta tasks definition
-    - loadme.yml    # Loadme scripts generation
     - helpers.yml   # Some "helper" tasks (version, help, etc...)
     - venv.yml      # Python venv handling
+    - buildenv.yml  # Refresh buildenv files

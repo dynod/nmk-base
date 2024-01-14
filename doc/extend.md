@@ -6,32 +6,11 @@ As for all **`nmk`** projects config items, [**`nmk-base`** ones](config.md) are
 
 The **`nmk-base`** plugin allows to declare and install different kind of dependencies in an **`nmk`** project.
 
-### System dependencies
-
-The **`nmk-base`** plugin generates a **`loadme.sh`** script in the root folder of an **`nmk`** project (see the {ref}`loadme<loadme>` task).
-
-This shell script verifies if required system dependencies are installed. Depending on the current OS, if a dependency is not found :
-* on Linux (Debian-like distributions), the script will trigger the corresponding package install using **`apt install`** command.
-* on Windows, the script will display the URL from which this dependency can be manually installed and stop.
-
-In order to add system dependencies to be verified by this script, the **{ref}`loadMeSysDeps<loadMeSysDeps>`** config item can be extended by **`nmk`** projects or plugins. This item syntax is described below:
-```yaml
-    loadMeSysDeps:
-        COMMAND:
-            apt: ["PACKAGE"]
-            url: https://someurl.org/
-```
-
-With:
-* **COMMAND** being the dependency command that is expected on the system path (e.g. by checking **`which COMMAND`** command return)
-* **apt** being a list of Linux packages to be installed with **`apt install`** command
-* **url** being the URL of the download page for this system dependency
-
 ### Python modules dependencies
 
 The **`nmk-base`** plugin handles a Python virtual environment ("**venv**") for **`nmk`** projects.
 It generates a requirements file (typically a **requirements.txt** file in the project root folder), and handles the **venv** lifecycle:
-* The **`loadme.sh`** script creates the **venv** if it doesn't exist yet
+* The **`buildenv`** tool creates the **venv** if it doesn't exist yet
 * The **{ref}`py.venv<py.venv>`** task maintains it up to date by adding new requirements when project files are updated.
 
 **`nmk`** projects or plugins can extend the following config items to declare Python modules dependencies to be installed in the **venv**:

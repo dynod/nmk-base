@@ -1,10 +1,4 @@
 config:
-    # Needs git CLI tool
-    loadMeSysDeps:
-        git:
-            apt: git
-            url: https://git-scm.com/downloads
-
     # The git version itself
     gitVersion:
         __resolver__: nmk_base.git.GitVersionResolver

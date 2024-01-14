@@ -21,6 +21,7 @@ setuptools
 wheel
 Jinja2
 nmk
+buildenv
 pytest-xdist
 pytest-cov
 pytest-multilog

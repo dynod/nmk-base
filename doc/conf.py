@@ -7,7 +7,7 @@
 
 # Project information
 project = "nmk-base"
-copyright = "2023, The dynod project"
+copyright = "2024, The dynod project"
 author = "The dynod project"
 
 # Extensions configuration
