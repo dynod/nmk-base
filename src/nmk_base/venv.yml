@@ -22,7 +22,7 @@ config:
     # Venv state file
     venvState: ${outputDir}/requirements.txt
 
-    # pip extra args when building/updating venv
+    # Deprecated, will be removed in future version
     venvPipArgs: ""
 
     # Template for merged requirements file
@@ -60,5 +60,3 @@ tasks:
             - ${venvState}
         input: ${PROJECTDIR}/${venvRequirements}
         builder: nmk_base.venv.VenvUpdateBuilder
-        params:
-            pip_args: ${venvPipArgs}

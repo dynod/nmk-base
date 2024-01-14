@@ -61,7 +61,7 @@ class GitClean(NmkTaskBuilder):
         """
 
         # Full clean, just warn before
-        self.logger.warning("Clean all git ignored files; use loadme script to setup the project again")
+        self.logger.warning("Clean all git ignored files; use buildenv script to setup the project again")
         subprocess.run(["git", "clean", "-fdX"], cwd=self.model.config[NmkRootConfig.PROJECT_DIR].value, check=True)
         raise NmkStopHereError()
 

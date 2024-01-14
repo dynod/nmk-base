@@ -37,7 +37,7 @@ class VenvUpdateBuilder(NmkTaskBuilder):
     Builder for **py.venv** task
     """
 
-    def build(self, pip_args: str):
+    def build(self, pip_args: str = ""):
         """
         Build logic for **py.venv** task:
         calls **pip install** with generated requirements file, then **pip freeze** to list all dependencies in secondary output file.
@@ -51,11 +51,9 @@ class VenvUpdateBuilder(NmkTaskBuilder):
 
         # Call pip and touch output folder
         run_pip(
-            ["install"]
-            + (["-r"] if self.main_input.suffix == ".txt" else [])
-            + [str(self.main_input)]
-            + (pip_args.strip().split(" ") if len(pip_args) else []),
+            ["install"] + (["-r"] if self.main_input.suffix == ".txt" else []) + [str(self.main_input)],
             logger=self.logger,
+            extra_args=pip_args + " " + self.model.pip_args,
         )
         venv_folder.touch()
 

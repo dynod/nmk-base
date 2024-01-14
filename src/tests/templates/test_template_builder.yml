@@ -1,0 +1,23 @@
+refs:
+    - pip://nmk-base!plugin.yml
+
+tasks:
+    sample.sh:
+        description: Sample task for template builder (sh output)
+        emoji: rocket
+        deps:
+          - out
+        output: ${outputDir}/generated.sh
+        params:
+            template: ${BASEDIR}/sample.jinja
+        builder: nmk_base.common.TemplateBuilder
+
+    sample.bat:
+        description: Sample task for template builder (bat output)
+        emoji: rocket
+        deps:
+          - out
+        output: ${outputDir}/generated.bat
+        params:
+            template: ${BASEDIR}/sample.jinja
+        builder: nmk_base.common.TemplateBuilder

@@ -97,9 +97,9 @@ class TemplateBuilder(NmkTaskBuilder):
                 # Always generate with Linux line endings
                 line_endings = "\n"
 
-            if suffix in self.model.config["windowsLineEndings"].value:  # pragma: no branch
+            if suffix in self.model.config["windowsLineEndings"].value:
                 # Always generate with Windows line endings
-                line_endings = "\r\n"  # pragma: no cover
+                line_endings = "\r\n"
 
         # Load template
         self.logger.debug(f"Generating {output} from template {template}")
