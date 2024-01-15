@@ -2,6 +2,7 @@
 Python module for **buildenv** extension and tasks
 """
 
+import os
 import subprocess
 import sys
 from argparse import Namespace
@@ -12,6 +13,9 @@ from nmk.model.builder import NmkTaskBuilder
 from nmk.model.keys import NmkRootConfig
 
 from nmk_base import __version__
+
+# Environment var to avoid "nmk in nmk" inception
+_ENV_VAR_NMK_IS_RUNNING = "NMK_IS_RUNNING"
 
 
 class BuildEnvInit(BuildEnvExtension):
@@ -34,9 +38,11 @@ class BuildEnvInit(BuildEnvExtension):
 
         # Check for nmk project file
         prj = self.manager.project_path / "nmk.yml"
-        if prj.is_file():
-            # Run "nmk setup"
-            subprocess.run([Path(sys.executable).parent / "nmk", "setup"], check=True, cwd=self.manager.project_path)
+        if prj.is_file() and os.getenv(_ENV_VAR_NMK_IS_RUNNING) is None:
+            # Run "nmk setup" with amended env
+            patched_env = dict(os.environ)
+            patched_env[_ENV_VAR_NMK_IS_RUNNING] = "1"
+            subprocess.run([Path(sys.executable).parent / "nmk", "setup"], check=True, cwd=self.manager.project_path, env=patched_env)
 
     def get_version(self) -> str:
         """

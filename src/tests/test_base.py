@@ -223,7 +223,7 @@ class TestBasePlugin(NmkBaseTester):
         monkeypatch.setattr(
             subprocess,
             "run",
-            lambda all_args, check=False, capture_output=False, text=False, encoding="utf-8", cwd=None, errors=None: subprocess.CompletedProcess(
+            lambda all_args, check=False, capture_output=False, text=False, encoding="utf-8", cwd=None, errors=None, env=None: subprocess.CompletedProcess(
                 all_args, 0, "# Fake packages list\nsomePackage==1.2.3", ""
             ),
         )
