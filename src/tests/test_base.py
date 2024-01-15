@@ -223,7 +223,7 @@ class TestBasePlugin(NmkBaseTester):
         monkeypatch.setattr(
             subprocess,
             "run",
-            lambda all_args, check, capture_output, text=False, encoding="utf-8", cwd=None, errors=None: subprocess.CompletedProcess(
+            lambda all_args, check=False, capture_output=False, text=False, encoding="utf-8", cwd=None, errors=None: subprocess.CompletedProcess(
                 all_args, 0, "# Fake packages list\nsomePackage==1.2.3", ""
             ),
         )
@@ -239,12 +239,15 @@ class TestBasePlugin(NmkBaseTester):
         (fake_venv_activate / "00_init.bat").touch()
         monkeypatch.setattr(BuildenvInitBuilder, "_venv_bin_path", lambda _: fake_venv_bin)
 
-        # Force buildend loading scripts
+        # Force buildenv loading scripts
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["buildenv", "--config", '{"buildenvInitForce": true}'])
         assert (self.test_folder / "buildenv.sh").is_file()
         assert (self.test_folder / "buildenv.cmd").is_file()
         assert (self.test_folder / "buildenv-loader.py").is_file()
-        assert (fake_venv_activate / "01_nmk.sh").is_file()
+
+        # Touch a fake project file, and try again
+        (self.test_folder / "nmk.yml").touch()
+        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["buildenv", "--config", '{"buildenvInitForce": true}'])
 
     def test_dirty_check(self):
         # Get current value

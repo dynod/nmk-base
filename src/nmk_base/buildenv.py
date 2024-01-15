@@ -2,6 +2,7 @@
 Python module for **buildenv** extension and tasks
 """
 
+import subprocess
 import sys
 from argparse import Namespace
 from pathlib import Path
@@ -9,7 +10,6 @@ from pathlib import Path
 from buildenv import BuildEnvExtension, BuildEnvManager
 from nmk.model.builder import NmkTaskBuilder
 from nmk.model.keys import NmkRootConfig
-from nmk.utils import is_windows
 
 from nmk_base import __version__
 
@@ -26,16 +26,17 @@ class BuildEnvInit(BuildEnvExtension):
         When called, this method:
 
         * registers **nmk** command for completion
-        * adds activation scripts to call **nmk setup** command when buildenv is activated
+        * calls **nmk setup** if project contains an **nmk.yml** file
         """
 
         # Register nmk command for CLI completion
         self.manager.register_completion("nmk")
 
-        # Add nmk setup in activation files
-        template = Path(__file__).parent / "templates" / "setup.jinja"
-        for ext in [".sh"] + ([".bat"] if is_windows() else []):
-            self.manager.add_activation_file("nmk", ext, template)
+        # Check for nmk project file
+        prj = self.manager.project_path / "nmk.yml"
+        if prj.is_file():
+            # Run "nmk setup"
+            subprocess.run(["nmk", "setup"], check=True, cwd=self.manager.project_path)
 
     def get_version(self) -> str:
         """
