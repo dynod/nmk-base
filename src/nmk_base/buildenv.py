@@ -36,7 +36,7 @@ class BuildEnvInit(BuildEnvExtension):
         prj = self.manager.project_path / "nmk.yml"
         if prj.is_file():
             # Run "nmk setup"
-            subprocess.run(["nmk", "setup"], check=True, cwd=self.manager.project_path)
+            subprocess.run([Path(sys.executable).parent / "nmk", "setup"], check=True, cwd=self.manager.project_path)
 
     def get_version(self) -> str:
         """
