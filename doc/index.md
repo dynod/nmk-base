@@ -7,9 +7,9 @@ This plugin provides base features for **`nmk`** build, which by design don't ne
 :maxdepth: 2
 usage
 tasks
-dependencies
 extend
 config
+contribs
 ```
 
 ## Indices and tables
