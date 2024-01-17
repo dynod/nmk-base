@@ -1,7 +1,7 @@
 config:
 
     # Venv dependencies list (direct packages dependencies)
-    venvPkgDeps: ["nmk"]  # Default: at least nmk itself!
+    venvPkgDeps: ["nmk-base"]  # Default: at least nmk-base itself, for buildenv initialization
 
     # Venv archives list (direct archive dependencies)
     venvArchiveDeps: []
