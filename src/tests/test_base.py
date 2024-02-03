@@ -69,9 +69,11 @@ class TestBasePlugin(NmkBaseTester):
         monkeypatch.setattr(
             subprocess,
             "run",
-            lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(all_args, 1, "", "")
-            if all_args[:3] == ["git", "describe", "--tags"]
-            else real_run(all_args, check=check, capture_output=capture_output, text=text, encoding=encoding, cwd=cwd),
+            lambda all_args, check, capture_output, text, encoding, cwd, errors: (
+                subprocess.CompletedProcess(all_args, 1, "", "")
+                if all_args[:3] == ["git", "describe", "--tags"]
+                else real_run(all_args, check=check, capture_output=capture_output, text=text, encoding=encoding, cwd=cwd)
+            ),
         )
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--print", "gitVersion"])
         self.check_logs('Config dump: { "gitVersion": "0.0.0-')
