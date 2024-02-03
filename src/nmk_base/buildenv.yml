@@ -6,6 +6,9 @@ config:
     # Force init
     buildenvInitForce: False
 
+    # Enable buildenv scripts refresh
+    buildenvRefresh: True
+
 tasks:
     # Buildenv init
     buildenv:
@@ -24,3 +27,4 @@ tasks:
         builder: nmk_base.buildenv.BuildenvInitBuilder
         params:
             force: ${buildenvInitForce}
+        if: ${buildenvRefresh}
