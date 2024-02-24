@@ -2,12 +2,14 @@
 Python module for **nmk-base** utility classes.
 """
 
+import subprocess
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List, Union
 
 from jinja2 import Environment, Template, meta
 from nmk.model.builder import NmkTaskBuilder
 from nmk.model.keys import NmkRootConfig
+from nmk.utils import run_with_logs
 
 
 class TemplateBuilder(NmkTaskBuilder):
@@ -128,8 +130,40 @@ class MkdirBuilder(NmkTaskBuilder):
     def build(self):
         """
         Build logic:
-        create output directory (main output of the task)
+        create specified directory (main output of the task)
         """
 
         # Create directory
         self.main_output.mkdir(parents=True, exist_ok=True)
+
+
+class ProcessBuilder(NmkTaskBuilder):
+    """
+    Generic builder logic to call a sub-process
+    """
+
+    def build(self, cmd: Union[str, List[str]], verbose: bool = False):
+        """
+        Build logic:
+
+        * call subprocess specified through **cmd** parameter; process is invoked in project directory
+        * depending on the **verbose** parameter, redirect output to stdout (if True) or to nmk logs (if False)
+        * touch the specified output file
+
+        :param cmd: process command line; may be a string or a list of parameters
+        :param verbose: states if the process output shall be displayed in stdout or saved in logs
+        """
+
+        # Split args if cmd is a string
+        args = cmd if isinstance(cmd, list) else cmd.split(" ")
+
+        if verbose:
+            # Verbose: process output will go to stdout/stderr
+            self.logger.debug(f"Running command: {args}")
+            subprocess.run(args, cwd=self.model.config[NmkRootConfig.PROJECT_DIR].value, check=True)
+        else:
+            # Redirect output to logs
+            run_with_logs(args, cwd=self.model.config[NmkRootConfig.PROJECT_DIR].value, check=True)
+
+        # Touch main output file
+        self.main_output.touch()
