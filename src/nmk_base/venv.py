@@ -2,12 +2,25 @@
 Python module for **nmk-base** venv tasks.
 """
 
+import sys
 from pathlib import Path
 from typing import List
 
 from nmk.model.builder import NmkTaskBuilder
-from nmk.model.resolver import NmkListConfigResolver
+from nmk.model.resolver import NmkListConfigResolver, NmkStrConfigResolver
 from nmk.utils import run_pip
+
+
+class ExeResolver(NmkStrConfigResolver):
+    """
+    Resolver class for **venvPython** config item
+    """
+
+    def get_value(self, name: str) -> List[str]:
+        """
+        Resolution logic: returns sys.executable
+        """
+        return sys.executable
 
 
 class FileDepsContentResolver(NmkListConfigResolver):

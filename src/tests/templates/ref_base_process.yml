@@ -1,0 +1,24 @@
+refs:
+    - pip://nmk-base!plugin.yml
+
+tasks:
+    process_try1:
+        description: Sample process task 1
+        emoji: ":spiral_notepad: "
+        input:
+            - ${PROJECTDIR}/process_try1_input.txt
+        output: ${PROJECTDIR}/process_try1_output.txt
+        params:
+            cmd: ${venvPython} --version
+            verbose: True
+        builder: nmk_base.common.ProcessBuilder
+
+    process_try2:
+        description: Sample process task 2
+        emoji: ":spiral_notepad: "
+        input:
+            - ${PROJECTDIR}/process_try2_input.txt
+        output: ${PROJECTDIR}/process_try2_output.txt
+        params:
+            cmd: ["${venvPython}", "--version"]
+        builder: nmk_base.common.ProcessBuilder

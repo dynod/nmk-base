@@ -28,6 +28,10 @@ config:
     # Template for merged requirements file
     venvRequirementsTemplate: ${BASEDIR}/templates/requirements.txt
 
+    # Current venv python executable
+    venvPython:
+        __resolver__: nmk_base.venv.ExeResolver
+
     # Contribute to ignored files
     gitIgnoredFiles:
         - ${venvName}
