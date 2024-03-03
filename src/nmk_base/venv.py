@@ -23,6 +23,18 @@ class ExeResolver(NmkStrConfigResolver):
         return sys.executable
 
 
+class BinResolver(NmkStrConfigResolver):
+    """
+    Resolver class for **venvBin** config item
+    """
+
+    def get_value(self, name: str) -> List[str]:
+        """
+        Resolution logic: returns sys.executable parent folder
+        """
+        return str(Path(sys.executable).parent)
+
+
 class FileDepsContentResolver(NmkListConfigResolver):
     """
     Resolver class for **venvFileDepsContent** config item

@@ -20,5 +20,5 @@ tasks:
             - ${PROJECTDIR}/process_try2_input.txt
         output: ${PROJECTDIR}/process_try2_output.txt
         params:
-            cmd: ["${venvPython}", "--version"]
+            cmd: ["${venvBin}/python", "--version"]
         builder: nmk_base.common.ProcessBuilder
