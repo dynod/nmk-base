@@ -1,11 +1,11 @@
 refs:
     - pip://nmk-base!plugin.yml
 
+path:
+    - "."
+
 config:
     fooFolder: ${BASEDIR}
-
-    pythonPath:
-        - ${BASEDIR}
 
     fooConfig:
         __resolver__: base_sample.SampleResolver

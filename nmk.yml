@@ -1,30 +1,22 @@
 refs:
-    # Base+python plugins
-    - src/nmk_base/plugin.yml
-    - <badges-plugin>/src/nmk_badges/plugin-defs.yml
-    - badges-plugin:
-        remote: github://dynod/nmk-badges/main
-        local: ../badges
-    - <github-plugin>/src/nmk_github/plugin-defs.yml
-    - github-plugin:
-        remote: github://dynod/nmk-github/main
-        local: ../github
-    - <python-plugin>/src/nmk_python/plugin-defs.yml
-    - python-plugin:
-        remote: github://dynod/nmk-python/main
-        local: ../python
-    - <vscode-plugin>/src/nmk_vscode/plugin-defs.yml
-    - vscode-plugin:
-        remote: github://dynod/nmk-vscode/main
-        local: ../vscode
-    - <doc-plugin>/src/nmk_doc/plugin-defs.yml
-    - doc-plugin:
-        remote: github://dynod/nmk-doc/main
-        local: ../doc
+    - <base>/plugin.yml
+    - base:
+        local: src/nmk_base
+        remote: pip://nmk-base!
+        override: true
+    - pip://nmk-badges!plugin.yml
+    - pip://nmk-github!plugin.yml
+    - pip://nmk-python!plugin.yml
+    - pip://nmk-vscode!plugin.yml
+    - pip://nmk-doc!plugin.yml
     - <workspace>/shared.yml
     - workspace:
         local: ../../../../shared
         remote: github://dynod/workspace/main/shared
+
+# Python path for locally defined tasks
+path:
+    - src
 
 config:
     # Python package
