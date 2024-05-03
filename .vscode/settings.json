@@ -12,7 +12,7 @@
         "160"
     ],
     "flake8.args": [
-        "--ignore=E203,E501,B902,W503,A005"
+        "--ignore=E203,E501,B902,W503"
     ],
     "python.defaultInterpreterPath": "venv/bin/python",
     "python.autoComplete.extraPaths": [

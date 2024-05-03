@@ -38,14 +38,6 @@ config:
         options.entry_points:
             buildenv_init: "\nnmk = nmk_base.buildenv:BuildEnvInit"
 
-        run:
-            omit:
-              - src/nmk_base/venv.py
-
     # Github issues logged in nmk project
     githubIssuesRepo: nmk
     githubIssuesLabel: "plugin:base"
-
-    # Temporary ignore for venv built-in
-    pythonIgnoredRules:
-        - A005
