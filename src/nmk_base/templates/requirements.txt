@@ -6,19 +6,19 @@
 # Merged requirements files
 #
 
-{% for line in venvFileDepsContent|sort() %}{{ line }}
+{% for line in venvFileDepsContent|unique|sort %}{{ line }}
 {% endfor %}
 {% endif %}{% if venvPkgDeps|length > 0 %}#
 # Package dependencies from nmk project files
 #
 
-{% for line in venvPkgDeps|sort() %}{{ line }}
+{% for line in venvPkgDeps|unique|sort %}{{ line }}
 {% endfor %}
 {% endif %}{% if venvArchiveDeps|length > 0 %}#
 # Archive dependencies from nmk project files
 #
 
-{% for line in venvArchiveDeps|sort() %}{{ line }}
+{% for line in venvArchiveDeps|unique|sort %}{{ line }}
 {% endfor %}
 {% endif %}
 
