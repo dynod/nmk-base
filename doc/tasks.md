@@ -199,7 +199,7 @@ It is triggered only if:
 
 | Property | Value/description |
 |-         |-
-| builder  | {py:class}`nmk_base.venv.VenvUpdateBuilder`
+| builder  | {py:class}`nmk_base.venvbuilder.VenvUpdateBuilder`
 | input    | ${PROJECTDIR}/{ref}`${venvRequirements}<venvRequirements>` file
 | output   | ${ROOTDIR}/{ref}`${venvName}<venvName>` & {ref}`${venvState}<venvState>` files
 | deps     | {ref}`out<out>` & {ref}`py.req<py.req>` tasks
