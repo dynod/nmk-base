@@ -11,7 +11,7 @@ config:
 
     # Venv requirement files merged content
     venvFileDepsContent:
-        __resolver__: nmk_base.venv.FileDepsContentResolver
+        __resolver__: nmk_base.venvbuilder.FileDepsContentResolver
 
     # Venv folder name
     venvName: venv
@@ -30,11 +30,11 @@ config:
 
     # Current venv bon folder
     venvBin:
-        __resolver__: nmk_base.venv.BinResolver
+        __resolver__: nmk_base.venvbuilder.BinResolver
 
     # Current venv python executable
     venvPython:
-        __resolver__: nmk_base.venv.ExeResolver
+        __resolver__: nmk_base.venvbuilder.ExeResolver
 
     # Contribute to ignored files
     gitIgnoredFiles:
@@ -67,4 +67,4 @@ tasks:
             - ${ROOTDIR}/${venvName}
             - ${venvState}
         input: ${PROJECTDIR}/${venvRequirements}
-        builder: nmk_base.venv.VenvUpdateBuilder
+        builder: nmk_base.venvbuilder.VenvUpdateBuilder
