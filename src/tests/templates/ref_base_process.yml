@@ -16,6 +16,13 @@ tasks:
     process_try2:
         description: Sample process task 2
         emoji: ":spiral_notepad: "
+        params:
+            cmd: ["${venvBin}/python", "--version"]
+        builder: nmk_base.common.ProcessBuilder
+
+    process_try3:
+        description: Sample process task 3
+        emoji: ":spiral_notepad: "
         input:
             - ${PROJECTDIR}/process_try2_input.txt
         output: ${PROJECTDIR}/process_try2_output.txt

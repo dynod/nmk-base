@@ -26,7 +26,7 @@ class InfoBuilder(NmkTaskBuilder):
 
         # Display all information
         for name, version in info.items():
-            self.logger.info(self.task.emoji, f" {Emoji('backhand_index_pointing_right')} {name}{' '*(max_len-len(name))}: {version}")
+            self.logger.info(self.task.emoji, f" {Emoji('backhand_index_pointing_right')} {name}{' ' * (max_len - len(name))}: {version}")
 
 
 class VersionBuilder(InfoBuilder):

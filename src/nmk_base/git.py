@@ -142,7 +142,7 @@ class GitFileFragmentUpdater(TemplateBuilder):
             if fragment_header in file_content:
                 insert_pos = file_content.index(fragment_header)
                 footer_pos = (file_content.index(fragment_footer) + 1) if fragment_footer in file_content else len(file_content)
-                self.logger.debug(f"Merge {self.main_output.name} content by replacing fragment at lines {insert_pos+1}-{footer_pos}")
+                self.logger.debug(f"Merge {self.main_output.name} content by replacing fragment at lines {insert_pos + 1}-{footer_pos}")
                 del file_content[insert_pos:footer_pos]
             else:
                 self.logger.debug(f"Insert generated fragment at and of existing {self.main_output.name} file")
