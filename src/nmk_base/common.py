@@ -165,5 +165,6 @@ class ProcessBuilder(NmkTaskBuilder):
             # Redirect output to logs
             run_with_logs(args, cwd=self.model.config[NmkRootConfig.PROJECT_DIR].value, check=True)
 
-        # Touch main output file
-        self.main_output.touch()
+        # Touch main output file, if any
+        if len(self.outputs):
+            self.main_output.touch()

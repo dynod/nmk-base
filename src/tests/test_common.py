@@ -33,5 +33,10 @@ class TestBasePlugin(NmkBaseTester):
         if output.is_file():
             output.unlink()
         self.nmk(prj, extra_args=["process_try2"])
-        assert output.is_file()
+        assert not output.is_file()
         self.check_logs("Python 3.")
+
+        # Test 3
+        (self.test_folder / "process_try2_input.txt").touch()
+        self.nmk(prj, extra_args=["process_try3"])
+        assert output.is_file()

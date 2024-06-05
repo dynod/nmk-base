@@ -25,7 +25,7 @@ class TestBasePlugin(NmkBaseTester):
 
     def test_clean_missing(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["clean"])
-        self.check_logs(f"Nothing to clean (folder not found: {self.test_folder/'out'})")
+        self.check_logs(f"Nothing to clean (folder not found: {self.test_folder / 'out'})")
 
     def test_clean_folder(self):
         fake_out = self.test_folder / "out"
