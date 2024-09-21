@@ -28,12 +28,26 @@ The **`tests`** task shall be used to perform all automated testing operations o
 
 It depends on the **{ref}`build<build>`** task.
 
+(package)=
+### **`package`** task
+
+The **`package`** task shall be used to package project artifacts from generated software.
+
+It depends on the **{ref}`build<build>`** task.
+
+(install)=
+### **`install`** task
+
+The **`install`** task shall be used to install generated software locally.
+
+It depends on the **{ref}`build<build>`** task.
+
 (publish)=
 ### **`publish`** task
 
 The **`publish`** task shall be used to publish built artifacts where they should be stored, as decided by the project.
 
-It depends on the **{ref}`build<build>`** task.
+It depends on the **{ref}`package<package>`** task.
 
 ## Cleaning tasks
 

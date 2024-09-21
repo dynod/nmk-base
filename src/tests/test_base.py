@@ -43,9 +43,17 @@ class TestBasePlugin(NmkBaseTester):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "tests"])
         self.check_logs(["tests]] INFO 🤞 - Run automated tests", "11 built tasks"], check_order=True)
 
+    def test_package(self):
+        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "package"])
+        self.check_logs(["package]] INFO 📦 - Package project artifacts", "10 built tasks"], check_order=True)
+
+    def test_install(self):
+        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "install"])
+        self.check_logs(["install]] INFO 📥 - Install built software", "10 built tasks"], check_order=True)
+
     def test_publish(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "publish"])
-        self.check_logs(["publish]] INFO 🚚 - Publish artifacts", "10 built tasks"], check_order=True)
+        self.check_logs(["publish]] INFO 🚚 - Publish artifacts", "11 built tasks"], check_order=True)
 
     def test_version(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["version"])

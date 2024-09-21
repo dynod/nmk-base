@@ -21,9 +21,23 @@ tasks:
         deps:
             - build
 
-    # Main publish task, once build is done
+    # Main packaging task, once build is done
+    package:
+        description: Package project artifacts
+        emoji: package
+        deps:
+            - build
+
+    # Local install task, once build (or packaging) is done
+    install:
+        description: Install built software
+        emoji: inbox_tray
+        deps:
+            - build
+
+    # Main publish task, once packaging is done
     publish:
         description: Publish artifacts
         emoji: delivery_truck
         deps:
-            - build
+            - package
