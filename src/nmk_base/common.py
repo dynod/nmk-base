@@ -4,7 +4,7 @@ Python module for **nmk-base** utility classes.
 
 import subprocess
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Union
 
 from jinja2 import Environment, Template, meta
 from nmk.model.builder import NmkTaskBuilder
@@ -53,7 +53,7 @@ class TemplateBuilder(NmkTaskBuilder):
         # Probably nothing to do with path, use raw value
         return v  # pragma: no cover
 
-    def render_template(self, template: Path, kwargs: Dict[str, str]) -> str:
+    def render_template(self, template: Path, kwargs: dict[str, str]) -> str:
         """
         Render template into a string, with provided keywords and config items
 
@@ -78,7 +78,7 @@ class TemplateBuilder(NmkTaskBuilder):
         all_kw.update(kwargs)
         return Template(template_source).render(all_kw)
 
-    def build_from_template(self, template: Path, output: Path, kwargs: Dict[str, str]) -> str:
+    def build_from_template(self, template: Path, output: Path, kwargs: dict[str, str]) -> str:
         """
         Generate file from template
 
@@ -142,7 +142,7 @@ class ProcessBuilder(NmkTaskBuilder):
     Generic builder logic to call a sub-process
     """
 
-    def build(self, cmd: Union[str, List[str]], verbose: bool = False):
+    def build(self, cmd: Union[str, list[str]], verbose: bool = False):
         """
         Build logic:
 

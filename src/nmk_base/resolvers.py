@@ -4,7 +4,6 @@ Python module for base resolvers (to be used by other plugins).
 
 from abc import abstractmethod
 from pathlib import Path
-from typing import List
 
 from nmk.model.resolver import NmkListConfigResolver
 
@@ -33,7 +32,7 @@ class FilesResolver(NmkListConfigResolver):
         """
         return "*.*"
 
-    def get_value(self, name: str) -> List[Path]:
+    def get_value(self, name: str) -> list[Path]:
         """
         Files resolution logic:
         iterate on provided folders (from config item name), and filter on provided extension.

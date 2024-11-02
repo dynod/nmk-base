@@ -5,7 +5,6 @@ Python module for **nmk-base** git related resolvers and builders.
 import os
 import subprocess
 from pathlib import Path
-from typing import Dict, List
 
 from nmk.errors import NmkStopHereError
 from nmk.model.builder import NmkTaskBuilder
@@ -118,7 +117,7 @@ class GitFileFragmentUpdater(TemplateBuilder):
         """
         return missing_input == self.main_input
 
-    def build_fragment(self, kwargs: Dict[str, str], template: str):
+    def build_fragment(self, kwargs: dict[str, str], template: str):
         """
         Build fragment to be inserted in file that can be also manually edited
 
@@ -191,7 +190,7 @@ class GitIgnore(GitFileFragmentUpdater):
 
         return ignored_file
 
-    def build(self, ignored_files: List[str], template: str):
+    def build(self, ignored_files: list[str], template: str):
         """
         Generate .gitignore file fragment from template
 

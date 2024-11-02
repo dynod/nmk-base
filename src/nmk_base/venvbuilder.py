@@ -4,7 +4,6 @@ Python module for **nmk-base** venv tasks.
 
 import sys
 from pathlib import Path
-from typing import List
 
 from nmk.model.builder import NmkTaskBuilder
 from nmk.model.resolver import NmkListConfigResolver, NmkStrConfigResolver
@@ -16,7 +15,7 @@ class ExeResolver(NmkStrConfigResolver):
     Resolver class for **venvPython** config item
     """
 
-    def get_value(self, name: str) -> List[str]:
+    def get_value(self, name: str) -> list[str]:
         """
         Resolution logic: returns sys.executable
         """
@@ -28,7 +27,7 @@ class BinResolver(NmkStrConfigResolver):
     Resolver class for **venvBin** config item
     """
 
-    def get_value(self, name: str) -> List[str]:
+    def get_value(self, name: str) -> list[str]:
         """
         Resolution logic: returns sys.executable parent folder
         """
@@ -40,7 +39,7 @@ class FileDepsContentResolver(NmkListConfigResolver):
     Resolver class for **venvFileDepsContent** config item
     """
 
-    def get_value(self, name: str) -> List[str]:
+    def get_value(self, name: str) -> list[str]:
         """
         Resolution logic: merge content from files listed in **venvFileDeps** config item
         """
