@@ -10,13 +10,12 @@ from nmk.model.builder import NmkTaskBuilder
 
 class CleanBuilder(NmkTaskBuilder):
     """
-    Builder for **clean** task
+    Generic builder logic to clean a directory
     """
 
     def build(self, path: str):
         """
-        Build logic for **clean** task:
-        delete (recursively) provided directory, if it exists
+        Build logic: delete (recursively) provided directory, if it exists
 
         :param path: Directory to be deleted
         """

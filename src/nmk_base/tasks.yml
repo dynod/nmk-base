@@ -41,3 +41,8 @@ tasks:
         emoji: delivery_truck
         deps:
             - package
+
+    # Main cleaning task
+    clean:
+        description: Clean project
+        emoji: broom
