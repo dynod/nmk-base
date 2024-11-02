@@ -49,24 +49,10 @@ The **`publish`** task shall be used to publish built artifacts where they shoul
 
 It depends on the **{ref}`package<package>`** task.
 
-## Cleaning tasks
+(clean)=
+### **`clean`** task
 
-### **`clean`** -- output cleaning
-
-The **`clean`** task will simply remove the {ref}`${outputDir}<outputDir>` folder and its entire content.
-
-> Usage example:
-> ```
-> $ nmk clean
-> 2022-02-20 14:37:54 (I) [clean] 🧹 - Clean build output
-> 2022-02-20 14:37:54 (I) nmk 🏁 - Done
-> ```
-
-### **`git.clean`** -- full clean
-
-The **`git.clean`** task will use git to clean the project folder, i.e. by removing all git ignored files.
-
-**Warning:** this will remove (at least) both the **`venv`** and **`.nmk`** folders. Consequently, the build will immediately stop after this task, ignoring other tasks eventually specified on the command line. After this task is executed, the **`buildenv`** loading scripts will have to be used again to setup the project and reinstall **`nmk`**
+The **`clean`** task shall be used to clean the project built files.
 
 ## Helper tasks
 
@@ -131,6 +117,16 @@ The **`tasks`** task will list all the known tasks for the built project.
 > 
 > 2022-02-20 14:42:24 (I) nmk 🏁 - Done
 > ```
+
+### **`git.clean`** -- full clean
+
+| Property | Value/description |
+|-         |-
+| builder  | {py:class}`nmk_base.git.GitClean`
+
+The **`git.clean`** task will use git to clean the project folder, i.e. by removing all git ignored files.
+
+**Warning:** this will remove (at least) both the **`venv`** and **`.nmk`** folders. Consequently, the build will immediately stop after this task, ignoring other tasks eventually specified on the command line. After this task is executed, the **`buildenv`** loading scripts will have to be used again to setup the project and reinstall **`nmk`**
 
 ## Setup tasks
 
@@ -232,6 +228,26 @@ It also generates a dump ({ref}`${venvState}<venvState>`) of all installed packa
 | output   | {ref}`${outputDir}<outputDir>` folder
 
 This task simply silently creates the {ref}`${outputDir}<outputDir>` folder. All tasks aiming to create files in this folder should reference this task.
+
+## Clean tasks
+
+All tasks in this chapter are dependencies of the main **{ref}`clean<clean>`** task.
+
+### **`clean.out`** -- output cleaning
+
+| Property | Value/description |
+|-         |-
+| builder  | {py:class}`nmk_base.common.CleanBuilder`
+| path     | {ref}`${outputDir}<outputDir>` folder
+
+The **`clean.out`** task will simply remove the {ref}`${outputDir}<outputDir>` folder and its entire content.
+
+> Usage example:
+> ```
+> $ nmk clean
+> 2022-02-20 14:37:54 (I) [clean.out] 🧹 - Clean build output
+> 2022-02-20 14:37:54 (I) nmk 🏁 - Done
+> ```
 
 ## Epilogue tasks
 

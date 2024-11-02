@@ -10,13 +10,15 @@ config:
         - ${outputDir}
 
 tasks:
-    # Clean task
-    clean:
-        description: Clean build output
-        emoji: broom
+    # Clean output
+    clean.out:
+        description: Clean build output folder
+        emoji: ":broom:.:file_folder:"
         builder: nmk_base.output.CleanBuilder
         params:
             path: ${outputDir}
+        appendToDeps:
+            - clean
 
     # Create output folder
     out:
