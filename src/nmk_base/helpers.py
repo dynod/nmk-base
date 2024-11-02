@@ -2,8 +2,6 @@
 Python module for **nmk-base** helper tasks.
 """
 
-from typing import Dict
-
 from nmk import __version__
 from nmk.model.builder import NmkTaskBuilder
 from rich.emoji import Emoji
@@ -14,7 +12,7 @@ class InfoBuilder(NmkTaskBuilder):
     Common implementation for information display tasks
     """
 
-    def display_info(self, info: Dict[str, str]):
+    def display_info(self, info: dict[str, str]):
         """
         Iterate on information dictionnary content, and display it with aligned colons
 
@@ -22,7 +20,7 @@ class InfoBuilder(NmkTaskBuilder):
         """
 
         # Prepare spaces padding
-        max_len = max([len(n) for n in info.keys()])
+        max_len = max([len(n) for n in info])
 
         # Display all information
         for name, version in info.items():
@@ -34,7 +32,7 @@ class VersionBuilder(InfoBuilder):
     Builder implementation for **version** task
     """
 
-    def build(self, plugins: Dict[str, str]):
+    def build(self, plugins: dict[str, str]):
         """
         Build logic for **version** task:
         iterate on provided plugins version map and display them.
@@ -53,7 +51,7 @@ class HelpBuilder(InfoBuilder):
     Builder implementation for **help** task
     """
 
-    def build(self, links: Dict[str, str]):
+    def build(self, links: dict[str, str]):
         """
         Build logic for **help** task:
         iterate on provided plugins help links map and display them.

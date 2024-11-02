@@ -48,7 +48,7 @@ Author of the project
 
 | Type          | Default value |
 |-              |-
-| Dict[str,str] | {"nmk-base": ${nmkBasePluginVersion}}
+| dict[str,str] | {"nmk-base": ${nmkBasePluginVersion}}
 
 Plugins versions, indexed by names, to be displayed by **{ref}`version<version>`** task
 
@@ -57,7 +57,7 @@ Plugins versions, indexed by names, to be displayed by **{ref}`version<version>`
 
 | Type          | Default value |
 |-              |-
-| Dict[str,str] | {"nmk-base": "https://github.com/dynod/nmk/wiki/nmk-base-plugin"}
+| dict[str,str] | {"nmk-base": "https://github.com/dynod/nmk/wiki/nmk-base-plugin"}
 
 Plugins help pages URLs indexed by names, to be displayed by **{ref}`help<help>`** task.
 
@@ -115,7 +115,7 @@ Stamp file for generated **`.gitignore`** fragment.
 
 | Type      | Default value |
 |-          |-
-| List[str] | [ "${PROJECTDIR_NMK}/", "{ref}`${outputDir}<outputDir>`", "{ref}`${venvName}<venvName>`" ]
+| list[str] | [ "${PROJECTDIR_NMK}/", "{ref}`${outputDir}<outputDir>`", "{ref}`${venvName}<venvName>`" ]
 
 List of files/folders to be added when generating **`.gitignore`** file.
 
@@ -151,7 +151,7 @@ Stamp file for generated **`.gitattributes`** fragment.
 
 | Type      | Default value |
 |-          |-
-| List[str] | [ ".sh" ]
+| list[str] | [ ".sh" ]
 
 List of files extensions (".xxx" format) with Linux line endings; will be declared with "**text eol=lf**" attribute in generated **`.gitattributes`** fragment.
 
@@ -160,7 +160,7 @@ List of files extensions (".xxx" format) with Linux line endings; will be declar
 
 | Type      | Default value |
 |-          |-
-| List[str] | [ ".bat", ".cmd" ]
+| list[str] | [ ".bat", ".cmd" ]
 
 List of files extensions (".xxx" format) with Windows line endings; will be declared with "**text eol=crlf**" attribute in generated **`.gitattributes`** fragment.
 
@@ -180,7 +180,7 @@ Enablement flag for **{ref}`git.dirty<git.dirty>`** task (by default, returns Tr
 
 | Type      | Default value |
 |-          |-
-| List[str] | [ "nmk" ]
+| list[str] | [ "nmk" ]
 
 List of python packages references to be installed in python venv (using [pip requirement specifiers syntax](https://pip.pypa.io/en/stable/reference/requirement-specifiers/)).
 
@@ -189,7 +189,7 @@ List of python packages references to be installed in python venv (using [pip re
 
 | Type      | Default value |
 |-          |-
-| List[str] | []
+| list[str] | []
 
 List of local python module archive paths to be installed in python venv.
 
@@ -198,7 +198,7 @@ List of local python module archive paths to be installed in python venv.
 
 | Type      | Default value |
 |-          |-
-| List[str] | []
+| list[str] | []
 
 List of pip requirement files to be installed in python venv.
 
