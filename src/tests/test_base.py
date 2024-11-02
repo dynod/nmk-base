@@ -37,7 +37,7 @@ class TestBasePlugin(NmkBaseTester):
 
     def test_build(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run"])
-        self.check_logs(["setup]] INFO 🛫 - Setup project configuration", "build]] INFO 🛠  - Build project artifacts", "11 built tasks"], check_order=True)
+        self.check_logs(["setup]] INFO 🛫 - Setup project configuration", "build]] INFO 🛠  - Build project artifacts", "12 built tasks"], check_order=True)
 
     def test_test(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "tests"])
@@ -45,15 +45,15 @@ class TestBasePlugin(NmkBaseTester):
 
     def test_package(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "package"])
-        self.check_logs(["package]] INFO 📦 - Package project artifacts", "12 built tasks"], check_order=True)
+        self.check_logs(["package]] INFO 📦 - Package project artifacts", "13 built tasks"], check_order=True)
 
     def test_install(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "install"])
-        self.check_logs(["install]] INFO 📥 - Install built software", "12 built tasks"], check_order=True)
+        self.check_logs(["install]] INFO 📥 - Install built software", "13 built tasks"], check_order=True)
 
     def test_publish(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "publish"])
-        self.check_logs(["publish]] INFO 🚚 - Publish artifacts", "13 built tasks"], check_order=True)
+        self.check_logs(["publish]] INFO 🚚 - Publish artifacts", "14 built tasks"], check_order=True)
 
     def test_version(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["version"])
@@ -116,14 +116,14 @@ class TestBasePlugin(NmkBaseTester):
             subprocess, "run", lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(all_args, 0, "", "")
         )
         prj = self.prepare_project("ref_base.yml")
-        self.nmk(prj, extra_args=["git.dirty", "--config", '{"gitEnableDirtyCheck":true}'])
+        self.nmk(prj, extra_args=["git.dirty", "--config", '{"gitEnableDirtyCheck":true}'], with_epilogue=True)
         self.check_logs("Check for modified files")
 
         # Stub to have "git status" command with some dirty files
         monkeypatch.setattr(
             subprocess,
             "run",
-            lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(
+            lambda all_args, check=True, capture_output=True, text=True, encoding="utf-8", cwd=None, errors="ignore": subprocess.CompletedProcess(
                 all_args, 0, " M src/nmk_base/git.py\n M src/nmk_base/git.yml", ""
             ),
         )
@@ -131,6 +131,7 @@ class TestBasePlugin(NmkBaseTester):
             prj,
             extra_args=["git.dirty", "--config", '{"gitEnableDirtyCheck":true}'],
             expected_error="An error occurred during task git.dirty build: Current folder is dirty:",
+            with_epilogue=True,
         )
 
     def test_venv_merged_requirements(self):

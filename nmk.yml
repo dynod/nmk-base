@@ -25,7 +25,7 @@ config:
     # Nmk dependencies
     pythonPackageRequirements:
         - Jinja2
-        - nmk
+        - nmk>=0.16.2
         - buildenv
 
     # Extra project data

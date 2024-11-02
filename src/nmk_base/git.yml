@@ -96,10 +96,10 @@ tasks:
         params:
             template: ${gitAttributesTemplate}
 
-    # Check if folder is not dirty after build
+    # Check if folder is not dirty after all tasks
     git.dirty:
         description: Check for modified files
         emoji: ":regional_indicator_symbol_letter_g: .:magnifying_glass_tilted_left:"
-        appendToDeps: tests
+        appendToDeps: epilogue
         builder: nmk_base.git.GitIsDirty
         if: ${gitEnableDirtyCheck}
