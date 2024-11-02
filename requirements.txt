@@ -10,9 +10,9 @@ build
 buildenv
 Jinja2
 myst-parser
-nmk
 nmk-base
 nmk-vscode
+nmk>=0.16.2
 pytest-cov
 pytest-multilog
 pytest-xdist

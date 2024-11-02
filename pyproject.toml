@@ -9,7 +9,7 @@ name = "nmk-base"
 dynamic = ["version"]
 requires-python = ">=3.9"
 classifiers = ["Programming Language :: Python :: 3.9", "Programming Language :: Python :: 3.10", "Programming Language :: Python :: 3.11", "Programming Language :: Python :: 3.12"]
-dependencies = ["Jinja2", "nmk", "buildenv"]
+dependencies = ["Jinja2", "nmk>=0.16.2", "buildenv"]
 description = "Base plugin for nmk build system"
 
 [[project.authors]]

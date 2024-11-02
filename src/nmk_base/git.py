@@ -9,7 +9,7 @@ from pathlib import Path
 from nmk.errors import NmkStopHereError
 from nmk.model.builder import NmkTaskBuilder
 from nmk.model.keys import NmkRootConfig
-from nmk.model.resolver import NmkConfigResolver, NmkStrConfigResolver
+from nmk.model.resolver import NmkBoolConfigResolver, NmkStrConfigResolver
 from nmk.utils import run_with_logs
 
 from nmk_base.common import TemplateBuilder
@@ -227,21 +227,21 @@ class GitIsDirty(NmkTaskBuilder):
         """
         cwd = self.model.config[NmkRootConfig.PROJECT_DIR].value
         status_output = run_with_logs(["git", "status", "--porcelain"], cwd=cwd).stdout.splitlines(keepends=False)
-        assert len(status_output) == 0, "Current folder is dirty:\n" + "\n".join(status_output)
+        if len(status_output):
+            # Display diff
+            self.logger.error("Detected changes:")
+            subprocess.run(["git", "--no-pager", "diff"], check=False)
+
+            # Dirty files!
+            raise RuntimeError("Current folder is dirty:\n" + "\n".join(status_output))
 
 
-class CIResolver(NmkConfigResolver):
+class CIResolver(NmkBoolConfigResolver):
     """
     Resolver for **gitEnableDirtyCheck** config item override
     """
 
-    def get_type(self, name: str) -> object:
-        """
-        Returned type is **bool**
-        """
-        return bool
-
-    def get_value(self, name: str) -> str:
+    def get_value(self, name: str) -> bool:
         """
         Resolution logic for **gitEnableDirtyCheck**: check if **CI** env var is defined
         """
