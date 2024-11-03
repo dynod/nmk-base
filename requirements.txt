@@ -21,6 +21,7 @@ setuptools
 sphinx
 sphinx-autoapi
 sphinx_rtd_theme
+tomlkit
 wheel
 
 
