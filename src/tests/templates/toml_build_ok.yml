@@ -1,0 +1,34 @@
+refs:
+    - pip://nmk-base!plugin.yml
+
+config:
+    someTomlFileFragments:
+        - ${BASEDIR}/setup1.toml
+        - ${BASEDIR}/setup2.toml
+
+    someTomlItems:
+        ignoredIntValue: 12
+        dummy:
+            ymlContributedValue: foo
+            someIntValue: 456
+        anotherSection:
+            foo: bar
+            arrayOfValues:
+                - abc
+                - def
+            with_some_path: ${sourceDir}/foo
+        addedSection:
+            abc: def
+
+tasks:
+    generate.toml:
+        description: Generate some TOML file
+        emoji: ":hammer_and_wrench: "
+        builder: nmk_base.common.TomlFileBuilder
+        params:
+            fragment_files: ${someTomlFileFragments}
+            items: ${someTomlItems}
+        output:
+            - ${outputDir}/someFile.toml
+        deps:
+            - out

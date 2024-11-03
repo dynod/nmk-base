@@ -1,0 +1,19 @@
+refs:
+    - pip://nmk-base!plugin.yml
+
+config:
+    someTomlFileFragments:
+        - ${BASEDIR}/missing_var.toml
+
+    someTomlItems: {}
+
+tasks:
+    generate.toml:
+        description: Generate some TOML file
+        emoji: ":hammer_and_wrench: "
+        builder: nmk_base.common.TomlFileBuilder
+        params:
+            fragment_files: ${someTomlFileFragments}
+            items: ${someTomlItems}
+        output:
+            - ${outputDir}/someFile.toml

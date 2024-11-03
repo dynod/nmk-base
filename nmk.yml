@@ -27,6 +27,7 @@ config:
         - Jinja2
         - nmk>=0.16.2
         - buildenv
+        - tomlkit
 
     # Extra project data
     pythonProjectFileItems:

@@ -1,6 +1,8 @@
+import shutil
 from pathlib import Path
 
 from nmk.tests.tester import NmkBaseTester
+from tomlkit.toml_file import TOMLFile
 
 
 # Tests for common utilities
@@ -40,3 +42,33 @@ class TestBasePlugin(NmkBaseTester):
         (self.test_folder / "process_try2_input.txt").touch()
         self.nmk(prj, extra_args=["process_try3"])
         assert output.is_file()
+
+    def test_toml_file_missing_config(self):
+        file_fragment = self.test_folder / "missing_var.toml"
+        shutil.copyfile(self.template("missing_var.toml"), file_fragment)
+        self.nmk(
+            self.prepare_project("toml_build_missing_var.yml"),
+            extra_args=["generate.toml"],
+            expected_error=f"An error occurred during task generate.toml build: While loading toml file template ({file_fragment}): Unknown config items referenced from template {self.test_folder / 'missing_var.toml'}: unknownConfig",
+        )
+
+    def test_toml_file_ok(self):
+        shutil.copyfile(self.template("setup1.toml"), self.test_folder / "setup1.toml")
+        shutil.copyfile(self.template("setup2.toml"), self.test_folder / "setup2.toml")
+        self.nmk(
+            self.prepare_project("toml_build_ok.yml"),
+            extra_args=["generate.toml"],
+        )
+        generated_file = self.test_folder / "out" / "someFile.toml"
+        assert generated_file.is_file()
+
+        # Verify merged content
+        doc = TOMLFile(generated_file).read()
+        assert doc["dummy"]["foo"] == "bar"
+        assert doc["dummy"]["bar"] == "venv"
+        assert doc["dummy"]["other"] == "1,2,3"
+        assert doc["dummy"]["ymlContributedValue"] == "foo"
+        assert doc["dummy"]["someIntValue"] == 456
+        assert doc["anotherSection"]["foo"] == "bar"
+        assert doc["anotherSection"]["arrayOfValues"] == ["azerty", "abc", "def"]
+        assert doc["anotherSection"]["with_some_path"] == "src/foo"
