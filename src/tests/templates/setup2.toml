@@ -1,6 +1,7 @@
 [dummy]
 foo = "bar"
 other = "1,2,3"
+kwContrib = "{{ contributedKW }}"
 
 [anotherSection]
 arrayOfValues = ["azerty"]
