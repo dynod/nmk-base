@@ -20,6 +20,8 @@ config:
         addedSection:
             abc: def
 
+    yetAnotherParam: wow
+
 tasks:
     generate.toml:
         description: Generate some TOML file
@@ -28,6 +30,8 @@ tasks:
         params:
             fragment_files: ${someTomlFileFragments}
             items: ${someTomlItems}
+            kwargs:
+                contributedKW: ${yetAnotherParam}
         output:
             - ${outputDir}/someFile.toml
         deps:

@@ -114,15 +114,16 @@ class TemplateBuilder(NmkTaskBuilder):
             o.write(out)
             return out
 
-    def build(self, template: str):
+    def build(self, template: str, kwargs: dict[str, str] = None):
         """
         Default build behavior: generate main output file from provided template
 
         :param template: Path to the Jinja template to use for generation
+        :param kwargs: Map of keywords for templates rendering, indexed by name
         """
 
         # Just build from template
-        self.build_from_template(Path(template), self.main_output, {})
+        self.build_from_template(Path(template), self.main_output, kwargs if kwargs else {})
 
 
 class TomlFileBuilder(TemplateBuilder):
@@ -169,13 +170,14 @@ class TomlFileBuilder(TemplateBuilder):
                 # New key
                 main[k] = self._check_paths(v)
 
-    def build(self, fragment_files: list[str], items: dict, plugin_name: str = "nmk-base"):
+    def build(self, fragment_files: list[str], items: dict, plugin_name: str = "nmk-base", kwargs: dict[str, str] = None):
         """
         Generates toml file from fragments and items
 
         :param fragment_files: List of fragment files (processed as Jinja templates) to be merged
         :param items: Dict of toml items to be merged
         :param plugin_name: Plugin name to be inserted in generated file heading comment
+        :param kwargs: Map of keywords for templates rendering, indexed by name
         """
 
         # Merge fragments to generate final file
@@ -183,7 +185,7 @@ class TomlFileBuilder(TemplateBuilder):
         for f_path in map(Path, fragment_files):
             try:
                 # Update document with rendered template
-                fragment_doc = loads(self.render_template(f_path, {}))
+                fragment_doc = loads(self.render_template(f_path, kwargs if kwargs else {}))
             except Exception as e:
                 # Propagate error with file name
                 raise ValueError(f"While loading toml file template ({f_path}): {e}") from e

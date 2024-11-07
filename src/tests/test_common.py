@@ -69,6 +69,7 @@ class TestBasePlugin(NmkBaseTester):
         assert doc["dummy"]["other"] == "1,2,3"
         assert doc["dummy"]["ymlContributedValue"] == "foo"
         assert doc["dummy"]["someIntValue"] == 456
+        assert doc["dummy"]["kwContrib"] == "wow"
         assert doc["anotherSection"]["foo"] == "bar"
         assert doc["anotherSection"]["arrayOfValues"] == ["azerty", "abc", "def"]
         assert doc["anotherSection"]["with_some_path"] == "src/foo"
