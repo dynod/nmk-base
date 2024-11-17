@@ -250,7 +250,7 @@ class ProcessBuilder(NmkTaskBuilder):
             self.main_output.touch()
 
 
-class CleanBuilder(NmkTaskBuilder):  # pragma: no cover
+class CleanBuilder(NmkTaskBuilder):
     """
     Generic builder logic to clean a directory
     """
