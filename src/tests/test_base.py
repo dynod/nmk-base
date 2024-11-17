@@ -6,6 +6,7 @@ import subprocess
 import time
 from pathlib import Path
 
+import pytest
 from nmk import __version__ as nmk_version
 from nmk.tests.tester import NmkBaseTester
 from nmk.utils import is_windows
@@ -37,23 +38,23 @@ class TestBasePlugin(NmkBaseTester):
 
     def test_build(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run"])
-        self.check_logs(["setup]] INFO 🛫 - Setup project configuration", "build]] INFO 🛠  - Build project artifacts", "12 built tasks"], check_order=True)
+        self.check_logs(["setup]] INFO 🛫 - Setup project configuration", "build]] INFO 🛠  - Build project artifacts", "13 built tasks"], check_order=True)
 
     def test_test(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "tests"])
-        self.check_logs(["tests]] INFO 🤞 - Run automated tests", "13 built tasks"], check_order=True)
+        self.check_logs(["tests]] INFO 🤞 - Run automated tests", "14 built tasks"], check_order=True)
 
     def test_package(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "package"])
-        self.check_logs(["package]] INFO 📦 - Package project artifacts", "13 built tasks"], check_order=True)
+        self.check_logs(["package]] INFO 📦 - Package project artifacts", "14 built tasks"], check_order=True)
 
     def test_install(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "install"])
-        self.check_logs(["install]] INFO 📥 - Install built software", "13 built tasks"], check_order=True)
+        self.check_logs(["install]] INFO 📥 - Install built software", "14 built tasks"], check_order=True)
 
     def test_publish(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "publish"])
-        self.check_logs(["publish]] INFO 🚚 - Publish artifacts", "14 built tasks"], check_order=True)
+        self.check_logs(["publish]] INFO 🚚 - Publish artifacts", "15 built tasks"], check_order=True)
 
     def test_version(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["version"])
@@ -282,3 +283,26 @@ class TestBasePlugin(NmkBaseTester):
             os.environ["CI"] = old_value
         else:
             del os.environ["CI"]
+
+    def test_sysdeps(self):
+        # Run with missing fancy system dep
+        self.nmk(
+            self.prepare_project("ref_sysdeps.yml"),
+            extra_args=["sys.deps"],
+            with_prologue=True,
+            expected_error="An error occurred during task sys.deps build: Please install missing system dependencies (see above)",
+        )
+        self.check_logs(
+            [
+                "Missing system dependencies: unknown-cmd",
+                '* for "unknown-cmd" manual user install: see https://unknown-cmd.com/downloads',
+            ]
+        )
+
+        # Apt install instructions depend if apt is present on the system
+        apt_pattern = '* for global system install, use this command: "sudo apt install unknown-cmd"'
+        if not is_windows():
+            self.check_logs(apt_pattern)
+        else:
+            with pytest.raises(AssertionError, match="Missing patterns: .*"):
+                self.check_logs(apt_pattern)

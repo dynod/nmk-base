@@ -36,6 +36,20 @@ It generates a requirements file (typically a **requirements.txt** file in the p
       - ${PROJECTDIR}/test-requirements.txt
   ```
 
+### System dependencies
+
+The **`nmk-base`** plugin provides the **{ref}`sys.deps<sys.deps>`** task, which verifies system dependencies before running the full **`nmk`** build.
+
+These dependencies are declared through the **{ref}`systemDeps<systemDeps>`** configuration item.
+
+Example:
+```yaml
+systemDeps:
+    git:
+        apt: ["git"]
+        url: https://git-scm.com/downloads
+```
+
 ## Project information
 
 **`nmk`** plugins or project can override to the following items to give information about the project:

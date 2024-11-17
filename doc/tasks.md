@@ -249,9 +249,45 @@ The **`clean.out`** task will simply remove the {ref}`${outputDir}<outputDir>` f
 > 2022-02-20 14:37:54 (I) nmk 🏁 - Done
 > ```
 
+## Prologue tasks
+
+All tasks in this chapter are dependencies of the built-in **prologue** task (i.e. systematically executed before all tasks specified on the comand line).
+
+(sys.deps)=
+### **`sys.deps`** -- check for system dependencies
+
+| Property | Value/description |
+|-         |-
+| builder  | {py:class}`nmk_base.sysdeps.SystemDepsCheckBuilder`
+
+This task checks if system requirements (specified in {ref}`${systemDeps}<systemDeps>` item) are installed. If not, it displays install instructions and stops the build in error.
+
+The builder is called with the following parameters mapping:
+
+| Name | Value |
+|- |-
+| deps | **{ref}`${systemDeps}<systemDeps>`**
+
+> Example configuration:
+> ```yaml
+> systemDeps:
+>     git:
+>         apt: ["git"]
+>         url: https://git-scm.com/downloads
+> ```
+> If git is not installed:
+> ```
+> $ nmk sys.deps
+> 2024-11-22 07:40:22 (W)  [sys.deps] ❗ - Missing system dependencies: git
+> 2024-11-22 07:40:22 (W)  [sys.deps] ❗ - Install instructions:
+> 2024-11-22 07:40:22 (W)  [sys.deps] ❗ - * for global system install, use this command: "sudo apt install git"
+> 2024-11-22 07:40:22 (W)  [sys.deps] ❗ - * for "git" manual user install: see https://git-scm.com/downloads
+> 2024-11-22 07:40:22 (E) nmk 💀 - An error occurred during task sys.deps build: Please install missing system dependencies (see above)
+> ```
+
 ## Epilogue tasks
 
-All tasks in this chapter are dependencies of the built-in **{ref}`epilogue<epilogue>`** task (i.e. systematically executed after all specified tasks).
+All tasks in this chapter are dependencies of the built-in **epilogue** task (i.e. systematically executed after all tasks specified on the comand line).
 
 (git.dirty)=
 ### **`git.dirty`** -- check for dirty project folder

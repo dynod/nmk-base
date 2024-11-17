@@ -14,7 +14,7 @@ tasks:
     clean.out:
         description: Clean build output folder
         emoji: ":broom:.:file_folder:"
-        builder: nmk_base.output.CleanBuilder
+        builder: nmk_base.common.CleanBuilder
         params:
             path: ${outputDir}
         appendToDeps:

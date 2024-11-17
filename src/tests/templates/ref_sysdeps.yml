@@ -1,0 +1,8 @@
+refs:
+  - pip://nmk-base!plugin.yml
+
+config:
+  systemDeps:
+    unknown-cmd:
+      apt: ["unknown-cmd"]
+      url: https://unknown-cmd.com/downloads
