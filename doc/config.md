@@ -57,7 +57,7 @@ Plugins versions, indexed by names, to be displayed by **{ref}`version<version>`
 
 | Type          | Default value |
 |-              |-
-| dict[str,str] | {"nmk-base": "https://github.com/dynod/nmk/wiki/nmk-base-plugin"}
+| dict[str,str] | {"nmk-base": "https://nmk-base.readthedocs.io/"}
 
 Plugins help pages URLs indexed by names, to be displayed by **{ref}`help<help>`** task.
 

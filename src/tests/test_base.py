@@ -62,7 +62,7 @@ class TestBasePlugin(NmkBaseTester):
 
     def test_help(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["help"])
-        self.check_logs(" 👉 nmk     : https://github.com/dynod/nmk/wiki")
+        self.check_logs(" 👉 nmk     : https://nmk.readthedocs.io/")
 
     def test_tasks(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["tasks"])
