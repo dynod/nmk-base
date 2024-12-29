@@ -87,8 +87,8 @@ The **`help`** task will list the help page URL of **`nmk`** itself, plus all pl
 > ```
 > $ nmk help
 > 2022-02-20 14:42:24 (I) [help] 🆘 - Display online help links
-> 2022-02-20 14:42:24 (I) [help] 🆘 -  👉 nmk: https://github.com/dynod/nmk/wiki
-> 2022-02-20 14:42:24 (I) [help] 🆘 -  👉 base: https://github.com/dynod/nmk/wiki/nmk-base-plugin
+> 2022-02-20 14:42:24 (I) [help] 🆘 -  👉 nmk: https://nmk.readthedocs.io/
+> 2022-02-20 14:42:24 (I) [help] 🆘 -  👉 base: https://nmk-base.readthedocs.io/
 > 2022-02-20 14:42:24 (I) nmk 🏁 - Done
 > ```
 

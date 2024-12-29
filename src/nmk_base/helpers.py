@@ -60,7 +60,7 @@ class HelpBuilder(InfoBuilder):
         """
 
         # Displays all online help links
-        all_links = {"nmk": "https://github.com/dynod/nmk/wiki"}
+        all_links = {"nmk": "https://nmk.readthedocs.io/"}
         all_links.update(links)
         self.display_info(all_links)
 
