@@ -1,7 +1,8 @@
 config:
 
     # Venv dependencies list (direct packages dependencies)
-    venvPkgDeps: ["nmk-base"]  # Default: at least nmk-base itself, for buildenv initialization
+    venvPkgDeps:
+        - ${PACKAGESREFS}  # Default: all referenced plug-ins
 
     # Venv archives list (direct archive dependencies)
     venvArchiveDeps: []

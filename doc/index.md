@@ -10,6 +10,7 @@ tasks
 extend
 config
 contribs
+changelog
 ```
 
 ## Indices and tables
