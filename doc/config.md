@@ -180,7 +180,7 @@ Enablement flag for **{ref}`git.dirty<git.dirty>`** task (by default, returns Tr
 
 | Type      | Default value |
 |-          |-
-| list[str] | [ "nmk" ]
+| list[str] | **[${PACKAGESREFS}](https://nmk.readthedocs.io/en/stable/file.html#built-in-config-items)**<br> <br>*<span style="color:orange">Changed in version 1.0.1</span>* -- Previous value was `["nmk-base"]`
 
 List of python packages references to be installed in python venv (using [pip requirement specifiers syntax](https://pip.pypa.io/en/stable/reference/requirement-specifiers/)).
 

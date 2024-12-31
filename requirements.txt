@@ -9,18 +9,18 @@
 build
 buildenv
 Jinja2
-myst-parser
-nmk-base
+nmk-badges
+nmk-doc
+nmk-github
+nmk-python
 nmk-vscode
-nmk>=0.16.2
+nmk>=1.1.0
 pytest-cov
 pytest-multilog
 pytest-xdist
 ruff
 setuptools
-sphinx
 sphinx-autoapi
-sphinx_rtd_theme
 tomlkit
 wheel
 

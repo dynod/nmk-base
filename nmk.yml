@@ -25,7 +25,7 @@ config:
     # Nmk dependencies
     pythonPackageRequirements:
         - Jinja2
-        - nmk>=0.16.2
+        - nmk>=1.1.0
         - buildenv
         - tomlkit
 
