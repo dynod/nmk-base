@@ -23,9 +23,6 @@ config:
     # Venv state file
     venvState: ${outputDir}/requirements.txt
 
-    # Deprecated, will be removed in future version
-    venvPipArgs: ""
-
     # Template for merged requirements file
     venvRequirementsTemplate: ${BASEDIR}/templates/requirements.txt
 

@@ -27,7 +27,7 @@ class SystemDepsCheckBuilder(NmkTaskBuilder):
         # Something missing?
         if missing_deps:  # pragma: no branch
             # List missing commands
-            self.logger.warning(f'Missing system dependencies: {", ".join(list(missing_deps.keys()))}')
+            self.logger.warning(f"Missing system dependencies: {', '.join(list(missing_deps.keys()))}")
 
             # Just verify if current system has apt
             has_apt = shutil.which("apt") is not None

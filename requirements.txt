@@ -6,7 +6,6 @@
 # Package dependencies from nmk project files
 #
 
-build
 buildenv
 Jinja2
 nmk-badges
@@ -15,13 +14,7 @@ nmk-github
 nmk-python
 nmk-vscode
 nmk>=1.1.0
-pytest-cov
-pytest-multilog
-pytest-xdist
-ruff
-setuptools
 sphinx-autoapi
 tomlkit
-wheel
 
 
