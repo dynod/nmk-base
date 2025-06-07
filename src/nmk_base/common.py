@@ -175,7 +175,7 @@ class TomlFileBuilder(TemplateBuilder):
         Generates toml file from fragments and items
 
         :param fragment_files: List of fragment files (processed as Jinja templates) to be merged
-        :param items: Dict of toml items to be merged
+        :param items: Dict of toml items to be merged; only non-empty items are considered (no empty section will be added)
         :param plugin_name: Plugin name to be inserted in generated file heading comment
         :param kwargs: Map of keywords for templates rendering, indexed by name
         """
@@ -191,8 +191,8 @@ class TomlFileBuilder(TemplateBuilder):
                 raise ValueError(f"While loading toml file template ({f_path}): {e}") from e
             self._contribute(toml_file, fragment_doc.unwrap())
 
-        # Iterate on items contributed through yml project files (only ones contributing maps)
-        self._contribute(toml_file, {k: v for k, v in items.items() if isinstance(v, dict)})
+        # Iterate on items contributed through yml project files (only ones contributing non-empty dicts)
+        self._contribute(toml_file, {k: v for k, v in items.items() if (isinstance(v, dict) and len(v) > 0)})
 
         # Finally write config to output file
         doc = TOMLDocument()
