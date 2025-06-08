@@ -11,6 +11,7 @@ config:
         dummy:
             ymlContributedValue: foo
             someIntValue: 456
+            emptyMap: {}
         anotherSection:
             foo: bar
             arrayOfValues:

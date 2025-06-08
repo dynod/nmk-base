@@ -161,13 +161,16 @@ class TomlFileBuilder(TemplateBuilder):
                 if isinstance(v, list):
                     main[k].extend(self._check_paths(v))
                 # Map: recursive contribution
-                elif isinstance(v, dict):
+                elif isinstance(v, dict) and len(v) > 0:
                     self._contribute(main[k], v)
                 # Otherwise: replace
                 else:
                     main[k] = self._check_paths(v)
             else:
                 # New key
+                if (isinstance(v, (list, dict))) and len(v) == 0:
+                    # Ignore empty lists and dicts
+                    continue
                 main[k] = self._check_paths(v)
 
     def build(self, fragment_files: list[str], items: dict, plugin_name: str = "nmk-base", kwargs: dict[str, str] = None):
