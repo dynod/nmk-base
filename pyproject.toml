@@ -35,7 +35,7 @@ nmk = "nmk_base.buildenv:BuildEnvInit"
 
 [tool.setuptools.packages.find]
 where = ["src"]
-exclude = ["tests"]
+exclude = ["tests*"]
 namespaces = false
 
 [tool.setuptools.package-data]
@@ -46,6 +46,11 @@ file = "out/.pythonversion"
 
 [tool.distutils.bdist_wheel]
 plat-name = "any"
+
+[tool.pyright]
+include = ["src"]
+typeCheckingMode = "strict"
+reportMissingTypeStubs = false
 
 [tool.ruff]
 line-length = 160

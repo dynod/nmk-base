@@ -15,7 +15,7 @@ class ExeResolver(NmkStrConfigResolver):
     Resolver class for **venvPython** config item
     """
 
-    def get_value(self, name: str) -> list[str]:
+    def get_value(self, name: str) -> str:
         """
         Resolution logic: returns sys.executable
         """
@@ -27,7 +27,7 @@ class BinResolver(NmkStrConfigResolver):
     Resolver class for **venvBin** config item
     """
 
-    def get_value(self, name: str) -> list[str]:
+    def get_value(self, name: str) -> str:
         """
         Resolution logic: returns sys.executable parent folder
         """

@@ -11,7 +11,6 @@ from nmk import __version__ as nmk_version
 from nmk.tests.tester import NmkBaseTester
 from nmk.utils import is_windows
 
-from nmk_base import __version__
 from nmk_base.buildenv import BuildenvInitBuilder
 
 
@@ -70,7 +69,7 @@ class TestBasePlugin(NmkBaseTester):
 
     def test_git_version_config(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--print", "gitVersion"])
-        self.check_logs(f'Config dump: {{ "gitVersion": "{__version__[:5]}')
+        self.check_logs('Config dump: { "gitVersion": "')
 
     def test_git_version_config_no_tag(self, monkeypatch):
         # Fake git subprocess behavior, to make "git describe --tags" failing

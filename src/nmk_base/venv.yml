@@ -15,7 +15,8 @@ config:
         __resolver__: nmk_base.venvbuilder.FileDepsContentResolver
 
     # Venv folder name
-    venvName: venv
+    venvName:
+        __resolver__: nmk_base.backends.VenvNameResolver
 
     # Venv merged requirements file
     venvRequirements: requirements.txt
@@ -38,6 +39,10 @@ config:
     gitIgnoredFiles:
         - ${venvName}
 
+    # State if backend use requirements file
+    backendUseRequirements:
+        __resolver__: nmk_base.backends.BackendUseRequirementsResolver
+
 tasks:
 
     # Generate merged requirements file
@@ -52,6 +57,7 @@ tasks:
         params:
             template: ${venvRequirementsTemplate}
         builder: nmk_base.common.TemplateBuilder
+        if: ${backendUseRequirements}
 
     # Update venv from dependencies
     py.venv:
