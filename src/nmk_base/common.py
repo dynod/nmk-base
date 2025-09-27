@@ -81,49 +81,64 @@ class TemplateBuilder(NmkTaskBuilder):
         all_kw.update(kwargs)
         return Template(template_source).render(all_kw)
 
-    def build_from_template(self, template: Path, output: Path, kwargs: dict[str, str]) -> str:
+    def build_from_template(self, template: Path, output: Path, kwargs: dict[str, str], preserve_time: bool = False) -> str:
         """
         Generate file from template
 
         :param template: Path to template file to be rendered
         :param output: Path to output file to be generated
         :param kwargs: Map of keywords for templates rendering, indexed by name
+        :param preserve_time: States if the output file timestamp shall be preserved if the file content doesn't change
         :return: Rendered template string
         :throw: AssertionError if unknown keyword is referenced in template
         """
 
         # By default, keep system-defined line endings
         line_endings = None
-        if output.suffix is not None:  # pragma: no branch
+        if output.suffix:  # pragma: no branch
             # Check for forced line endings
             suffix = output.suffix.lower()
 
-            if suffix in self.model.config["linuxLineEndings"].value:
+            linuxLineEndings = self.model.config["linuxLineEndings"].value
+            windowsLineEndings = self.model.config["windowsLineEndings"].value
+            assert isinstance(linuxLineEndings, list)
+            assert isinstance(windowsLineEndings, list)
+            if suffix in linuxLineEndings:
                 # Always generate with Linux line endings
                 line_endings = "\n"
 
-            if suffix in self.model.config["windowsLineEndings"].value:
+            if suffix in windowsLineEndings:
                 # Always generate with Windows line endings
                 line_endings = "\r\n"
 
-        # Load template
-        self.logger.debug(f"Generating {output} from template {template}")
-        with output.open("w", newline=line_endings) as o:
-            # Render it
-            out = self.render_template(template, kwargs)
-            o.write(out)
-            return out
+        # Read previous output (only if preserve_time is set)
+        previous_content = ""
+        if output.is_file() and preserve_time:
+            with output.open(newline=line_endings) as o:
+                previous_content = o.read()
 
-    def build(self, template: str, kwargs: dict[str, str] = None):
+        # Load template and render it
+        self.logger.debug(f"Generating {output} from template {template}")
+        rendered_content = self.render_template(template, kwargs)
+
+        # Write it to output if necessary
+        if rendered_content != previous_content:
+            with output.open("w", newline=line_endings) as o:
+                # Render it
+                o.write(rendered_content)
+                return rendered_content
+
+    def build(self, template: str, kwargs: Union[dict[str, str], None] = None, preserve_time: bool = False):  # pyright: ignore[reportIncompatibleMethodOverride]
         """
         Default build behavior: generate main output file from provided template
 
         :param template: Path to the Jinja template to use for generation
         :param kwargs: Map of keywords for templates rendering, indexed by name
+        :param preserve_time: States if the output file timestamp shall be preserved if the file content doesn't change
         """
 
         # Just build from template
-        self.build_from_template(Path(template), self.main_output, kwargs if kwargs else {})
+        self.build_from_template(Path(template), self.main_output, kwargs if kwargs else {}, preserve_time=preserve_time)
 
 
 class TomlFileBuilder(TemplateBuilder):

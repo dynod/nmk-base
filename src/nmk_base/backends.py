@@ -6,20 +6,19 @@ from pathlib import Path
 
 from nmk._internal.envbackend import EnvBackend, EnvBackendFactory
 from nmk.model.keys import NmkRootConfig
-from nmk.model.resolver import NmkBoolConfigResolver, NmkConfigResolver, NmkStrConfigResolver
+from nmk.model.model import NmkModel
+from nmk.model.resolver import NmkBoolConfigResolver, NmkStrConfigResolver
 
 
 # Common logic to access to the backend from the project path
-class _EnvBackendResolver(NmkConfigResolver):
-    @property
-    def backend(self) -> EnvBackend:
-        # Resolve backend from project path
-        v = self.model.config[NmkRootConfig.PROJECT_DIR].value
-        assert isinstance(v, Path)
-        return EnvBackendFactory.detect(v)
+def get_backend(model: NmkModel) -> EnvBackend:
+    # Resolve backend from project path
+    v = model.config[NmkRootConfig.PROJECT_DIR].value
+    assert isinstance(v, Path)
+    return EnvBackendFactory.detect(v)
 
 
-class VenvNameResolver(NmkStrConfigResolver, _EnvBackendResolver):
+class VenvNameResolver(NmkStrConfigResolver):
     """
     Resolver for the virtual environment folder name from the backend.
     """
@@ -30,10 +29,10 @@ class VenvNameResolver(NmkStrConfigResolver, _EnvBackendResolver):
 
         :param name: The config name
         """
-        return self.backend.venv_name
+        return get_backend(self.model).venv_name
 
 
-class BackendUseRequirementsResolver(NmkBoolConfigResolver, _EnvBackendResolver):
+class BackendUseRequirementsResolver(NmkBoolConfigResolver):
     """
     Resolver to know if the backend uses requirements files.
     """
@@ -44,4 +43,4 @@ class BackendUseRequirementsResolver(NmkBoolConfigResolver, _EnvBackendResolver)
 
         :param name: The config name
         """
-        return self.backend.use_requirements
+        return get_backend(self.model).use_requirements

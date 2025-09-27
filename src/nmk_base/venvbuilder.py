@@ -5,9 +5,12 @@ Python module for **nmk-base** venv tasks.
 import sys
 from pathlib import Path
 
+from nmk.errors import NmkStopHereError
 from nmk.model.builder import NmkTaskBuilder
 from nmk.model.resolver import NmkListConfigResolver, NmkStrConfigResolver
 from nmk.utils import run_pip
+
+from .backends import get_backend
 
 
 class ExeResolver(NmkStrConfigResolver):
@@ -44,10 +47,12 @@ class FileDepsContentResolver(NmkListConfigResolver):
         Resolution logic: merge content from files listed in **venvFileDeps** config item
         """
 
-        file_requirements = []
+        file_requirements: list[str] = []
 
         # Merge all files content
-        for req_file in map(Path, self.model.config["venvFileDeps"].value):
+        req_file_list = self.model.config["venvFileDeps"].value
+        assert isinstance(req_file_list, list)
+        for req_file in map(Path, req_file_list):
             with req_file.open() as f:
                 # Append file content + one empty line
                 file_requirements.extend(f.read().splitlines(keepends=False))
@@ -63,11 +68,24 @@ class VenvUpdateBuilder(NmkTaskBuilder):
 
     def build(self, pip_args: str = ""):
         """
-        Build logic for **py.venv** task:
-        calls **pip install** with generated requirements file, then **pip freeze** to list all dependencies in secondary output file.
+        Build logic for **py.venv** task
+
+        This logic depends on the backend used:
+        - if the backend is not mutable, it just warns the user that requirements have been updated (+exit properly)
+        - if the backend is mutable, it calls **pip install** with generated requirements file,
+          then **pip freeze** to list all dependencies in secondary output file.
 
         :param pip_args: Extra arguments to be used when invoking **pip install**
         """
+
+        # If backend is not mutable, just stop here
+        backend = get_backend(self.model)
+        if not backend.is_mutable():
+            self.logger.warning("Requirements have been updated; please exit and re-enter the environment to apply changes.")
+            for output in self.outputs:
+                # Touch outputs to not be notified next time
+                output.touch()
+            raise NmkStopHereError()
 
         # Prepare outputs
         venv_folder = self.main_output

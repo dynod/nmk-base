@@ -7,10 +7,12 @@ import time
 from pathlib import Path
 
 import pytest
+from _pytest.monkeypatch import MonkeyPatch
 from nmk import __version__ as nmk_version
 from nmk.tests.tester import NmkBaseTester
 from nmk.utils import is_windows
 
+import nmk_base.venvbuilder as nmk_venvbuilder
 from nmk_base.buildenv import BuildenvInitBuilder
 
 
@@ -71,7 +73,7 @@ class TestBasePlugin(NmkBaseTester):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--print", "gitVersion"])
         self.check_logs('Config dump: { "gitVersion": "')
 
-    def test_git_version_config_no_tag(self, monkeypatch):
+    def test_git_version_config_no_tag(self, monkeypatch: MonkeyPatch):
         # Fake git subprocess behavior, to make "git describe --tags" failing
         real_run = subprocess.run
         monkeypatch.setattr(
@@ -86,7 +88,7 @@ class TestBasePlugin(NmkBaseTester):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--print", "gitVersion"])
         self.check_logs('Config dump: { "gitVersion": "0.0.0-')
 
-    def test_git_version_config_no_git(self, monkeypatch):
+    def test_git_version_config_no_git(self, monkeypatch: MonkeyPatch):
         # Fake git subprocess behavior, to make all "git" commands failing
         monkeypatch.setattr(
             subprocess, "run", lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(all_args, 1, "", "")
@@ -104,13 +106,13 @@ class TestBasePlugin(NmkBaseTester):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["git.version"])
         self.check_logs("Persisted git version already up to date")
 
-    def test_git_clean(self, monkeypatch):
+    def test_git_clean(self, monkeypatch: MonkeyPatch):
         # Stub to avoid real git clean command executed
         monkeypatch.setattr(subprocess, "run", lambda args, cwd, check: None)
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["git.clean"])
         self.check_logs("Clean all git ignored files")
 
-    def test_git_dirty(self, monkeypatch):
+    def test_git_dirty(self, monkeypatch: MonkeyPatch):
         # Stub to have "git status" command with empty return
         monkeypatch.setattr(
             subprocess, "run", lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(all_args, 0, "", "")
@@ -155,7 +157,7 @@ class TestBasePlugin(NmkBaseTester):
             assert "SomeFakePackage" in content
             assert "somearchive.tar.gz" in content
 
-    def test_venv_simple_update(self, monkeypatch):
+    def test_venv_simple_update(self, monkeypatch: MonkeyPatch):
         # Fake pip subprocess behavior
         monkeypatch.setattr(
             subprocess,
@@ -174,6 +176,23 @@ class TestBasePlugin(NmkBaseTester):
         assert output_req.exists()
         with output_req.open() as f:
             assert "somePackage==1.2.3" in f.read()
+
+    def test_venv_not_mutable(self, monkeypatch: MonkeyPatch):
+        # Fake non-mutable backend
+        class FakeBackend:
+            def is_mutable(self) -> bool:
+                return False
+
+        monkeypatch.setattr(nmk_venvbuilder, "get_backend", lambda model: FakeBackend())  # pyright: ignore[reportUnknownLambdaType, reportUnknownArgumentType]
+
+        # Test a simple venv update
+        project = self.prepare_project("ref_base.yml")
+        self.nmk(project, extra_args=["py.venv"])
+        self.check_logs("Requirements have been updated; please exit and re-enter the environment to apply changes.")
+
+        # Next time, task should be skipped
+        self.nmk(project, extra_args=["py.venv"])
+        self.check_logs("[py.venv]] DEBUG 🐛 - Task skipped, nothing to do")
 
     def test_git_ignore(self):
         # Try 1: generate a new .gitignore
@@ -229,7 +248,7 @@ class TestBasePlugin(NmkBaseTester):
         assert (self.test_folder / "out" / ".gitattributes").is_file()
         self.check_logs("Create new .gitattributes file")
 
-    def test_buildenv_init(self, monkeypatch):
+    def test_buildenv_init(self, monkeypatch: MonkeyPatch):
         # Fake pip subprocess behavior
         monkeypatch.setattr(
             subprocess,

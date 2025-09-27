@@ -56,6 +56,7 @@ tasks:
         output: ${PROJECTDIR}/${venvRequirements}
         params:
             template: ${venvRequirementsTemplate}
+            preserve_time: true
         builder: nmk_base.common.TemplateBuilder
         if: ${backendUseRequirements}
 
@@ -72,3 +73,4 @@ tasks:
             - ${venvState}
         input: ${PROJECTDIR}/${venvRequirements}
         builder: nmk_base.venvbuilder.VenvUpdateBuilder
+        if: ${backendUseRequirements}
