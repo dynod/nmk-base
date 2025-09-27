@@ -7,7 +7,8 @@ config:
     buildenvInitForce: False
 
     # Enable buildenv scripts refresh
-    buildenvRefresh: True
+    buildenvRefresh:
+        __resolver__: nmk_base.backends.BuildenvRefreshResolver
 
 tasks:
     # Buildenv init
