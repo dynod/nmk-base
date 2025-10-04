@@ -38,6 +38,12 @@ config:
                     nmk: nmk_base._buildenv.legacy:BuildEnvInit
                 buildenv_extension:  # buildenv >=2 extension
                     nmk: nmk_base._buildenv.extension:NmkBaseBuildEnvExtension
+        tool:
+            coverage:
+                run:
+                    omit:
+                        - src/nmk_base/buildenv.py # Legacy buildenv scripts refresh code
+                        - src/nmk_base/_buildenv/legacy.py # Legacy buildenv extension code
 
     # Github issues logged in nmk project
     githubIssuesRepo: nmk

@@ -1,7 +1,6 @@
 # Tests for base plugin
 import os
 import re
-import shutil
 import subprocess
 import time
 from pathlib import Path
@@ -13,7 +12,6 @@ from nmk.tests.tester import NmkBaseTester
 from nmk.utils import is_windows
 
 import nmk_base.venvbuilder as nmk_venvbuilder
-from nmk_base.buildenv import BuildenvInitBuilder
 
 
 class TestBasePlugin(NmkBaseTester):
@@ -157,14 +155,30 @@ class TestBasePlugin(NmkBaseTester):
             assert "SomeFakePackage" in content
             assert "somearchive.tar.gz" in content
 
+    def test_requirements_changes(self, monkeypatch: MonkeyPatch):
+        # Simulate a non-mutable backend
+        try:
+            from buildenv2._backends.pip import LegacyPipBackend as EnvBackend
+        except ImportError:
+            from nmk._internal.envbackend_legacy import EnvBackend
+        monkeypatch.setattr(EnvBackend, "is_mutable", lambda slf: False)  # pyright: ignore[reportUnknownLambdaType, reportUnknownArgumentType]
+
+        # First run to display warning about non-mutable backend
+        p = self.prepare_project("ref_reqs.yml")
+        self.nmk(p, extra_args=["py.venv"])
+        self.check_logs("Requirements have been updated; please exit and re-enter the environment to apply changes.")
+
+        # Second run should just skip the task
+        p.touch()
+        self.nmk(p, extra_args=["py.venv"])
+        self.check_logs("[py.venv]] DEBUG 🐛 - Requirements are up to date, nothing to do")
+
     def test_venv_simple_update(self, monkeypatch: MonkeyPatch):
         # Fake pip subprocess behavior
         monkeypatch.setattr(
             subprocess,
             "run",
-            lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(
-                all_args, 0, "# Fake packages list\nsomePackage==1.2.3", ""
-            ),
+            lambda all_args, **kwargs: subprocess.CompletedProcess(all_args, 0, "# Fake packages list\nsomePackage==1.2.3", ""),
         )
 
         # Test a simple venv update
@@ -248,37 +262,6 @@ class TestBasePlugin(NmkBaseTester):
         assert (self.test_folder / "out" / ".gitattributes").is_file()
         self.check_logs("Create new .gitattributes file")
 
-    def test_buildenv_init(self, monkeypatch: MonkeyPatch):
-        # Fake pip subprocess behavior
-        monkeypatch.setattr(
-            subprocess,
-            "run",
-            lambda all_args, check=False, capture_output=False, text=False, encoding="utf-8", cwd=None, errors=None, env=None: subprocess.CompletedProcess(
-                all_args, 0, "# Fake packages list\nsomePackage==1.2.3", ""
-            ),
-        )
-
-        # Fake venv path
-        fake_venv = self.test_folder / "fakeVenv"
-        if fake_venv.is_dir():
-            shutil.rmtree(fake_venv)
-        fake_venv_bin = fake_venv / ("Scripts" if is_windows() else "bin")
-        fake_venv_activate = fake_venv_bin / "activate.d"
-        fake_venv_activate.mkdir(parents=True, exist_ok=True)
-        (fake_venv_activate / "00_init.sh").touch()
-        (fake_venv_activate / "00_init.bat").touch()
-        monkeypatch.setattr(BuildenvInitBuilder, "_venv_bin_path", lambda _: fake_venv_bin)
-
-        # Force buildenv loading scripts
-        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["buildenv", "--config", '{"buildenvInitForce": true}'])
-        assert (self.test_folder / "buildenv.sh").is_file()
-        assert (self.test_folder / "buildenv.cmd").is_file()
-        assert (self.test_folder / "buildenv-loader.py").is_file()
-
-        # Touch a fake project file, and try again
-        (self.test_folder / "nmk.yml").touch()
-        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["buildenv", "--config", '{"buildenvInitForce": true}'])
-
     def test_dirty_check(self):
         # Get current value
         already_in_ci = "CI" in os.environ
@@ -324,3 +307,11 @@ class TestBasePlugin(NmkBaseTester):
         else:
             with pytest.raises(AssertionError, match="Missing patterns: .*"):
                 self.check_logs(apt_pattern)
+
+    def test_skipped_buildenv_init(self):
+        # Check buildenv loading scripts kipped task
+        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["buildenv", "--skip", "py.venv"])
+        assert not (self.test_folder / "buildenv.sh").is_file()
+        assert not (self.test_folder / "buildenv.cmd").is_file()
+        assert not (self.test_folder / "buildenv-loader.py").is_file()
+        self.check_logs("[buildenv]] DEBUG 🐛 - Task skipped, nothing to do")

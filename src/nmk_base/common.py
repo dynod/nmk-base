@@ -9,6 +9,7 @@ from typing import Any, Union
 
 from jinja2 import Environment, Template, meta
 from nmk.model.builder import NmkTaskBuilder
+from nmk.model.config import NmkStaticConfig
 from nmk.model.keys import NmkRootConfig
 from nmk.utils import run_with_logs
 from tomlkit import TOMLDocument, comment, loads
@@ -81,14 +82,14 @@ class TemplateBuilder(NmkTaskBuilder):
         all_kw.update(kwargs)
         return Template(template_source).render(all_kw)
 
-    def build_from_template(self, template: Path, output: Path, kwargs: dict[str, str], preserve_time: bool = False) -> str:
+    def build_from_template(self, template: Path, output: Path, kwargs: dict[str, str], file_updated_info: Union[str, None] = None) -> str:
         """
         Generate file from template
 
         :param template: Path to template file to be rendered
         :param output: Path to output file to be generated
         :param kwargs: Map of keywords for templates rendering, indexed by name
-        :param preserve_time: States if the output file timestamp shall be preserved if the file content doesn't change
+        :param file_updated_info: Config item name where to store information that output file has been updated
         :return: Rendered template string
         :throw: AssertionError if unknown keyword is referenced in template
         """
@@ -111,9 +112,9 @@ class TemplateBuilder(NmkTaskBuilder):
                 # Always generate with Windows line endings
                 line_endings = "\r\n"
 
-        # Read previous output (only if preserve_time is set)
+        # Read previous output (only if file_updated_info is set)
         previous_content = ""
-        if output.is_file() and preserve_time:
+        if output.is_file() and file_updated_info:
             with output.open(newline=line_endings) as o:
                 previous_content = o.read()
 
@@ -121,24 +122,33 @@ class TemplateBuilder(NmkTaskBuilder):
         self.logger.debug(f"Generating {output} from template {template}")
         rendered_content = self.render_template(template, kwargs)
 
-        # Write it to output if necessary
-        if rendered_content != previous_content:
-            with output.open("w", newline=line_endings) as o:
-                # Render it
-                o.write(rendered_content)
-                return rendered_content
+        # Write it to output
+        with output.open("w", newline=line_endings) as o:
+            o.write(rendered_content)
 
-    def build(self, template: str, kwargs: Union[dict[str, str], None] = None, preserve_time: bool = False):  # pyright: ignore[reportIncompatibleMethodOverride]
+        # Store "updated" information
+        if file_updated_info:
+            assert file_updated_info in self.model.config, f'Unknown referenced config item to store "file updated" information: {file_updated_info}'
+            file_updated_info_item = self.model.config[file_updated_info]
+            assert isinstance(file_updated_info_item, NmkStaticConfig) and (file_updated_info_item.value_type is bool), (
+                f"Expected static boolean config item for {file_updated_info}"
+            )
+            file_updated_info_item.static_value = rendered_content != previous_content
+            self.logger.debug(f"Updated config item: {file_updated_info}={file_updated_info_item.value}")
+
+        return rendered_content
+
+    def build(self, template: str, kwargs: Union[dict[str, str], None] = None, file_updated_info: Union[str, None] = None):  # pyright: ignore[reportIncompatibleMethodOverride]
         """
         Default build behavior: generate main output file from provided template
 
         :param template: Path to the Jinja template to use for generation
         :param kwargs: Map of keywords for templates rendering, indexed by name
-        :param preserve_time: States if the output file timestamp shall be preserved if the file content doesn't change
+        :param file_updated_info: Config item name where to store information that output file has been updated
         """
 
         # Just build from template
-        self.build_from_template(Path(template), self.main_output, kwargs if kwargs else {}, preserve_time=preserve_time)
+        self.build_from_template(Path(template), self.main_output, kwargs if kwargs else {}, file_updated_info=file_updated_info)
 
 
 class TomlFileBuilder(TemplateBuilder):

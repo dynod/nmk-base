@@ -43,6 +43,9 @@ config:
     backendUseRequirements:
         __resolver__: nmk_base.backends.BackendUseRequirementsResolver
 
+    # Buffer item for "requirements file re-generated" info
+    venRequirementsUpdated: false
+
 tasks:
 
     # Generate merged requirements file
@@ -56,7 +59,7 @@ tasks:
         output: ${PROJECTDIR}/${venvRequirements}
         params:
             template: ${venvRequirementsTemplate}
-            preserve_time: true
+            file_updated_info: venRequirementsUpdated
         builder: nmk_base.common.TemplateBuilder
         if: ${backendUseRequirements}
 
@@ -73,4 +76,6 @@ tasks:
             - ${venvState}
         input: ${PROJECTDIR}/${venvRequirements}
         builder: nmk_base.venvbuilder.VenvUpdateBuilder
+        params:
+            requirements_updated: ${venRequirementsUpdated}
         if: ${backendUseRequirements}

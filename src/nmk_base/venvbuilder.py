@@ -66,7 +66,7 @@ class VenvUpdateBuilder(NmkTaskBuilder):
     Builder for **py.venv** task
     """
 
-    def build(self, pip_args: str = ""):
+    def build(self, pip_args: str = "", requirements_updated: bool = False):
         """
         Build logic for **py.venv** task
 
@@ -75,28 +75,32 @@ class VenvUpdateBuilder(NmkTaskBuilder):
         - if the backend is mutable, it calls **pip install** with generated requirements file,
           then **pip freeze** to list all dependencies in secondary output file.
 
-        :param pip_args: Extra arguments to be used when invoking **pip install**
+        :param pip_args: Extra arguments to be used when invoking **pip install**; deprecated, not used anymore
+        :param requirements_updated: State if requirements file content was actually updated
         """
 
         # If backend is not mutable, just stop here
         backend = get_backend(self.model)
         if not backend.is_mutable():
-            self.logger.warning("Requirements have been updated; please exit and re-enter the environment to apply changes.")
+            # Touch outputs to not be notified next time
             for output in self.outputs:
-                # Touch outputs to not be notified next time
                 output.touch()
-            raise NmkStopHereError()
+
+            # Were requirements *really* updated?
+            if requirements_updated:
+                self.logger.warning("Requirements have been updated; please exit and re-enter the environment to apply changes.")
+                raise NmkStopHereError()
+            else:
+                # Nothing to do
+                self.logger.debug("Requirements are up to date, nothing to do")
+                return
 
         # Prepare outputs
         venv_folder = self.main_output
         venv_status = self.outputs[1]
 
         # Call pip and touch output folder
-        run_pip(
-            ["install"] + (["-r"] if self.main_input.suffix == ".txt" else []) + [str(self.main_input)],
-            logger=self.logger,
-            extra_args=pip_args + " " + self.model.pip_args,
-        )
+        backend.add_packages((["-r"] if self.main_input.suffix == ".txt" else []) + [str(self.main_input)])
         venv_folder.touch()
 
         # Dump installed packages
