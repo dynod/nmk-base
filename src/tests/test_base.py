@@ -178,7 +178,7 @@ class TestBasePlugin(NmkBaseTester):
         monkeypatch.setattr(
             subprocess,
             "run",
-            lambda all_args, **kwargs: subprocess.CompletedProcess(all_args, 0, "# Fake packages list\nsomePackage==1.2.3", ""),
+            lambda all_args, **kwargs: subprocess.CompletedProcess(all_args, 0, "# Fake packages list\nsomePackage==1.2.3", ""),  # type: ignore
         )
 
         # Test a simple venv update
@@ -189,7 +189,7 @@ class TestBasePlugin(NmkBaseTester):
         output_req = self.test_folder / "out" / "requirements.txt"
         assert output_req.exists()
         with output_req.open() as f:
-            assert "somePackage==1.2.3" in f.read()
+            assert "rich==" in f.read()
 
     def test_venv_not_mutable(self, monkeypatch: MonkeyPatch):
         # Fake non-mutable backend

@@ -8,7 +8,6 @@ from pathlib import Path
 from nmk.errors import NmkStopHereError
 from nmk.model.builder import NmkTaskBuilder
 from nmk.model.resolver import NmkListConfigResolver, NmkStrConfigResolver
-from nmk.utils import run_pip
 
 from .backends import get_backend
 
@@ -104,6 +103,4 @@ class VenvUpdateBuilder(NmkTaskBuilder):
         venv_folder.touch()
 
         # Dump installed packages
-        pkg_list = run_pip(["freeze"], logger=self.logger)
-        with venv_status.open("w") as f:
-            f.write(pkg_list)
+        backend.lock(venv_status)
