@@ -5,7 +5,6 @@ Python module for **nmk-base** venv tasks.
 import sys
 from pathlib import Path
 
-from nmk.errors import NmkStopHereError
 from nmk.model.builder import NmkTaskBuilder
 from nmk.model.resolver import NmkListConfigResolver, NmkStrConfigResolver
 
@@ -81,26 +80,21 @@ class VenvUpdateBuilder(NmkTaskBuilder):
         # If backend is not mutable, just stop here
         backend = get_backend(self.model)
         if not backend.is_mutable():
-            # Touch outputs to not be notified next time
-            for output in self.outputs:
-                output.touch()
-
             # Were requirements *really* updated?
             if requirements_updated:
-                self.logger.warning("Requirements have been updated; please exit and re-enter the environment to apply changes.")
-                raise NmkStopHereError()
+                self.logger.warning("Requirements have been updated; please:")
+                self.logger.warning("-- either exit and re-enter the environment to apply changes")
+                self.logger.warning("-- or call 'buildenv2 upgrade' command to spawn a new upgraded environment")
+                raise RuntimeError("Build stopped")
             else:
                 # Nothing to do
                 self.logger.debug("Requirements are up to date, nothing to do")
-                return
-
-        # Prepare outputs
-        venv_folder = self.main_output
-        venv_status = self.outputs[1]
-
-        # Call pip and touch output folder
-        backend.add_packages((["-r"] if self.main_input.suffix == ".txt" else []) + [str(self.main_input)])
-        venv_folder.touch()
+                self.main_output.touch()
+        else:
+            # Delegate to backend
+            backend.upgrade()
+            self.main_output.touch()
 
         # Dump installed packages
+        venv_status = self.outputs[1]
         backend.lock(venv_status)

@@ -165,8 +165,8 @@ class TestBasePlugin(NmkBaseTester):
 
         # First run to display warning about non-mutable backend
         p = self.prepare_project("ref_reqs.yml")
-        self.nmk(p, extra_args=["py.venv"])
-        self.check_logs("Requirements have been updated; please exit and re-enter the environment to apply changes.")
+        self.nmk(p, extra_args=["py.venv"], expected_error="An error occurred during task py.venv build: Build stopped")
+        self.check_logs("Requirements have been updated")
 
         # Second run should just skip the task
         p.touch()
@@ -197,16 +197,15 @@ class TestBasePlugin(NmkBaseTester):
             def is_mutable(self) -> bool:
                 return False
 
+            def lock(self, venv_status: Path) -> None:
+                pass
+
         monkeypatch.setattr(nmk_venvbuilder, "get_backend", lambda model: FakeBackend())  # pyright: ignore[reportUnknownLambdaType, reportUnknownArgumentType]
 
         # Test a simple venv update
         project = self.prepare_project("ref_base.yml")
-        self.nmk(project, extra_args=["py.venv"])
-        self.check_logs("Requirements have been updated; please exit and re-enter the environment to apply changes.")
-
-        # Next time, task should be skipped
-        self.nmk(project, extra_args=["py.venv"])
-        self.check_logs("[py.venv]] DEBUG 🐛 - Task skipped, nothing to do")
+        self.nmk(project, extra_args=["py.venv"], expected_error="An error occurred during task py.venv build: Build stopped")
+        self.check_logs("Requirements have been updated")
 
     def test_git_ignore(self):
         # Try 1: generate a new .gitignore
