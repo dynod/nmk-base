@@ -64,7 +64,7 @@ class VenvUpdateBuilder(NmkTaskBuilder):
     Builder for **py.venv** task
     """
 
-    def build(self, pip_args: str = "", requirements_updated: bool = False):
+    def build(self, pip_args: str = "", requirements_updated: bool = False, is_ci: bool = False):
         """
         Build logic for **py.venv** task
 
@@ -85,7 +85,9 @@ class VenvUpdateBuilder(NmkTaskBuilder):
                 self.logger.warning("Requirements have been updated; please:")
                 self.logger.warning("-- either exit and re-enter the environment to apply changes")
                 self.logger.warning("-- or call 'buildenv2 upgrade' command to spawn a new upgraded environment")
-                raise RuntimeError("Build stopped")
+                if is_ci:
+                    # On CI, fail build as we can't automate sub-shell spawning
+                    raise RuntimeError("Build stopped")
             else:
                 # Nothing to do
                 self.logger.debug("Requirements are up to date, nothing to do")

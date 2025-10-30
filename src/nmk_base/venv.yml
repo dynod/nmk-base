@@ -78,4 +78,5 @@ tasks:
         builder: nmk_base.venvbuilder.VenvUpdateBuilder
         params:
             requirements_updated: ${venRequirementsUpdated}
+            is_ci: ${gitEnableDirtyCheck}
         if: ${backendUseRequirements}

@@ -165,12 +165,12 @@ class TestBasePlugin(NmkBaseTester):
 
         # First run to display warning about non-mutable backend
         p = self.prepare_project("ref_reqs.yml")
-        self.nmk(p, extra_args=["py.venv"], expected_error="An error occurred during task py.venv build: Build stopped")
+        self.nmk(p, extra_args=["py.venv", "--config", '{"gitEnableDirtyCheck":false}'])
         self.check_logs("Requirements have been updated")
 
         # Second run should just skip the task
         p.touch()
-        self.nmk(p, extra_args=["py.venv"])
+        self.nmk(p, extra_args=["py.venv", "--config", '{"gitEnableDirtyCheck":false}'])
         self.check_logs("[py.venv]] DEBUG 🐛 - Requirements are up to date, nothing to do")
 
     def test_venv_simple_update(self, monkeypatch: MonkeyPatch):
@@ -204,7 +204,11 @@ class TestBasePlugin(NmkBaseTester):
 
         # Test a simple venv update
         project = self.prepare_project("ref_base.yml")
-        self.nmk(project, extra_args=["py.venv"], expected_error="An error occurred during task py.venv build: Build stopped")
+        self.nmk(
+            project,
+            extra_args=["py.venv", "--config", '{"gitEnableDirtyCheck":true}'],
+            expected_error="An error occurred during task py.venv build: Build stopped",
+        )
         self.check_logs("Requirements have been updated")
 
     def test_git_ignore(self):
