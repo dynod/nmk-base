@@ -8,8 +8,6 @@ from pathlib import Path
 from nmk.model.builder import NmkTaskBuilder
 from nmk.model.resolver import NmkListConfigResolver, NmkStrConfigResolver
 
-from .backends import get_backend
-
 
 class ExeResolver(NmkStrConfigResolver):
     """
@@ -70,15 +68,15 @@ class VenvUpdateBuilder(NmkTaskBuilder):
 
         This logic depends on the backend used:
         - if the backend is not mutable, it just warns the user that requirements have been updated (+exit properly)
-        - if the backend is mutable, it calls **pip install** with generated requirements file,
-          then **pip freeze** to list all dependencies in secondary output file.
+        - if the backend is mutable, it simply calls backend upgrade logic to apply changes,
+        In all cases, all dependencies are listed in secondary output file.
 
         :param pip_args: Extra arguments to be used when invoking **pip install**; deprecated, not used anymore
         :param requirements_updated: State if requirements file content was actually updated
         """
 
         # If backend is not mutable, just stop here
-        backend = get_backend(self.model)
+        backend = self.model.env_backend
         if not backend.is_mutable():
             # Were requirements *really* updated?
             if requirements_updated:
@@ -94,7 +92,7 @@ class VenvUpdateBuilder(NmkTaskBuilder):
                 self.main_output.touch()
         else:
             # Delegate to backend
-            backend.upgrade()
+            backend.upgrade(full=False)
             self.main_output.touch()
 
         # Dump installed packages

@@ -8,10 +8,9 @@ from pathlib import Path
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 from nmk import __version__ as nmk_version
+from nmk._internal.envbackend import EnvBackendFactory
 from nmk.tests.tester import NmkBaseTester
 from nmk.utils import is_windows
-
-import nmk_base.venvbuilder as nmk_venvbuilder
 
 
 class TestBasePlugin(NmkBaseTester):
@@ -178,7 +177,7 @@ class TestBasePlugin(NmkBaseTester):
         monkeypatch.setattr(
             subprocess,
             "run",
-            lambda all_args, **kwargs: subprocess.CompletedProcess(all_args, 0, "# Fake packages list\nsomePackage==1.2.3", ""),  # type: ignore
+            lambda args, **kwargs: subprocess.CompletedProcess(args, 0, "# Fake packages list\nsomePackage==1.2.3", ""),  # type: ignore
         )
 
         # Test a simple venv update
@@ -197,10 +196,18 @@ class TestBasePlugin(NmkBaseTester):
             def is_mutable(self) -> bool:
                 return False
 
+            @property
+            def use_requirements(self) -> bool:
+                return True
+
+            @property
+            def venv_name(self) -> str:
+                return "venv"
+
             def lock(self, venv_status: Path) -> None:
                 pass
 
-        monkeypatch.setattr(nmk_venvbuilder, "get_backend", lambda model: FakeBackend())  # pyright: ignore[reportUnknownLambdaType, reportUnknownArgumentType]
+        monkeypatch.setattr(EnvBackendFactory, "detect", lambda *args, **kwargs: FakeBackend())  # pyright: ignore[reportUnknownLambdaType, reportUnknownArgumentType]
 
         # Test a simple venv update
         project = self.prepare_project("ref_base.yml")

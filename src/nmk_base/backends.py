@@ -2,20 +2,7 @@
 Python module for **nmk-base** env backends handling.
 """
 
-from pathlib import Path
-
-from nmk._internal.envbackend import EnvBackend, EnvBackendFactory
-from nmk.model.keys import NmkRootConfig
-from nmk.model.model import NmkModel
 from nmk.model.resolver import NmkBoolConfigResolver, NmkStrConfigResolver
-
-
-# Common logic to access to the backend from the project path
-def get_backend(model: NmkModel) -> EnvBackend:
-    # Resolve backend from project path
-    v = model.config[NmkRootConfig.PROJECT_DIR].value
-    assert isinstance(v, Path)
-    return EnvBackendFactory.detect(v)
 
 
 class VenvNameResolver(NmkStrConfigResolver):
@@ -29,7 +16,7 @@ class VenvNameResolver(NmkStrConfigResolver):
 
         :param name: The config name
         """
-        return get_backend(self.model).venv_name
+        return self.model.env_backend.venv_name
 
 
 class BackendUseRequirementsResolver(NmkBoolConfigResolver):
@@ -43,7 +30,7 @@ class BackendUseRequirementsResolver(NmkBoolConfigResolver):
 
         :param name: The config name
         """
-        return get_backend(self.model).use_requirements
+        return self.model.env_backend.use_requirements
 
 
 class BuildenvRefreshResolver(NmkBoolConfigResolver):
@@ -57,4 +44,4 @@ class BuildenvRefreshResolver(NmkBoolConfigResolver):
 
         :param name: The config name
         """
-        return get_backend(self.model).is_legacy()
+        return self.model.env_backend.is_legacy()
