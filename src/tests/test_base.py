@@ -184,7 +184,6 @@ class TestBasePlugin(NmkBaseTester):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["py.venv"])
 
         # Verify output files
-        assert (self.test_folder / "venv").exists()
         output_req = self.test_folder / "out" / "requirements.txt"
         assert output_req.exists()
         with output_req.open() as f:
@@ -193,6 +192,9 @@ class TestBasePlugin(NmkBaseTester):
     def test_venv_not_mutable(self, monkeypatch: MonkeyPatch):
         # Fake non-mutable backend
         class FakeBackend:
+            def __init__(self, root: Path) -> None:
+                self._root = root
+
             def is_mutable(self) -> bool:
                 return False
 
@@ -204,10 +206,14 @@ class TestBasePlugin(NmkBaseTester):
             def venv_name(self) -> str:
                 return "venv"
 
+            @property
+            def venv_root(self) -> Path:
+                return self._root / "venv"
+
             def lock(self, venv_status: Path) -> None:
                 pass
 
-        monkeypatch.setattr(EnvBackendFactory, "detect", lambda *args, **kwargs: FakeBackend())  # pyright: ignore[reportUnknownLambdaType, reportUnknownArgumentType]
+        monkeypatch.setattr(EnvBackendFactory, "detect", lambda *args, **kwargs: FakeBackend(self.test_folder))  # pyright: ignore[reportUnknownLambdaType, reportUnknownArgumentType]
 
         # Test a simple venv update
         project = self.prepare_project("ref_base.yml")

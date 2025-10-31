@@ -18,6 +18,10 @@ config:
     venvName:
         __resolver__: nmk_base.backends.VenvNameResolver
 
+    # Venv root folder
+    venvRoot:
+        __resolver__: nmk_base.backends.VenvRootResolver
+
     # Venv merged requirements file
     venvRequirements: requirements.txt
     
@@ -72,7 +76,7 @@ tasks:
             - out
         appendToDeps: setup
         output: 
-            - ${ROOTDIR}/${venvName}
+            - ${venvRoot}
             - ${venvState}
         input: ${PROJECTDIR}/${venvRequirements}
         builder: nmk_base.venvbuilder.VenvUpdateBuilder

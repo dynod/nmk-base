@@ -19,6 +19,20 @@ class VenvNameResolver(NmkStrConfigResolver):
         return self.model.env_backend.venv_name
 
 
+class VenvRootResolver(NmkStrConfigResolver):
+    """
+    Resolver for the virtual environment root folder from the backend.
+    """
+
+    def get_value(self, name: str) -> str:
+        """
+        Get the virtual environment root folder from the backend.
+
+        :param name: The config name
+        """
+        return str(self.model.env_backend.venv_root)
+
+
 class BackendUseRequirementsResolver(NmkBoolConfigResolver):
     """
     Resolver to know if the backend uses requirements files.
