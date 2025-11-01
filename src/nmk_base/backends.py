@@ -47,14 +47,14 @@ class BackendUseRequirementsResolver(NmkBoolConfigResolver):
         return self.model.env_backend.use_requirements
 
 
-class BuildenvRefreshResolver(NmkBoolConfigResolver):
+class BackendLegacyResolver(NmkBoolConfigResolver):
     """
-    Resolver to know if the backend supports buildenv scripts refresh (legacy mode)
+    Resolver to know if the backend is a legacy one.
     """
 
     def get_value(self, name: str) -> bool:
         """
-        State if the backend supports buildenv scripts refresh.
+        State if the backend is a legacy backend.
 
         :param name: The config name
         """

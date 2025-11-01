@@ -6,9 +6,12 @@ config:
     # Force init
     buildenvInitForce: False
 
+    # Backend legacy mode
+    backendLegacy:
+        __resolver__: nmk_base.backends.BackendLegacyResolver
+
     # Enable buildenv scripts refresh
-    buildenvRefresh:
-        __resolver__: nmk_base.backends.BuildenvRefreshResolver
+    buildenvRefresh: ${backendLegacy}
 
 tasks:
     # Buildenv init
