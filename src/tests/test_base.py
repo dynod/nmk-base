@@ -324,8 +324,23 @@ class TestBasePlugin(NmkBaseTester):
             with pytest.raises(AssertionError, match="Missing patterns: .*"):
                 self.check_logs(apt_pattern)
 
-    def test_skipped_buildenv_init(self):
-        # Check buildenv loading scripts kipped task
+    @pytest.fixture
+    def fake_new_backend(self):
+        # Fake level env var to simulate new backend (buildenv >=2.X)
+        old_level = os.getenv("BUILDENV_LEVEL")
+        os.environ["BUILDENV_LEVEL"] = "1"
+
+        # Back to test
+        yield
+
+        # Restore env var
+        if old_level is not None:
+            os.environ["BUILDENV_LEVEL"] = old_level
+        else:
+            del os.environ["BUILDENV_LEVEL"]
+
+    def test_skipped_buildenv_init(self, fake_new_backend: None):
+        # Check buildenv loading scripts skipped task
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["buildenv", "--skip", "py.venv"])
         assert not (self.test_folder / "buildenv.sh").is_file()
         assert not (self.test_folder / "buildenv.cmd").is_file()

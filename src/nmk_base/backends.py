@@ -2,6 +2,8 @@
 Python module for **nmk-base** env backends handling.
 """
 
+import os
+
 from nmk.model.resolver import NmkBoolConfigResolver, NmkStrConfigResolver
 
 
@@ -49,13 +51,13 @@ class BackendUseRequirementsResolver(NmkBoolConfigResolver):
 
 class BackendLegacyResolver(NmkBoolConfigResolver):
     """
-    Resolver to know if the backend is a legacy one.
+    Resolver to know if the running backend is a legacy one (buildenv 1.X)
     """
 
     def get_value(self, name: str) -> bool:
         """
-        State if the backend is a legacy backend.
+        State if the running backend is a legacy backend (buildenv 1.X)
 
         :param name: The config name
         """
-        return self.model.env_backend.is_legacy()
+        return os.getenv("BUILDENV_LEVEL") is None
