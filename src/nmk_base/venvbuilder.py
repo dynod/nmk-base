@@ -5,6 +5,7 @@ Python module for **nmk-base** venv tasks.
 import sys
 from pathlib import Path
 
+from nmk.errors import NmkStopHereError
 from nmk.model.builder import NmkTaskBuilder
 from nmk.model.resolver import NmkListConfigResolver, NmkStrConfigResolver
 
@@ -84,8 +85,8 @@ class VenvUpdateBuilder(NmkTaskBuilder):
                 self.logger.warning("-- either exit and re-enter the environment to apply changes")
                 self.logger.warning("-- or call 'buildenv2 upgrade' command to spawn a new upgraded environment")
                 if is_ci:
-                    # On CI, fail build as we can't automate sub-shell spawning
-                    raise RuntimeError("Build stopped")
+                    # On CI, fail build as we can't automate sub-shell spawning; otherwise just stop here
+                    raise RuntimeError("Build stopped") if is_ci else NmkStopHereError()
             else:
                 # Nothing to do
                 self.logger.debug("Requirements are up to date, nothing to do")
