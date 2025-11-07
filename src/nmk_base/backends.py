@@ -61,3 +61,18 @@ class BackendLegacyResolver(NmkBoolConfigResolver):
         :param name: The config name
         """
         return os.getenv("BUILDENV_LEVEL") is None
+
+
+class BuildenvFolderResolver(NmkStrConfigResolver):
+    """
+    Resolver for the buildenv folder path (for legacy backend).
+    """
+
+    def get_value(self, name: str, is_legacy: bool) -> str:  # type: ignore
+        """
+        Get the buildenv folder path (for legacy backend).
+
+        :param name: The config name
+        :param is_legacy: If the backend is legacy
+        """
+        return ".buildenv/" if is_legacy else ""

@@ -84,9 +84,9 @@ class VenvUpdateBuilder(NmkTaskBuilder):
                 self.logger.warning("Requirements have been updated; please:")
                 self.logger.warning("-- either exit and re-enter the environment to apply changes")
                 self.logger.warning("-- or call 'buildenv2 upgrade' command to spawn a new upgraded environment")
-                if is_ci:
-                    # On CI, fail build as we can't automate sub-shell spawning; otherwise just stop here
-                    raise RuntimeError("Build stopped") if is_ci else NmkStopHereError()
+
+                # On CI, fail build as we can't automate sub-shell spawning; otherwise just stop here
+                raise RuntimeError("Build stopped") if is_ci else NmkStopHereError()
             else:
                 # Nothing to do
                 self.logger.debug("Requirements are up to date, nothing to do")
