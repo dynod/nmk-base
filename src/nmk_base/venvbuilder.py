@@ -2,6 +2,7 @@
 Python module for **nmk-base** venv tasks.
 """
 
+import logging
 import sys
 from pathlib import Path
 
@@ -98,4 +99,4 @@ class VenvUpdateBuilder(NmkTaskBuilder):
 
         # Dump installed packages
         venv_status = self.outputs[1]
-        backend.lock(venv_status)
+        backend.lock(venv_status, log_level=logging.DEBUG)
