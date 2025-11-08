@@ -10,11 +10,14 @@ class NmkBaseBuildEnvExtension(BuildEnvExtension):
         return [ArgCompleteCompletionCommand("nmk")]
 
     def init(self, force: bool):
+        # Auto-force if first init (no .nmk dir yet)
+        is_forced = force or ((self.info.project_root is not None) and not (self.info.project_root / ".nmk").is_dir())
+
         # Check for init conditions
         if (
             (self.info.project_root is not None)
             and (self.info.project_root / "nmk.yml").is_file()  # Is it an nmk project?
-            and (force or not (self.info.project_root / ".nmk").is_dir())  # Forced init, or first init (no .nmk dir yet)?
+            and is_forced
         ):
             # Run "nmk setup"
-            subprocess.run([self.info.venv_bin / "nmk", "setup"] + (["--force"] if force else []), check=True, cwd=self.info.project_root)
+            subprocess.run([self.info.venv_bin / "nmk", "setup"] + (["--force"] if is_forced else []), check=True, cwd=self.info.project_root)
