@@ -2,8 +2,6 @@
 Python module for **nmk-base** env backends handling.
 """
 
-import os
-
 from nmk.model.resolver import NmkBoolConfigResolver, NmkStrConfigResolver
 
 
@@ -60,7 +58,7 @@ class BackendLegacyResolver(NmkBoolConfigResolver):
 
         :param name: The config name
         """
-        return os.getenv("BUILDENV_LEVEL") is None
+        return self.model.env_backend.version < 2
 
 
 class BuildenvFolderResolver(NmkStrConfigResolver):
