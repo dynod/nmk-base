@@ -63,7 +63,7 @@ tasks:
             - ${venvFileDeps}
             - ${venvArchiveDeps}
             - ${venvRequirementsTemplate}
-        output: ${venvUpdateInput}
+        output: ${PROJECTDIR}/${venvRequirements}
         params:
             template: ${venvRequirementsTemplate}
             file_updated_info: venRequirementsUpdated
