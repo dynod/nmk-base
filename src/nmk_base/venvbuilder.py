@@ -94,9 +94,9 @@ class VenvUpdateBuilder(NmkTaskBuilder):
                 self.main_output.touch()
         else:
             # Delegate to backend
-            backend.upgrade(full=False)
+            backend.upgrade(full=False, only_deps=True)
             self.main_output.touch()
 
         # Dump installed packages
         venv_status = self.outputs[1]
-        backend.lock(venv_status, log_level=logging.DEBUG)
+        backend.dump(venv_status, log_level=logging.DEBUG)

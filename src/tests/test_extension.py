@@ -8,6 +8,25 @@ from nmk_base._buildenv.extension import NmkBaseBuildEnvExtension
 
 
 class TestNmkBuildenvExtension(TestHelper):
+    def test_no_project(self, monkeypatch: MonkeyPatch):
+        # Fake extension loading
+        venv_bin = self.test_folder / "venv" / "bin"
+        ext = NmkBaseBuildEnvExtension(BuildEnvInfo(venv_bin=venv_bin, project_root=None))
+
+        # Fake subprocess call
+        called_args = None
+
+        def fake_run(args: list[str], **kwargs) -> subprocess.CompletedProcess[str]:  # type: ignore
+            nonlocal called_args
+            called_args = args
+            return subprocess.CompletedProcess(args, 0)
+
+        monkeypatch.setattr(subprocess, "run", fake_run)  # type: ignore
+
+        # Trigger init -> should do nothing
+        ext.init(force=False)
+        assert called_args is None
+
     def test_fake_ext_load(self, monkeypatch: MonkeyPatch):
         # Fake extension loading
         venv_bin = self.test_folder / "venv" / "bin"
@@ -36,7 +55,7 @@ class TestNmkBuildenvExtension(TestHelper):
         # Trigger init in nmk project (with nmk.yml) -> should call subprocess
         (self.test_folder / "nmk.yml").touch()
         ext.init(force=False)
-        assert called_args == [venv_bin / "nmk", "setup"]
+        assert called_args == [venv_bin / "nmk", "setup", "--force"]
         called_args = None
 
         # Trigger init with existing .nmk folder -> should do nothing

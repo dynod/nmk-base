@@ -50,6 +50,9 @@ config:
     # Buffer item for "requirements file re-generated" info
     venRequirementsUpdated: false
 
+    # Input file for venv update
+    venvUpdateInput: ${PROJECTDIR}/${venvRequirements}
+
 tasks:
 
     # Generate merged requirements file
@@ -60,7 +63,7 @@ tasks:
             - ${venvFileDeps}
             - ${venvArchiveDeps}
             - ${venvRequirementsTemplate}
-        output: ${PROJECTDIR}/${venvRequirements}
+        output: ${venvUpdateInput}
         params:
             template: ${venvRequirementsTemplate}
             file_updated_info: venRequirementsUpdated
@@ -78,9 +81,8 @@ tasks:
         output: 
             - ${venvRoot}
             - ${venvState}
-        input: ${PROJECTDIR}/${venvRequirements}
+        input: ${venvUpdateInput}
         builder: nmk_base.venvbuilder.VenvUpdateBuilder
         params:
             requirements_updated: ${venRequirementsUpdated}
             is_ci: ${gitEnableDirtyCheck}
-        if: ${backendUseRequirements}

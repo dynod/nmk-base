@@ -325,19 +325,12 @@ class TestBasePlugin(NmkBaseTester):
                 self.check_logs(apt_pattern)
 
     @pytest.fixture
-    def fake_new_backend(self):
+    def fake_new_backend(self, monkeypatch: MonkeyPatch):
         # Fake level env var to simulate new backend (buildenv >=2.X)
-        old_level = os.getenv("BUILDENV_LEVEL")
-        os.environ["BUILDENV_LEVEL"] = "1"
+        monkeypatch.setenv("BUILDENV_VERSION", "2")
 
         # Back to test
         yield
-
-        # Restore env var
-        if old_level is not None:
-            os.environ["BUILDENV_LEVEL"] = old_level
-        else:
-            del os.environ["BUILDENV_LEVEL"]
 
     def test_skipped_buildenv_init(self, fake_new_backend: None):
         # Check buildenv loading scripts skipped task
