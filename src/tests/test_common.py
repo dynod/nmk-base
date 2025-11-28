@@ -73,3 +73,10 @@ class TestBasePlugin(NmkBaseTester):
         assert doc["anotherSection"]["foo"] == "bar"
         assert doc["anotherSection"]["arrayOfValues"] == ["azerty", "abc", "def"]
         assert doc["anotherSection"]["with_some_path"] == "src/foo"
+
+    def test_multi_choice_resolver(self):
+        prj = self.prepare_project("ref_base_multichoice.yml")
+        self.nmk(prj, extra_args=["--print", "sampleMulti", "--config", "variableKey=foo"])
+        self.check_logs('Config dump: { "sampleMulti": "Default option selected" }')
+        self.nmk(prj, extra_args=["--print", "sampleMulti", "--config", "variableKey=optionB"])
+        self.check_logs('Config dump: { "sampleMulti": "You selected option B" }')
