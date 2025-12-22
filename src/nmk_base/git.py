@@ -20,7 +20,7 @@ class GitVersionRefresh(NmkTaskBuilder):
     Builder for **git.version** task
     """
 
-    def build(self, version: str):
+    def build(self, version: str):  # type: ignore
         """
         Build logic for **git.version** task:
         update .gitversion only if it doesn't exist or if its content doesn't match current version.
@@ -190,7 +190,7 @@ class GitIgnore(GitFileFragmentUpdater):
 
         return ignored_file
 
-    def build(self, ignored_files: list[str], template: str):
+    def build(self, ignored_files: list[str], template: str):  # type: ignore
         """
         Generate .gitignore file fragment from template
 
@@ -205,7 +205,7 @@ class GitAttributes(GitFileFragmentUpdater):
     Builder for **git.attributes** task
     """
 
-    def build(self, template: str):
+    def build(self, template: str):  # type: ignore
         """
         Generate .gitattributes file fragment from template
 
@@ -238,11 +238,15 @@ class GitIsDirty(NmkTaskBuilder):
 
 class CIResolver(NmkBoolConfigResolver):
     """
-    Resolver for **gitEnableDirtyCheck** config item override
+    Resolver for **isLocalBuild**/**isCIBuild** config items
     """
 
-    def get_value(self, name: str) -> bool:
+    def get_value(self, name: str, invert: bool = False) -> bool:
         """
-        Resolution logic for **gitEnableDirtyCheck**: check if **CI** env var is defined
+        Resolution logic for **isLocalBuild**/**isCIBuild** config items: check if **CI** env var is defined
+
+        :param name: Config item name
+        :param invert: True to invert logic (e.g. for **isLocalBuild**)
         """
-        return "CI" in os.environ and (len(os.environ["CI"]) > 0)
+        result = "CI" in os.environ and (len(os.environ["CI"]) > 0)
+        return not result if invert else result

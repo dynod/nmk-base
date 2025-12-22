@@ -8,6 +8,10 @@ Only interface and important behavior changes are listed here.
 The fully detailed changelog is also available on [Github](https://github.com/dynod/nmk-base/releases)
 ```
 
+## Release 1.1.0
+
+* Add {ref}`${isLocalBuild}<isLocalBuild>` and {ref}`${isLocalBuild}<isLocalBuild>` config items to detect build context
+
 ## Release 1.0.1
 
 * {ref}`${venvPkgDeps}<venvPkgDeps>` default value changed to **[${PACKAGESREFS}](https://nmk.readthedocs.io/en/stable/file.html#built-in-config-items)**

@@ -37,9 +37,16 @@ config:
     # Template for .gitattributes fragment
     gitAttributesTemplate: ${BASEDIR}/templates/gitattributes
 
-    # Enable dirty check?
-    gitEnableDirtyCheck:
+    # Local/CI build?
+    isLocalBuild:
         __resolver__: nmk_base.git.CIResolver
+        params:
+            invert: true
+    isCIBuild:
+        __resolver__: nmk_base.git.CIResolver
+
+    # Enable dirty check?
+    gitEnableDirtyCheck: ${isCIBuild}
 
 tasks:
     # To refresh git version stamp file

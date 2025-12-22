@@ -115,7 +115,7 @@ systemDeps:
 
 ## Dirty check enablement
 
-By default, the **{ref}`git.dirty<git.dirty>`** task is disabled. **`nmk`** projects or plugins may override the **{ref}`gitEnableDirtyCheck<gitEnableDirtyCheck>`** item to implement a logic able to toggle this check in certain conditions (e.g. in automated builds).
+By default, the **{ref}`git.dirty<git.dirty>`** task is enabled only in CI. **`nmk`** projects or plugins may override the **{ref}`gitEnableDirtyCheck<gitEnableDirtyCheck>`** item to implement a logic able to toggle this check in other conditions.
 
 Example:
 ```yaml
