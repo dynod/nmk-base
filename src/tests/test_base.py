@@ -72,25 +72,27 @@ class TestBasePlugin(NmkBaseTester):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--print", "gitVersion"])
         self.check_logs(f'Config dump: {{ "gitVersion": "{__version__[:5]}')
 
-    def test_git_version_config_no_tag(self, monkeypatch):
+    def test_git_version_config_no_tag(self, monkeypatch: pytest.MonkeyPatch):
         # Fake git subprocess behavior, to make "git describe --tags" failing
         real_run = subprocess.run
         monkeypatch.setattr(
             subprocess,
             "run",
-            lambda all_args, check, capture_output, text, encoding, cwd, errors: (
-                subprocess.CompletedProcess(all_args, 1, "", "")
+            lambda all_args, check, capture_output, text, encoding, cwd, errors: (  # type: ignore
+                subprocess.CompletedProcess(all_args, 1, "", "")  # type: ignore
                 if all_args[:3] == ["git", "describe", "--tags"]
-                else real_run(all_args, check=check, capture_output=capture_output, text=text, encoding=encoding, cwd=cwd)
-            ),
+                else real_run(all_args, check=check, capture_output=capture_output, text=text, encoding=encoding, cwd=cwd)  # type: ignore
+            ),  # type: ignore
         )
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--print", "gitVersion"])
         self.check_logs('Config dump: { "gitVersion": "0.0.0-')
 
-    def test_git_version_config_no_git(self, monkeypatch):
+    def test_git_version_config_no_git(self, monkeypatch: pytest.MonkeyPatch):
         # Fake git subprocess behavior, to make all "git" commands failing
         monkeypatch.setattr(
-            subprocess, "run", lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(all_args, 1, "", "")
+            subprocess,
+            "run",
+            lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(all_args, 1, "", ""),  # type: ignore
         )
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--print", "gitVersion"])
         self.check_logs('Config dump: { "gitVersion": "0.0.0" }')
@@ -105,16 +107,18 @@ class TestBasePlugin(NmkBaseTester):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["git.version"])
         self.check_logs("Persisted git version already up to date")
 
-    def test_git_clean(self, monkeypatch):
+    def test_git_clean(self, monkeypatch: pytest.MonkeyPatch):
         # Stub to avoid real git clean command executed
-        monkeypatch.setattr(subprocess, "run", lambda args, cwd, check: None)
+        monkeypatch.setattr(subprocess, "run", lambda args, cwd, check: None)  # type: ignore
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["git.clean"])
         self.check_logs("Clean all git ignored files")
 
-    def test_git_dirty(self, monkeypatch):
+    def test_git_dirty(self, monkeypatch: pytest.MonkeyPatch):
         # Stub to have "git status" command with empty return
         monkeypatch.setattr(
-            subprocess, "run", lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(all_args, 0, "", "")
+            subprocess,
+            "run",
+            lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(all_args, 0, "", ""),  # type: ignore
         )
         prj = self.prepare_project("ref_base.yml")
         self.nmk(prj, extra_args=["git.dirty", "--config", '{"gitEnableDirtyCheck":true}'], with_epilogue=True)
@@ -124,8 +128,11 @@ class TestBasePlugin(NmkBaseTester):
         monkeypatch.setattr(
             subprocess,
             "run",
-            lambda all_args, check=True, capture_output=True, text=True, encoding="utf-8", cwd=None, errors="ignore": subprocess.CompletedProcess(
-                all_args, 0, " M src/nmk_base/git.py\n M src/nmk_base/git.yml", ""
+            lambda all_args, check=True, capture_output=True, text=True, encoding="utf-8", cwd=None, errors="ignore": subprocess.CompletedProcess(  # type: ignore
+                all_args,  # type: ignore
+                0,
+                " M src/nmk_base/git.py\n M src/nmk_base/git.yml",
+                "",  # type: ignore
             ),
         )
         self.nmk(
@@ -156,13 +163,16 @@ class TestBasePlugin(NmkBaseTester):
             assert "SomeFakePackage" in content
             assert "somearchive.tar.gz" in content
 
-    def test_venv_simple_update(self, monkeypatch):
+    def test_venv_simple_update(self, monkeypatch: pytest.MonkeyPatch):
         # Fake pip subprocess behavior
         monkeypatch.setattr(
             subprocess,
             "run",
-            lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(
-                all_args, 0, "# Fake packages list\nsomePackage==1.2.3", ""
+            lambda all_args, check, capture_output, text, encoding, cwd, errors: subprocess.CompletedProcess(  # type: ignore
+                all_args,  # type: ignore
+                0,
+                "# Fake packages list\nsomePackage==1.2.3",
+                "",  # type: ignore
             ),
         )
 
@@ -230,13 +240,16 @@ class TestBasePlugin(NmkBaseTester):
         assert (self.test_folder / "out" / ".gitattributes").is_file()
         self.check_logs("Create new .gitattributes file")
 
-    def test_buildenv_init(self, monkeypatch):
+    def test_buildenv_init(self, monkeypatch: pytest.MonkeyPatch):
         # Fake pip subprocess behavior
         monkeypatch.setattr(
             subprocess,
             "run",
-            lambda all_args, check=False, capture_output=False, text=False, encoding="utf-8", cwd=None, errors=None, env=None: subprocess.CompletedProcess(
-                all_args, 0, "# Fake packages list\nsomePackage==1.2.3", ""
+            lambda all_args, check=False, capture_output=False, text=False, encoding="utf-8", cwd=None, errors=None, env=None: subprocess.CompletedProcess(  # type: ignore
+                all_args,  # type: ignore
+                0,
+                "# Fake packages list\nsomePackage==1.2.3",
+                "",
             ),
         )
 
@@ -249,7 +262,7 @@ class TestBasePlugin(NmkBaseTester):
         fake_venv_activate.mkdir(parents=True, exist_ok=True)
         (fake_venv_activate / "00_init.sh").touch()
         (fake_venv_activate / "00_init.bat").touch()
-        monkeypatch.setattr(BuildenvInitBuilder, "_venv_bin_path", lambda _: fake_venv_bin)
+        monkeypatch.setattr(BuildenvInitBuilder, "_venv_bin_path", lambda _: fake_venv_bin)  # type: ignore
 
         # Force buildenv loading scripts
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["buildenv", "--config", '{"buildenvInitForce": true}'])
@@ -264,22 +277,23 @@ class TestBasePlugin(NmkBaseTester):
     def test_dirty_check(self):
         # Get current value
         already_in_ci = "CI" in os.environ
+        old_value = None
         if already_in_ci:
             old_value = os.environ["CI"]
             del os.environ["CI"]
 
         # Without CI env var
         p = self.prepare_project("ref_base.yml")
-        self.nmk(p, extra_args=["--print", "gitEnableDirtyCheck"])
-        self.check_logs('Config dump: { "gitEnableDirtyCheck": false }')
+        self.nmk(p, extra_args=["--print", "gitEnableDirtyCheck", "--print", "isLocalBuild", "--print", "isCIBuild"])
+        self.check_logs('Config dump: { "isLocalBuild": true, "isCIBuild": false, "gitEnableDirtyCheck": false }')
 
         # With CI env var
         os.environ["CI"] = "true"
-        self.nmk(p, extra_args=["--print", "gitEnableDirtyCheck"])
-        self.check_logs('Config dump: { "gitEnableDirtyCheck": true }')
+        self.nmk(p, extra_args=["--print", "gitEnableDirtyCheck", "--print", "isLocalBuild", "--print", "isCIBuild"])
+        self.check_logs('Config dump: { "isLocalBuild": false, "isCIBuild": true, "gitEnableDirtyCheck": true }')
 
         # Restore environment
-        if already_in_ci:
+        if old_value is not None:
             os.environ["CI"] = old_value
         else:
             del os.environ["CI"]
