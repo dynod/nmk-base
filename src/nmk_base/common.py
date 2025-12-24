@@ -5,7 +5,7 @@ Python module for **nmk-base** utility classes.
 import shutil
 import subprocess
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 
 from jinja2 import Environment, Template, meta
 from nmk.model.builder import NmkTaskBuilder
@@ -225,7 +225,7 @@ class ProcessBuilder(NmkTaskBuilder):
     Generic builder logic to call a sub-process
     """
 
-    def build(self, cmd: Union[str, list[str]], verbose: bool = False):
+    def build(self, cmd: str | list[str], verbose: bool = False):
         """
         Build logic:
 
