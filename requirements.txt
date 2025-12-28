@@ -13,7 +13,7 @@ nmk-doc
 nmk-github
 nmk-python
 nmk-vscode
-nmk>=1.1.0
+nmk>=1.4.0
 sphinx-autoapi
 tomlkit
 
