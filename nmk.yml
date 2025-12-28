@@ -1,42 +1,39 @@
 refs:
-    - <base>/plugin.yml
-    - base:
-        local: src/nmk_base
-        remote: pip://nmk-base!
-        override: true
-    - pip://nmk-badges!plugin.yml
-    - pip://nmk-github!plugin.yml
-    - pip://nmk-python!plugin.yml
-    - pip://nmk-vscode!plugin.yml
-    - pip://nmk-doc!plugin.yml
-    - <workspace>/shared.yml
-    - workspace:
-        local: ../../shared
-        remote: github://dynod/workspace/main/shared
+  - <base>/plugin.yml
+  - base:
+      local: src/nmk_base
+      remote: pip://nmk-base!
+      override: true
+  - pip://nmk-badges!plugin.yml
+  - pip://nmk-github!plugin.yml
+  - pip://nmk-python!plugin.yml
+  - pip://nmk-vscode!plugin.yml
+  - pip://nmk-doc!plugin.yml
+  - <workspace>/shared.yml
+  - workspace:
+      local: ../../shared
+      remote: github://dynod/workspace/main/shared
 
 # Python path for locally defined tasks
 path:
-    - src
+  - src
 
 config:
-    # Python package
-    pythonPackage: nmk-base
-    
-    # Nmk dependencies
-    pythonPackageRequirements:
-        - Jinja2
-        - nmk>=1.1.0
-        - buildenv
-        - tomlkit
+  # Nmk dependencies
+  pythonPackageRequirements:
+    - Jinja2
+    - nmk>=1.4.0
+    - buildenv
+    - tomlkit
 
-    # Extra project data
-    pythonProjectFileItems:
-        project:
-            description: Base plugin for nmk build system
-            entry-points:
-                buildenv_init:
-                    nmk: nmk_base.buildenv:BuildEnvInit
+  # Extra project data
+  pythonProjectFileItems:
+    project:
+      description: Base plugin for nmk build system
+      entry-points:
+        buildenv_init:
+          nmk: nmk_base.buildenv:BuildEnvInit
 
-    # Github issues logged in nmk project
-    githubIssuesRepo: nmk
-    githubIssuesLabel: "plugin:base"
+  # Github issues logged in nmk project
+  githubIssuesRepo: nmk
+  githubIssuesLabel: "plugin:base"
