@@ -31,8 +31,15 @@ config:
     project:
       description: Base plugin for nmk build system
       entry-points:
-        buildenv_init:
-          nmk: nmk_base.buildenv:BuildEnvInit
+        buildenv_init: # buildenv <2 extension
+          nmk: nmk_base._buildenv.legacy:BuildEnvInit
+        buildenv_extension: # buildenv >=2 extension
+          nmk: nmk_base._buildenv.extension:NmkBaseBuildEnvExtension
+    tool:
+      coverage:
+        run:
+          omit:
+            - src/nmk_base/_buildenv/extension.py # New buildenv extension code
 
   # Github issues logged in nmk project
   githubIssuesRepo: nmk

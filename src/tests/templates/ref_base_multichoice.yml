@@ -1,0 +1,13 @@
+refs:
+    - pip://nmk-base!plugin.yml
+
+config:
+    sampleMulti:
+        __resolver__: nmk_base.common.MultiStrChoiceResolver
+        params:
+            choices:
+                optionA: "You selected option A"
+                optionB: "You selected option B"
+                optionC: "You selected option C"
+            default: "Default option selected"
+            key: ${variableKey}
