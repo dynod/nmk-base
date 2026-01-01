@@ -1,13 +1,23 @@
 config:
-    # Ignore buildenv temporary folder
-    gitIgnoredFiles:
-      - .buildenv/
-
     # Force init
     buildenvInitForce: False
 
+    # Backend legacy mode
+    backendLegacy:
+        __resolver__: nmk_base.backends.BackendLegacyResolver
+
+    # Buildenv subfolder (for legacy backend)
+    buildenvFolder:
+      __resolver__: nmk_base.backends.BuildenvFolderResolver
+      params:
+        is_legacy: ${backendLegacy}
+
+    # Ignore buildenv temporary folder (for legacy backend)
+    gitIgnoredFiles:
+      - ${buildenvFolder}
+
     # Enable buildenv scripts refresh
-    buildenvRefresh: True
+    buildenvRefresh: ${backendLegacy}
 
 tasks:
     # Buildenv init

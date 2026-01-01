@@ -31,7 +31,10 @@ Repository = "https://github.com/dynod/nmk-base"
 Issues = "https://github.com/dynod/nmk/issues?q=is%3Aopen+is%3Aissue+label%3Aplugin%3Abase"
 
 [project.entry-points.buildenv_init]
-nmk = "nmk_base.buildenv:BuildEnvInit"
+nmk = "nmk_base._buildenv.legacy:BuildEnvInit"
+
+[project.entry-points.buildenv_extension]
+nmk = "nmk_base._buildenv.extension:NmkBaseBuildEnvExtension"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -70,4 +73,4 @@ data_file = "out/.coverage"
 concurrency = ["thread"]
 disable_warnings = ["no-data-collected"]
 branch = true
-omit = ["src/tests/*"]
+omit = ["src/tests/*", "src/nmk_base/_buildenv/extension.py"]

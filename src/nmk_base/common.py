@@ -9,7 +9,9 @@ from typing import Any
 
 from jinja2 import Environment, Template, meta
 from nmk.model.builder import NmkTaskBuilder
+from nmk.model.config import NmkStaticConfig
 from nmk.model.keys import NmkRootConfig
+from nmk.model.resolver import NmkConfigResolver, NmkDictConfigResolver, NmkListConfigResolver, NmkStrConfigResolver
 from nmk.utils import run_with_logs
 from tomlkit import TOMLDocument, comment, loads
 from tomlkit.toml_file import TOMLFile
@@ -81,49 +83,73 @@ class TemplateBuilder(NmkTaskBuilder):
         all_kw.update(kwargs)
         return Template(template_source).render(all_kw)
 
-    def build_from_template(self, template: Path, output: Path, kwargs: dict[str, str]) -> str:
+    def build_from_template(self, template: Path, output: Path, kwargs: dict[str, str], file_updated_info: str | None = None) -> str:
         """
         Generate file from template
 
         :param template: Path to template file to be rendered
         :param output: Path to output file to be generated
         :param kwargs: Map of keywords for templates rendering, indexed by name
+        :param file_updated_info: Config item name where to store information that output file has been updated
         :return: Rendered template string
         :throw: AssertionError if unknown keyword is referenced in template
         """
 
         # By default, keep system-defined line endings
         line_endings = None
-        if output.suffix is not None:  # pragma: no branch
+        if output.suffix:  # pragma: no branch
             # Check for forced line endings
             suffix = output.suffix.lower()
 
-            if suffix in self.model.config["linuxLineEndings"].value:
+            linuxLineEndings = self.model.config["linuxLineEndings"].value
+            windowsLineEndings = self.model.config["windowsLineEndings"].value
+            assert isinstance(linuxLineEndings, list)
+            assert isinstance(windowsLineEndings, list)
+            if suffix in linuxLineEndings:
                 # Always generate with Linux line endings
                 line_endings = "\n"
 
-            if suffix in self.model.config["windowsLineEndings"].value:
+            if suffix in windowsLineEndings:
                 # Always generate with Windows line endings
                 line_endings = "\r\n"
 
-        # Load template
-        self.logger.debug(f"Generating {output} from template {template}")
-        with output.open("w", newline=line_endings) as o:
-            # Render it
-            out = self.render_template(template, kwargs)
-            o.write(out)
-            return out
+        # Read previous output (only if file_updated_info is set)
+        previous_content = ""
+        if output.is_file() and file_updated_info:
+            with output.open(newline=line_endings) as o:
+                previous_content = o.read()
 
-    def build(self, template: str, kwargs: dict[str, str] = None):
+        # Load template and render it
+        self.logger.debug(f"Generating {output} from template {template}")
+        rendered_content = self.render_template(template, kwargs)
+
+        # Write it to output
+        with output.open("w", newline=line_endings) as o:
+            o.write(rendered_content)
+
+        # Store "updated" information
+        if file_updated_info:
+            assert file_updated_info in self.model.config, f'Unknown referenced config item to store "file updated" information: {file_updated_info}'
+            file_updated_info_item = self.model.config[file_updated_info]
+            assert isinstance(file_updated_info_item, NmkStaticConfig) and (file_updated_info_item.value_type is bool), (
+                f"Expected static boolean config item for {file_updated_info}"
+            )
+            file_updated_info_item.static_value = rendered_content != previous_content
+            self.logger.debug(f"Updated config item: {file_updated_info}={file_updated_info_item.value}")
+
+        return rendered_content
+
+    def build(self, template: str, kwargs: dict[str, str] | None = None, file_updated_info: str | None = None):  # pyright: ignore[reportIncompatibleMethodOverride]
         """
         Default build behavior: generate main output file from provided template
 
         :param template: Path to the Jinja template to use for generation
         :param kwargs: Map of keywords for templates rendering, indexed by name
+        :param file_updated_info: Config item name where to store information that output file has been updated
         """
 
         # Just build from template
-        self.build_from_template(Path(template), self.main_output, kwargs if kwargs else {})
+        self.build_from_template(Path(template), self.main_output, kwargs if kwargs else {}, file_updated_info=file_updated_info)
 
 
 class TomlFileBuilder(TemplateBuilder):
@@ -274,3 +300,50 @@ class CleanBuilder(NmkTaskBuilder):
         else:
             # Nothing to clean
             self.logger.debug(f"Nothing to clean (folder not found: {to_delete})")
+
+
+_MultiChoiceValue = str | int | bool | list[Any] | dict[str, Any]
+
+
+class MultiChoiceResolver(NmkConfigResolver):
+    """
+    Multi-choice config item resolver base class
+    """
+
+    def get_value(  # type: ignore
+        self, name: str, key: int | str | bool, choices: dict[int | str | bool, _MultiChoiceValue], default: _MultiChoiceValue
+    ) -> _MultiChoiceValue:
+        """
+        Resolve multi-choice config item value using provided key and available choices
+
+        :param name: config item name
+        :param key: key to select value
+        :param choices: available choices
+        :param default: default value
+        :return: item value
+        """
+        return choices.get(key, default)
+
+
+class MultiStrChoiceResolver(MultiChoiceResolver, NmkStrConfigResolver):  # type: ignore
+    """
+    Multi-choice string config item resolver class
+    """
+
+    pass
+
+
+class MultiListChoiceResolver(MultiChoiceResolver, NmkListConfigResolver):  # type: ignore
+    """
+    Multi-choice list config item resolver class
+    """
+
+    pass
+
+
+class MultiDictChoiceResolver(MultiChoiceResolver, NmkDictConfigResolver):  # type: ignore
+    """
+    Multi-choice dict config item resolver class
+    """
+
+    pass
