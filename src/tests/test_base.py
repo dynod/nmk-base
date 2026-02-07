@@ -341,13 +341,14 @@ class TestBasePlugin(NmkBaseTester):
         # Back to test
         yield
 
-    # def test_skipped_buildenv_init(self, fake_new_backend: None):
-    #    # Check buildenv loading scripts skipped task
-    #    self.nmk(self.prepare_project("ref_base.yml"), extra_args=["buildenv", "--skip", "py.venv"])
-    #    assert not (self.test_folder / "buildenv.sh").is_file()
-    #    assert not (self.test_folder / "buildenv.cmd").is_file()
-    #    assert not (self.test_folder / "buildenv-loader.py").is_file()
-    #    self.check_logs("[buildenv]] DEBUG 🐛 - Task skipped, nothing to do")
+    @pytest.mark.skip
+    def test_skipped_buildenv_init(self, fake_new_backend: None):
+        # Check buildenv loading scripts skipped task
+        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["buildenv", "--skip", "py.venv"])
+        assert not (self.test_folder / "buildenv.sh").is_file()
+        assert not (self.test_folder / "buildenv.cmd").is_file()
+        assert not (self.test_folder / "buildenv-loader.py").is_file()
+        self.check_logs("[buildenv]] DEBUG 🐛 - Task skipped, nothing to do")
 
     def test_buildenv_init(self, monkeypatch: pytest.MonkeyPatch):
         # Fake pip subprocess behavior

@@ -36,6 +36,9 @@ nmk = "nmk_base._buildenv.legacy:BuildEnvInit"
 [project.entry-points.buildenv_extension]
 nmk = "nmk_base._buildenv.extension:NmkBaseBuildEnvExtension"
 
+[dependency-groups]
+dev = ["nmk-badges", "nmk-doc", "nmk-github", "nmk-python", "nmk-vscode", "sphinx-autoapi"]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 exclude = ["tests*"]

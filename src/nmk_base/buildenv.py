@@ -7,7 +7,6 @@ from argparse import Namespace
 from pathlib import Path
 from typing import cast
 
-from buildenv import BuildEnvManager
 from nmk.model.builder import NmkTaskBuilder
 from nmk.model.keys import NmkRootConfig
 
@@ -26,12 +25,18 @@ class BuildenvInitBuilder(NmkTaskBuilder):
         Triggers BuildEnvManager init, in order to refresh buildenv loading scripts
         """
 
-        # Prepare manager
-        m = BuildEnvManager(cast(Path, self.model.config[NmkRootConfig.PROJECT_DIR].value), self._venv_bin_path())
+        try:
+            # Prepare manager
+            from buildenv import BuildEnvManager
 
-        # Trigger init, either in force mode (typically for tests) or in skip mode (nominal case)
-        m.init(Namespace(force=force) if force else Namespace(skip=True))
+            m = BuildEnvManager(cast(Path, self.model.config[NmkRootConfig.PROJECT_DIR].value), self._venv_bin_path())
 
-        # Touch output files
-        for f in self.outputs:
-            f.touch()
+            # Trigger init, either in force mode (typically for tests) or in skip mode (nominal case)
+            m.init(Namespace(force=force) if force else Namespace(skip=True))
+
+            # Touch output files
+            for f in self.outputs:
+                f.touch()
+        except ImportError:  # pragma: no cover
+            # Legacy buildenv (<2) is not installed -- just do nothing
+            pass
