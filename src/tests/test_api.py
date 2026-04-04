@@ -16,3 +16,5 @@ class TestBasePluginApi(NmkBaseTester):
         self.prepare_project("base_sample.py")
         self.nmk(self.prepare_project("ref_base_resolver.yml"), extra_args=["--print", "fooConfig"])
         self.check_logs(f'Config dump: {{ "fooConfig": [ {self.jsonify(self.test_folder / "base_sample.py")} ] }}')
+        self.nmk(self.prepare_project("ref_base_resolver.yml"), extra_args=["--print", "barConfig"])
+        self.check_logs(f'Config dump: {{ "barConfig": [ {self.jsonify(self.test_folder / "base_sample.py")} ] }}')

@@ -1,11 +1,17 @@
 refs:
-    - pip://nmk-base!plugin.yml
+  - pip://nmk-base!plugin.yml
 
 path:
-    - "."
+  - "."
 
 config:
-    fooFolder: ${BASEDIR}
+  fooFolder: ${BASEDIR}
 
-    fooConfig:
-        __resolver__: base_sample.SampleResolver
+  fooConfig:
+    __resolver__: base_sample.SampleResolver
+
+  barConfig:
+    __resolver__: nmk_base.resolvers.FilesResolver
+    params:
+      folder: ${BASEDIR}
+      extension: "*.py"

@@ -8,6 +8,10 @@ Only interface and important behavior changes are listed here.
 The fully detailed changelog is also available on [Github](https://github.com/dynod/nmk-base/releases)
 ```
 
+## Release 1.3.0
+
+- API update: updated {py:class}`nmk_base.resolvers.FilesResolver` to make it a "ready to use" resolver, with parameters
+
 ## Release 1.2.0
 
 - Config items changes:
