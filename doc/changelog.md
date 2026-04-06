@@ -12,10 +12,12 @@ The fully detailed changelog is also available on [Github](https://github.com/dy
 
 - Config items update:
   - added {ref}`${requestFunction}<requestFunction>`: name of request function used for download tasks
+  - added {ref}`${javaRuntime}<javaRuntime>` and {ref}`${javaRuntimeCustomPath}<javaRuntimeCustomPath>`: used to resolve **java** command
 - API update:
   - updated {py:class}`nmk_base.resolvers.FilesResolver` to make it a "ready to use" resolver, with parameters
   - moved {py:class}`nmk_base.resolvers.MultiChoiceResolver` (and sub-classes) from `nmk_base.common` module, for more consistency
   - added {py:class}`nmk_base.common.DownloadBuilder` builder to handle download tasks (with progress bar + extraction option)
+  - added {py:class}`nmk_base.resolvers.CommandResolver` resolver, to resolve a given command from a provided custom path or from system path
 
 ## Release 1.2.0
 

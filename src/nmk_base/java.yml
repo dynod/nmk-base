@@ -1,0 +1,10 @@
+config:
+  # Java runtime custom path
+  javaRuntimeCustomPath: ""
+
+  # Java runtime resolution
+  javaRuntime:
+    __resolver__: nmk_base.resolvers.CommandResolver
+    params:
+      command: java
+      custom_path: ${javaRuntimeCustomPath}
