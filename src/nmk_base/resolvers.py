@@ -3,9 +3,9 @@ Python module for base resolvers (to be used by other plugins).
 """
 
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
-from nmk.model.resolver import NmkListConfigResolver
+from nmk.model.resolver import NmkConfigResolver, NmkDictConfigResolver, NmkListConfigResolver, NmkStrConfigResolver
 
 
 class FilesResolver(NmkListConfigResolver):
@@ -54,3 +54,50 @@ class FilesResolver(NmkListConfigResolver):
 
         # Iterate on paths, and find all files
         return [file for path in map(Path, paths_to_browse) for file in filter(lambda f: f.is_file(), path.rglob(extension_to_search))]
+
+
+_MultiChoiceValue = str | int | bool | list[Any] | dict[str, Any]
+
+
+class MultiChoiceResolver(NmkConfigResolver):
+    """
+    Multi-choice config item resolver base class
+    """
+
+    def get_value(  # type: ignore
+        self, name: str, key: int | str | bool, choices: dict[int | str | bool, _MultiChoiceValue], default: _MultiChoiceValue
+    ) -> _MultiChoiceValue:
+        """
+        Resolve multi-choice config item value using provided key and available choices
+
+        :param name: config item name
+        :param key: key to select value
+        :param choices: available choices
+        :param default: default value
+        :return: item value
+        """
+        return choices.get(key, default)
+
+
+class MultiStrChoiceResolver(MultiChoiceResolver, NmkStrConfigResolver):  # type: ignore
+    """
+    Multi-choice string config item resolver class
+    """
+
+    pass
+
+
+class MultiListChoiceResolver(MultiChoiceResolver, NmkListConfigResolver):  # type: ignore
+    """
+    Multi-choice list config item resolver class
+    """
+
+    pass
+
+
+class MultiDictChoiceResolver(MultiChoiceResolver, NmkDictConfigResolver):  # type: ignore
+    """
+    Multi-choice dict config item resolver class
+    """
+
+    pass

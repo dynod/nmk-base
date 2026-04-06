@@ -10,7 +10,9 @@ The fully detailed changelog is also available on [Github](https://github.com/dy
 
 ## Release 1.3.0
 
-- API update: updated {py:class}`nmk_base.resolvers.FilesResolver` to make it a "ready to use" resolver, with parameters
+- API update:
+  - updated {py:class}`nmk_base.resolvers.FilesResolver` to make it a "ready to use" resolver, with parameters
+  - moved {py:class}`nmk_base.resolvers.MultiChoiceResolver` (and sub-classes) from `nmk_base.common` module, for more consistency
 
 ## Release 1.2.0
 
