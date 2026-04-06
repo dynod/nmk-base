@@ -378,3 +378,26 @@ class TestBasePlugin(NmkBaseTester):
         # Touch a fake project file, and try again
         (self.test_folder / "nmk.yml").touch()
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["buildenv", "--config", '{"buildenvInitForce": true}'])
+
+    def test_java_runtime(self, monkeypatch: pytest.MonkeyPatch):
+        p = self.prepare_project("ref_base.yml")
+
+        # Case 1: unknown custom path
+        java_path = self.test_folder / "java"
+        self.nmk(p, extra_args=["--print", "javaRuntime", "--config", f"javaRuntimeCustomPath={java_path}"])
+        self.check_logs("Provided path for 'java' command was not found: ")
+
+        # Case 2: valid custom path
+        java_path.touch()
+        self.nmk(p, extra_args=["--print", "javaRuntime", "--config", f"javaRuntimeCustomPath={java_path}"])
+        self.check_logs("Using provided path for 'java' command:")
+
+        # Case 3: detect from system path with missing command
+        monkeypatch.setattr(shutil, "which", lambda cmd: None)  # type: ignore
+        self.nmk(p, extra_args=["--print", "javaRuntime"])
+        self.check_logs("'java' command was not found in system path")
+
+        # Case 4: detect from system path with valid command
+        monkeypatch.setattr(shutil, "which", lambda cmd: "/usr/bin/java")  # type: ignore
+        self.nmk(p, extra_args=["--print", "javaRuntime"])
+        self.check_logs("'java' command found in system path:")

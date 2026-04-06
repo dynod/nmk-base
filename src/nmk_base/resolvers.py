@@ -2,9 +2,11 @@
 Python module for base resolvers (to be used by other plugins).
 """
 
+import shutil
 from pathlib import Path
 from typing import Any, cast
 
+from nmk.logs import NmkLogger
 from nmk.model.resolver import NmkConfigResolver, NmkDictConfigResolver, NmkListConfigResolver, NmkStrConfigResolver
 
 
@@ -101,3 +103,41 @@ class MultiDictChoiceResolver(MultiChoiceResolver, NmkDictConfigResolver):  # ty
     """
 
     pass
+
+
+class CommandResolver(NmkStrConfigResolver):
+    """
+    Command resolver class, allowing to resolve a command path.
+    """
+
+    def get_value(self, name: str, command: str, custom_path: str) -> str:  # type: ignore
+        """
+        Resolve command path (from custom path, if any, or from system path)
+
+        :param name: config item name
+        :param command: command name (to be resolved from system path)
+        :param custom_path: custom path to be used for command resolution (overrides system path)
+        :return: command path
+        """
+
+        # Provided path must be a file, if specified
+        output = ""
+        if custom_path:
+            if Path(custom_path).is_file():
+                # Custom path is OK, use it
+                output = custom_path
+                NmkLogger.debug(f"Using provided path for '{command}' command: {custom_path}")
+            else:
+                # Can't use it just warn about it
+                NmkLogger.warning(f"Provided path for '{command}' command was not found: {custom_path}")
+
+        # Detect from path if not already found
+        if not output:
+            system_path = shutil.which(command)
+            if system_path is not None:
+                output = command
+                NmkLogger.debug(f"'{command}' command found in system path: {system_path}")
+            else:
+                NmkLogger.warning(f"'{command}' command was not found in system path")
+
+        return output
