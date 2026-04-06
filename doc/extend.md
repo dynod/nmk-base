@@ -122,3 +122,14 @@ Example:
 gitEnableDirtyCheck:
     __resolver__: path.to.my.resolver
 ```
+
+## Download tasks
+
+By default, tasks using the {py:class}`nmk_base.common.DownloadBuilder` builder are based on **`request.get`** function.
+**`nmk`** projects or plugins may override the **{ref}`requestFunction<requestFunction>`** item to specify an alternative function to do the same.
+It can be convenient for credentials injection, proxy handling or URL re-writing, for example.
+
+Example:
+```yaml
+requestFunction: mymodule.my_get_override
+```

@@ -2,26 +2,30 @@
 Python module for **nmk-base** utility classes and builders
 """
 
+import contextlib
+import importlib
 import shutil
 import subprocess
+import warnings
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any
+from tempfile import TemporaryDirectory
+from typing import Any, cast
 
+import requests
 from jinja2 import Environment, Template, meta
 from nmk.model.builder import NmkTaskBuilder
 from nmk.model.config import NmkStaticConfig
 from nmk.model.keys import NmkRootConfig
 from nmk.utils import run_with_logs
+from rich.progress import BarColumn, DownloadColumn, Progress, TimeRemainingColumn, TransferSpeedColumn
 from tomlkit import TOMLDocument, comment, loads
 from tomlkit.toml_file import TOMLFile
+from urllib3.exceptions import InsecureRequestWarning
 
-try:
-    from .resolvers import MultiChoiceResolver, MultiDictChoiceResolver, MultiListChoiceResolver, MultiStrChoiceResolver
-
-    __all__ = ["MultiChoiceResolver", "MultiStrChoiceResolver", "MultiListChoiceResolver", "MultiDictChoiceResolver"]  # pragma: no cover
-except ImportError:  # pragma: no cover
-    # Resolvers may be temporarily not available (should not happen in normal usage); ignore and let it fail later if resolvers are actually used
-    pass
+# Resolvers may be temporarily not available (should not happen in normal usage); ignore and let it fail later if resolvers are actually used
+with contextlib.suppress(ImportError):  # pragma: no cover
+    from .resolvers import MultiChoiceResolver, MultiDictChoiceResolver, MultiListChoiceResolver, MultiStrChoiceResolver  # NOQA: F401 # type: ignore
 
 
 class TemplateBuilder(NmkTaskBuilder):
@@ -206,7 +210,7 @@ class TomlFileBuilder(TemplateBuilder):
                     continue
                 main[k] = self._check_paths(v)
 
-    def build(self, fragment_files: list[str], items: dict, plugin_name: str = "nmk-base", kwargs: dict[str, str] = None):
+    def build(self, fragment_files: list[str], items: dict, plugin_name: str = "nmk-base", kwargs: dict[str, str] = None):  # type: ignore
         """
         Generates toml file from fragments and items
 
@@ -258,7 +262,7 @@ class ProcessBuilder(NmkTaskBuilder):
     Generic builder logic to call a sub-process
     """
 
-    def build(self, cmd: str | list[str], verbose: bool = False):
+    def build(self, cmd: str | list[str], verbose: bool = False):  # type: ignore
         """
         Build logic:
 
@@ -291,7 +295,7 @@ class CleanBuilder(NmkTaskBuilder):
     Generic builder logic to clean a directory
     """
 
-    def build(self, path: str):
+    def build(self, path: str):  # type: ignore
         """
         Build logic: delete (recursively) provided directory, if it exists
 
@@ -307,3 +311,87 @@ class CleanBuilder(NmkTaskBuilder):
         else:
             # Nothing to clean
             self.logger.debug(f"Nothing to clean (folder not found: {to_delete})")
+
+
+class DownloadBuilder(NmkTaskBuilder):
+    """
+    Generic builder logic to download a file from a URL
+    """
+
+    def download(
+        self, url: str, target: Path, request_function: Callable[[str], requests.Response], request_kwargs: dict[str, Any] | None = None, extract: bool = False
+    ):
+        """
+        Download file from provided URL and save it as main output
+
+        :param url: URL to download file from
+        :param target: Path to save/extract the downloaded file
+        :param request_function: Function to use for the HTTP request. The function must behave like **requests.get**
+        :param request_kwargs: Map of extra keyword arguments to be passed to the request function
+        :param extract: Whether to extract the downloaded file if it's an archive (zip, tar.gz, or others).
+                        In this case, the main output is expected to be a directory instead of a file, and the downloaded file will be extracted into it.
+        """
+
+        # Prepare args (for streaming mode)
+        used_kwargs = (request_kwargs or {}) | {"stream": True}
+
+        # Ignore SSL warnings (in case of self-signed certificates or others)
+        # The download may still fail if certificate is not valid, but at least it will not be ignored silently
+        warnings.filterwarnings("ignore", category=InsecureRequestWarning)
+
+        # Whatever if we need to extract or not, prepare a temporary directory + start download request in streaming mode
+        self.logger.info(cast(str, self.task.emoji), f"Downloading {url}")
+        with TemporaryDirectory() as tmp_dir, request_function(url, **used_kwargs) as req:
+            tmp_path = Path(tmp_dir)
+
+            # Check response and raise any error status
+            req.raise_for_status()
+
+            # Get total size for progress bar (if available)
+            total_size = int(req.headers.get("content-length") or 0) or None
+
+            # Prepare progress bar
+            columns = [DownloadColumn(), BarColumn(bar_width=None), TransferSpeedColumn(), TimeRemainingColumn()]
+            with Progress(*columns, transient=True) as progress:
+                # Prepare task for progress bar
+                task = progress.add_task(f"Downloading {url}", total=total_size)
+
+                # Download to file
+                target_file = tmp_path / Path(url).name if extract else target
+                target_file.parent.mkdir(parents=True, exist_ok=True)
+                with target_file.open("wb") as f:
+                    for chunk in req.iter_content(chunk_size=100 * 1024):
+                        f.write(chunk)
+                        progress.update(task, advance=len(chunk))
+
+            # Extract if needed
+            if extract:
+                target.mkdir(parents=True, exist_ok=True)
+                try:
+                    self.logger.info(cast(str, self.task.emoji), f"Extracting archive to {target}")
+                    shutil.unpack_archive(target_file, target)
+                except Exception as e:
+                    raise RuntimeError(f"Error while extracting archive {target_file} to {target}: {e}") from e
+                target.touch()
+
+    def build(self, url: str, request_function: str = "requests.get", request_kwargs: dict[str, Any] | None = None, extract: bool = False):  # type: ignore
+        """
+        Build logic: download file from provided URL and save it as main output
+
+        :param url: URL to download file from
+        :param request_function: Function name to import and use for the HTTP request. The function must behave like **requests.get**; default is **requests.get**.
+        :param request_kwargs: Map of extra keyword arguments to be passed to the request function
+        :param extract: Whether to extract the downloaded file if it's an archive (zip, tar.gz, or others).
+                        In this case, the main output is expected to be a directory instead of a file, and the downloaded file will be extracted into it.
+        """
+
+        # Import download function
+        try:
+            module_name, function_name = request_function.rsplit(".", 1)
+            imported_module = importlib.import_module(module_name)
+            imported_get_function = getattr(imported_module, function_name)
+        except Exception as e:
+            raise RuntimeError(f"Error while importing request function {request_function}: {e}") from e
+
+        # Download file
+        self.download(url=url, target=self.main_output, request_function=imported_get_function, request_kwargs=request_kwargs, extract=extract)

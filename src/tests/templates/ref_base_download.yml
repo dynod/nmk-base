@@ -1,0 +1,46 @@
+refs:
+  - pip://nmk-base!plugin.yml
+
+tasks:
+  bad_download:
+    description: Download some big file
+    builder: nmk_base.common.DownloadBuilder
+    params:
+      request_function: foo.bar.download
+      url: https://github.com/dynod/nmk-base/archive/refs/tags/1.2.0.zip
+      request_kwargs:
+        verify: False
+    output:
+      - ${PROJECTDIR}/sample.zip
+
+  download_raw:
+    description: Download some big file
+    builder: nmk_base.common.DownloadBuilder
+    params:
+      url: https://github.com/dynod/nmk-base/archive/refs/tags/1.2.0.zip
+      request_kwargs:
+        verify: False
+    output:
+      - ${PROJECTDIR}/sample.zip
+
+  download_n_extract:
+    description: Download some big file
+    builder: nmk_base.common.DownloadBuilder
+    params:
+      url: https://github.com/dynod/nmk-base/archive/refs/tags/1.2.0.zip
+      extract: True
+      request_kwargs:
+        verify: False
+    output:
+      - ${PROJECTDIR}/sample_dir
+
+  download_not_an_archive:
+    description: Download some big file
+    builder: nmk_base.common.DownloadBuilder
+    params:
+      url: https://raw.githubusercontent.com/dynod/nmk-base/main/README.md
+      extract: True
+      request_kwargs:
+        verify: False
+    output:
+      - ${PROJECTDIR}/sample_dir
