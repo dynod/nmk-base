@@ -66,6 +66,19 @@ Plugins versions, indexed by names, to be displayed by **{ref}`version<version>`
 
 Plugins help pages URLs indexed by names, to be displayed by **{ref}`help<help>`** task.
 
+(requestFunction)=
+
+### **`requestFunction`** -- request function for download tasks
+
+| Type | Default value |
+| ---- | ------------- |
+| str  | requests.get  |
+
+Canonical path to a requests-like function, that should be passed as **request_function** parameter for {py:class}`nmk_base.common.DownloadBuilder` based
+download tasks. The specified function must behave like **`requests.get`** function (same input/output parameters).
+
+_<span style="color:green">Added in version 1.3.0</span>_
+
 ## Git
 
 The **`nmk-base`** plugin handles some git related configuration items, listed in this chapter.

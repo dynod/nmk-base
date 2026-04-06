@@ -10,9 +10,12 @@ The fully detailed changelog is also available on [Github](https://github.com/dy
 
 ## Release 1.3.0
 
+- Config items update:
+  - added {ref}`${requestFunction}<requestFunction>`: name of request function used for download tasks
 - API update:
   - updated {py:class}`nmk_base.resolvers.FilesResolver` to make it a "ready to use" resolver, with parameters
   - moved {py:class}`nmk_base.resolvers.MultiChoiceResolver` (and sub-classes) from `nmk_base.common` module, for more consistency
+  - added {py:class}`nmk_base.common.DownloadBuilder` builder to handle download tasks (with progress bar + extraction option)
 
 ## Release 1.2.0
 

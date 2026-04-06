@@ -25,6 +25,8 @@ config:
     - nmk>=1.4.0
     - buildenv
     - tomlkit
+    - requests
+    - rich
 
   # Extra project data
   pythonProjectFileItems:
