@@ -1,5 +1,5 @@
 """
-Python module for **nmk-base** utility classes.
+Python module for **nmk-base** utility classes and builders
 """
 
 import shutil
@@ -11,10 +11,17 @@ from jinja2 import Environment, Template, meta
 from nmk.model.builder import NmkTaskBuilder
 from nmk.model.config import NmkStaticConfig
 from nmk.model.keys import NmkRootConfig
-from nmk.model.resolver import NmkConfigResolver, NmkDictConfigResolver, NmkListConfigResolver, NmkStrConfigResolver
 from nmk.utils import run_with_logs
 from tomlkit import TOMLDocument, comment, loads
 from tomlkit.toml_file import TOMLFile
+
+try:
+    from .resolvers import MultiChoiceResolver, MultiDictChoiceResolver, MultiListChoiceResolver, MultiStrChoiceResolver
+
+    __all__ = ["MultiChoiceResolver", "MultiStrChoiceResolver", "MultiListChoiceResolver", "MultiDictChoiceResolver"]  # pragma: no cover
+except ImportError:  # pragma: no cover
+    # Resolvers may be temporarily not available (should not happen in normal usage); ignore and let it fail later if resolvers are actually used
+    pass
 
 
 class TemplateBuilder(NmkTaskBuilder):
@@ -300,50 +307,3 @@ class CleanBuilder(NmkTaskBuilder):
         else:
             # Nothing to clean
             self.logger.debug(f"Nothing to clean (folder not found: {to_delete})")
-
-
-_MultiChoiceValue = str | int | bool | list[Any] | dict[str, Any]
-
-
-class MultiChoiceResolver(NmkConfigResolver):
-    """
-    Multi-choice config item resolver base class
-    """
-
-    def get_value(  # type: ignore
-        self, name: str, key: int | str | bool, choices: dict[int | str | bool, _MultiChoiceValue], default: _MultiChoiceValue
-    ) -> _MultiChoiceValue:
-        """
-        Resolve multi-choice config item value using provided key and available choices
-
-        :param name: config item name
-        :param key: key to select value
-        :param choices: available choices
-        :param default: default value
-        :return: item value
-        """
-        return choices.get(key, default)
-
-
-class MultiStrChoiceResolver(MultiChoiceResolver, NmkStrConfigResolver):  # type: ignore
-    """
-    Multi-choice string config item resolver class
-    """
-
-    pass
-
-
-class MultiListChoiceResolver(MultiChoiceResolver, NmkListConfigResolver):  # type: ignore
-    """
-    Multi-choice list config item resolver class
-    """
-
-    pass
-
-
-class MultiDictChoiceResolver(MultiChoiceResolver, NmkDictConfigResolver):  # type: ignore
-    """
-    Multi-choice dict config item resolver class
-    """
-
-    pass
