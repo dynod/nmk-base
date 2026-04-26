@@ -9,7 +9,7 @@ name = "nmk-base"
 dynamic = ["version"]
 requires-python = ">=3.10"
 classifiers = ["Programming Language :: Python :: 3.10", "Programming Language :: Python :: 3.11", "Programming Language :: Python :: 3.12", "Programming Language :: Python :: 3.13", "Programming Language :: Python :: 3.14"]
-dependencies = ["Jinja2", "nmk>=1.4.0", "buildenv", "tomlkit", "requests", "rich"]
+dependencies = ["Jinja2", "nmk>=1.4.0", "buildenv", "tomlkit", "requests", "rich", "ruamel.yaml"]
 description = "Base plugin for nmk build system"
 
 [[project.authors]]
@@ -35,6 +35,9 @@ nmk = "nmk_base._buildenv.legacy:BuildEnvInit"
 
 [project.entry-points.buildenv_extension]
 nmk = "nmk_base._buildenv.extension:NmkBaseBuildEnvExtension"
+
+[project.entry-points.buildenv_template]
+nmk-base = "nmk_base._buildenv.template:NmkBaseProjectTemplate"
 
 [dependency-groups]
 dev = ["nmk-badges", "nmk-doc", "nmk-github", "nmk-python", "nmk-vscode", "sphinx-autoapi"]
@@ -76,4 +79,4 @@ data_file = "out/.coverage"
 concurrency = ["thread"]
 disable_warnings = ["no-data-collected"]
 branch = true
-omit = ["src/tests/*", "src/nmk_base/_buildenv/extension.py"]
+omit = ["src/tests/*", "src/nmk_base/_buildenv/extension.py", "src/nmk_base/_buildenv/template.py"]

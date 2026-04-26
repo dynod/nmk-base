@@ -16,6 +16,7 @@ nmk-vscode
 nmk>=1.4.0
 requests
 rich
+ruamel.yaml
 sphinx-autoapi
 tomlkit
 
