@@ -27,6 +27,7 @@ config:
     - tomlkit
     - requests
     - rich
+    - ruamel.yaml
 
   # Extra project data
   pythonProjectFileItems:
@@ -37,11 +38,14 @@ config:
           nmk: nmk_base._buildenv.legacy:BuildEnvInit
         buildenv_extension: # buildenv >=2 extension
           nmk: nmk_base._buildenv.extension:NmkBaseBuildEnvExtension
+        buildenv_template: # buildenv >=2 template
+          nmk-base: nmk_base._buildenv.template:NmkBaseProjectTemplate
     tool:
       coverage:
         run:
           omit:
             - src/nmk_base/_buildenv/extension.py # New buildenv extension code
+            - src/nmk_base/_buildenv/template.py # New buildenv template code
 
   # Github issues logged in nmk project
   githubIssuesRepo: nmk
