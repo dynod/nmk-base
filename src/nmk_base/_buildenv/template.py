@@ -184,21 +184,32 @@ class NmkBaseProjectTemplate(BuildEnvProjectTemplate):
 
     # Build tasks list
     def _setup_tasks(self, nmk_templates: list[Self]) -> list[str]:
+        # Merge all tasks, avoiding duplicates while preserving order
         tasks: list[str] = []
         for nmk_template in nmk_templates:
             for task in nmk_template.post_generation_tasks:
                 if task not in tasks:
                     tasks.append(task)
+
+        # Remove ignored tasks from the main template, if any
+        for ignored_task in self.ignored_tasks:
+            if ignored_task in tasks:
+                tasks.remove(ignored_task)
+
         return tasks
+
+    @property
+    def ignored_tasks(self) -> list[str]:
+        """
+        Get the list of tasks to be ignored during post-generation, as a list of strings.
+        """
+        return []
 
     # Generate extra files before calling nmk, if needed
     def _generate_extra_files(self, nmk_templates: list[Self], renderer: BuildEnvRenderer):
-        # Delegate to other templates first
-        for nmk_template in nmk_templates[1:]:  # Skip self
+        # Generate all files
+        for nmk_template in nmk_templates:
             nmk_template.generate_extra_files(renderer)
-
-        # Generate extra files for self
-        self.generate_extra_files(renderer)
 
     def generate_extra_files(self, renderer: BuildEnvRenderer):
         """
@@ -214,8 +225,8 @@ class NmkBaseProjectTemplate(BuildEnvProjectTemplate):
             _LOGGER.info("Skip nmk.yml generation (already exist in this project)")
             return
 
-        # Check for extra nmk templates
-        all_nmk_templates: list[Self] = [self] + [t for t in extra_templates if isinstance(t, NmkBaseProjectTemplate) and t is not self]  # type: ignore
+        # List all templates (including this instance, at the end of the list)
+        all_nmk_templates: list[Self] = [t for t in extra_templates if isinstance(t, NmkBaseProjectTemplate) and t is not self] + [self]  # type: ignore
 
         # Handle references and config items
         references = self._setup_references(all_nmk_templates)
