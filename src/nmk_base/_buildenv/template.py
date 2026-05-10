@@ -1,4 +1,5 @@
 import logging
+import re
 import shutil
 import subprocess
 from dataclasses import dataclass, field
@@ -14,6 +15,25 @@ _LOGGER = logging.getLogger("nmk-base.template")
 
 NmkConfigType = str | bool | list[str] | dict[str, Any]
 """Nmk config item types"""
+
+
+def camel_to_kebab(name: str) -> str:
+    """Convert a camelCase or PascalCase string to kebab-case.
+
+    Examples:
+        camel_to_kebab('camelCase') -> 'camel-case'
+        camel_to_kebab('CamelCase') -> 'camel-case'
+        camel_to_kebab('getHTTPResponse') -> 'get-http-response'
+    """
+    if not name:
+        return ""
+
+    # First pass: put underscore between a lowercase/number and Uppercase-starting group
+    s1 = re.sub(r"(.)([A-Z][a-z]+)", r"\1_\2", name)
+    # Second pass: put underscore between a lowercase/number and an uppercase (for acronyms)
+    s2 = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s1)
+    # Replace spaces/underscores with dash and lowercase the result
+    return s2.replace("_", "-").replace(" ", "-").lower()
 
 
 def _to_commented(obj: dict[str, Any] | list[Any] | Any, comments: dict[str, str], path: str = "") -> CommentedMap | list[CommentedMap] | Any:
@@ -79,6 +99,10 @@ class NmkBaseProjectTemplate(BuildEnvProjectTemplate):
         return "base nmk project, without any plugin"
 
     @property
+    def weight(self) -> int:
+        return 100
+
+    @property
     def generated_files(self) -> set[Path]:
         return super().generated_files | set(
             [
@@ -88,6 +112,12 @@ class NmkBaseProjectTemplate(BuildEnvProjectTemplate):
                 Path(".gitignore"),
             ]
         )
+
+    @property
+    def project_name(self) -> str:
+        # Deduce the python module name from the project root name, converting to lowercase and replacing hyphens with underscores
+        assert self.info.project_root is not None, "Project root must be set to determine python module name"
+        return camel_to_kebab(self.info.project_root.name)
 
     @property
     def references(self) -> list[NmkReference]:
@@ -105,6 +135,7 @@ class NmkBaseProjectTemplate(BuildEnvProjectTemplate):
         return {
             "refs": "Plugin references",
             "config": "\nProject configuration",
+            "config.projectName": "\nProject name",
             "config.venvPkgDeps": "\nProject package dependencies",
             "config.venvArchiveDeps": "\nProject package dependencies (from local files)",
         }
@@ -115,8 +146,7 @@ class NmkBaseProjectTemplate(BuildEnvProjectTemplate):
         Get the config items to be added to the generated nmk.yml file, as a dict.
         """
 
-        # By default, no extra config
-        return {}
+        return {"projectName": self.project_name}
 
     def handle_dependencies(self, packages: list[str]) -> dict[str, NmkConfigType]:
         """
@@ -156,23 +186,34 @@ class NmkBaseProjectTemplate(BuildEnvProjectTemplate):
 
     # Build references list
     def _setup_references(self, nmk_templates: list[Self]) -> list[str]:
-        references: list[str] = []
+        references: dict[str, NmkReference] = {}
+
+        # Iterate on templates
         for nmk_template in nmk_templates:
+            # Iterate on declared references
             for declared_def in nmk_template.references:
-                if declared_def.ref not in references:
-                    # Add to references list if not done yet
-                    references.append(declared_def.ref)
+                # If not already in references, and not already included by other references
+                if (declared_def.ref not in references) and not any(declared_def.ref in existing_ref.included_refs for existing_ref in references.values()):
+                    references[declared_def.ref] = declared_def
+
+                # Also remove any included ref
                 for included_ref in declared_def.included_refs:
                     # Remove any included ref that is already in the list, to avoid duplicates
                     if included_ref in references:
-                        references.remove(included_ref)
-        return references
+                        del references[included_ref]
+        return list(references.keys())
 
     # Build config tree
     def _setup_config(self, nmk_templates: list[Self], packages: list[str]) -> dict[str, NmkConfigType]:
         config_items: dict[str, NmkConfigType] = self.handle_dependencies(packages)
         for nmk_template in nmk_templates:
             config_items.update(nmk_template.config_items)
+
+        # Remove ignored items from the main template, if any
+        for ignored_item in self.ignored_config_items:
+            if ignored_item in config_items:
+                del config_items[ignored_item]
+
         return config_items
 
     # Build comments dict
@@ -202,6 +243,13 @@ class NmkBaseProjectTemplate(BuildEnvProjectTemplate):
     def ignored_tasks(self) -> list[str]:
         """
         Get the list of tasks to be ignored during post-generation, as a list of strings.
+        """
+        return []
+
+    @property
+    def ignored_config_items(self) -> list[str]:
+        """
+        Get the list of config items to be ignored when generating nmk.yml, as a list of strings.
         """
         return []
 
