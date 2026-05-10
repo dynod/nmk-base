@@ -4,15 +4,21 @@
 
 The **`nmk-base`** plugin defines the tasks described below.
 
+---
+
 ## Meta tasks
 
 This plugin defines some meta tasks that can be used by other plugins as kind of build "phases"
+
+---
 
 (setup)=
 
 ### **`setup`** task
 
 The **`setup`** task aims to be the first phase of the build, allowing to perform prebuild operations like code generation, code formatting, dependencies checking, etc...
+
+---
 
 (build)=
 
@@ -24,6 +30,8 @@ It is the **default** build task (i.e. this is the built task when **`nmk`** is 
 
 It depends on the **{ref}`setup<setup>`** task.
 
+---
+
 (tests)=
 
 ### **`tests`** task
@@ -31,6 +39,8 @@ It depends on the **{ref}`setup<setup>`** task.
 The **`tests`** task shall be used to perform all automated testing operations on generated software.
 
 It depends on the **{ref}`build<build>`** task.
+
+---
 
 (package)=
 
@@ -40,6 +50,8 @@ The **`package`** task shall be used to package project artifacts from generated
 
 It depends on the **{ref}`build<build>`** task.
 
+---
+
 (install)=
 
 ### **`install`** task
@@ -47,6 +59,8 @@ It depends on the **{ref}`build<build>`** task.
 The **`install`** task shall be used to install generated software locally.
 
 It depends on the **{ref}`build<build>`** task.
+
+---
 
 (publish)=
 
@@ -56,13 +70,19 @@ The **`publish`** task shall be used to publish built artifacts where they shoul
 
 It depends on the **{ref}`package<package>`** task.
 
+---
+
 (clean)=
 
 ### **`clean`** task
 
 The **`clean`** task shall be used to clean the project built files.
 
+---
+
 ## Helper tasks
+
+---
 
 (version)=
 
@@ -84,6 +104,8 @@ The **`version`** task will list the versions of **`nmk`** itself, plus all plug
 > 2022-02-20 14:37:02 (I) nmk 🏁 - Done
 > ```
 
+---
+
 (help)=
 
 ### **`help`** -- display help links
@@ -103,6 +125,8 @@ The **`help`** task will list the help page URL of **`nmk`** itself, plus all pl
 > 2022-02-20 14:42:24 (I) [help] 🆘 -  👉 base: https://nmk-base.readthedocs.io/
 > 2022-02-20 14:42:24 (I) nmk 🏁 - Done
 > ```
+
+---
 
 (tasks)=
 
@@ -132,6 +156,8 @@ The **`tasks`** task will list all the known tasks for the built project.
 > 2022-02-20 14:42:24 (I) nmk 🏁 - Done
 > ```
 
+---
+
 ### **`git.clean`** -- full clean
 
 | Property | Value/description                 |
@@ -142,9 +168,13 @@ The **`git.clean`** task will use git to clean the project folder, i.e. by remov
 
 **Warning:** this will remove (at least) both the **`venv`** and **`.nmk`** folders. Consequently, the build will immediately stop after this task, ignoring other tasks eventually specified on the command line. After this task is executed, the **`buildenv`** loading scripts will have to be used again to setup the project and reinstall **`nmk`**
 
+---
+
 ## Setup tasks
 
 All tasks in this chapter are dependencies of the main **{ref}`setup<setup>`** task.
+
+---
 
 (buildenv)=
 
@@ -162,6 +192,8 @@ The **`buildenv`** task updates [buildenv](https://buildenv.readthedocs.io) load
 - create a local python venv where **`nmk`** (and all python dependencies of the project) will be installed
 - enable this venv
 
+---
+
 (git.version)=
 
 ### **`git.version`** -- git version update
@@ -173,6 +205,8 @@ The **`buildenv`** task updates [buildenv](https://buildenv.readthedocs.io) load
 | deps     | {ref}`out<out>` task                            |
 
 This task is used to update the {ref}`${gitVersionStamp}<gitVersionStamp>` file, each time the {ref}`${gitVersion}<gitVersion>` value is updated (new commit, new tag...)
+
+---
 
 (git.ignore)=
 
@@ -192,6 +226,8 @@ Notes:
 - Project-relative paths are automatically made relative to project root.
 - Non project-relative absolute paths are ignored when generating the fragment.
 
+---
+
 (git.attributes)=
 
 ### **`git.attributes`** -- generate .gitattributes file
@@ -206,6 +242,8 @@ This task is used to update the {ref}`${gitAttributes}<gitAttributes>` file with
 
 - {ref}`${linuxLineEndings}<linuxLineEndings>`: list of file extensions (".xxx" format) requiring to be systematically handled with Linux line endings
 - {ref}`${windowsLineEndings}<windowsLineEndings>`: list of file extensions (".xxx" format) requiring to be systematically handled with Windows line endings
+
+---
 
 (py.req)=
 
@@ -231,6 +269,8 @@ It is triggered only if:
 - the requirements template (from {ref}`${venvRequirementsTemplate}<venvRequirementsTemplate>` config list) is updated
 - project files are updated
 
+---
+
 (py.venv)=
 
 ### **`py.venv`** -- update python venv
@@ -255,6 +295,8 @@ Instead, instructions are provided to update the environment:
 - or call `buildenv upgrade` command to spawn a new upgraded environment
 ```
 
+---
+
 (out)=
 
 ### **`out`** -- output folder creation
@@ -266,9 +308,13 @@ Instead, instructions are provided to update the environment:
 
 This task simply silently creates the {ref}`${outputDir}<outputDir>` folder. All tasks aiming to create files in this folder should reference this task.
 
+---
+
 ## Clean tasks
 
 All tasks in this chapter are dependencies of the main **{ref}`clean<clean>`** task.
+
+---
 
 ### **`clean.out`** -- output cleaning
 
@@ -287,9 +333,13 @@ The **`clean.out`** task will simply remove the {ref}`${outputDir}<outputDir>` f
 > 2022-02-20 14:37:54 (I) nmk 🏁 - Done
 > ```
 
+---
+
 ## Prologue tasks
 
 All tasks in this chapter are dependencies of the built-in **prologue** task (i.e. systematically executed before all tasks specified on the comand line).
+
+---
 
 (sys.deps)=
 
@@ -327,9 +377,13 @@ The builder is called with the following parameters mapping:
 > 2024-11-22 07:40:22 (E) nmk 💀 - An error occurred during task sys.deps build: Please install missing system dependencies (see above)
 > ```
 
+---
+
 ## Epilogue tasks
 
 All tasks in this chapter are dependencies of the built-in **epilogue** task (i.e. systematically executed after all tasks specified on the comand line).
+
+---
 
 (git.dirty)=
 
