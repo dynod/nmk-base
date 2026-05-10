@@ -37,7 +37,7 @@ nmk = "nmk_base._buildenv.legacy:BuildEnvInit"
 nmk = "nmk_base._buildenv.extension:NmkBaseBuildEnvExtension"
 
 [project.entry-points.buildenv_template]
-nmk-base = "nmk_base._buildenv.template:NmkBaseProjectTemplate"
+nmk = "nmk_base._buildenv.template:NmkBaseProjectTemplate"
 
 [dependency-groups]
 dev = ["nmk-badges", "nmk-doc", "nmk-github", "nmk-python", "nmk-vscode", "sphinx-autoapi"]

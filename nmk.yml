@@ -39,7 +39,7 @@ config:
         buildenv_extension: # buildenv >=2 extension
           nmk: nmk_base._buildenv.extension:NmkBaseBuildEnvExtension
         buildenv_template: # buildenv >=2 template
-          nmk-base: nmk_base._buildenv.template:NmkBaseProjectTemplate
+          nmk: nmk_base._buildenv.template:NmkBaseProjectTemplate
     tool:
       coverage:
         run:
