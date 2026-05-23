@@ -8,6 +8,14 @@ Only interface and important behavior changes are listed here.
 The fully detailed changelog is also available on [Github](https://github.com/dynod/nmk-base/releases)
 ```
 
+## Release 1.5.0
+
+- Add new build sub-tasks, to help other plugins hooking in the build phase at the right place:
+  - {ref}`build.codegen<build.codegen>`
+  - {ref}`build.preprocess<build.preprocess>`
+  - {ref}`build.compile<build.compile>`
+  - {ref}`build.doc<build.doc>`
+
 ## Release 1.4.0
 
 - Change documentation theme

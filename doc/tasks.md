@@ -8,7 +8,17 @@ The **`nmk-base`** plugin defines the tasks described below.
 
 ## Meta tasks
 
-This plugin defines some meta tasks that can be used by other plugins as kind of build "phases"
+This plugin defines some meta tasks that can be used by other plugins as kind of build "phases". Depending on what the user want to do, the different available workflows are illustrated by the diagram below:
+
+![](diagrams/tasks-workflow.svg)
+
+```{note}
+As **`nmk`** supports any tasks combination, it is possbile to get any other build workflow combination by specifying the task names on the command line.
+
+E.g. an `nmk tests package install publish` command results in the following workflow:
+
+![](diagrams/full-workflow.svg)
+```
 
 ---
 
@@ -16,7 +26,7 @@ This plugin defines some meta tasks that can be used by other plugins as kind of
 
 ### **`setup`** task
 
-The **`setup`** task aims to be the first phase of the build, allowing to perform prebuild operations like code generation, code formatting, dependencies checking, etc...
+The **`setup`** task aims to be the first phase of the build, allowing to perform prebuild operations like config files generation, dependencies checking, etc...
 
 ---
 
@@ -28,7 +38,53 @@ The **`build`** task shall be used to perform all operation that build temporary
 
 It is the **default** build task (i.e. this is the built task when **`nmk`** is invoked without argument).
 
-It depends on the **{ref}`setup<setup>`** task.
+It firstly depends on the **{ref}`setup<setup>`** task, and is then composed of several sub-tasks, allowing plugins to easily contribute to a given build phase. These sub-tasks are detailed in the following chapters.
+
+![](diagrams/build-subtasks.svg)
+
+---
+
+(build.codegen)=
+
+#### **`build.codegen`** task
+
+The **`build.codegen`** task can be used to hook any code generation task, i.e. any process that creates/updates source code files expecting to be part of the build.
+
+_<span style="color:green">Added in version 1.5.0</span>_
+
+---
+
+(build.preprocess)=
+
+#### **`build.preprocess`** task
+
+The **`build.preprocess`** task can be used to hook any code preprocessing task, e.g.:
+
+- code format
+- code linting/static analysis
+- etc...
+
+_<span style="color:green">Added in version 1.5.0</span>_
+
+---
+
+(build.compile)=
+
+#### **`build.compile`** task
+
+The **`build.compile`** task can be used to hook any compilation task (whatever it means for any supported programming language)
+
+_<span style="color:green">Added in version 1.5.0</span>_
+
+---
+
+(build.doc)=
+
+#### **`build.doc`** task
+
+The **`build.doc`** task can be used to hook any documentation build task.
+
+_<span style="color:green">Added in version 1.5.0</span>_
 
 ---
 
