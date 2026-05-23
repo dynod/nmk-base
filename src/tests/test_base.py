@@ -38,23 +38,23 @@ class TestBasePlugin(NmkBaseTester):
 
     def test_build(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run"])
-        self.check_logs(["setup]] INFO 🛫 - Setup project configuration", "build]] INFO 🛠  - Build project artifacts", "13 built tasks"], check_order=True)
+        self.check_logs(["setup]] INFO 🛫 - Setup project configuration", "build]] INFO 🛠  - Build project artifacts", "17 built tasks"], check_order=True)
 
     def test_test(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "tests"])
-        self.check_logs(["tests]] INFO 🤞 - Run automated tests", "14 built tasks"], check_order=True)
+        self.check_logs(["tests]] INFO 🤞 - Run automated tests", "18 built tasks"], check_order=True)
 
     def test_package(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "package"])
-        self.check_logs(["package]] INFO 📦 - Package project artifacts", "14 built tasks"], check_order=True)
+        self.check_logs(["package]] INFO 📦 - Package project artifacts", "18 built tasks"], check_order=True)
 
     def test_install(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "install"])
-        self.check_logs(["install]] INFO 📥 - Install built software", "14 built tasks"], check_order=True)
+        self.check_logs(["install]] INFO 📥 - Install built software", "18 built tasks"], check_order=True)
 
     def test_publish(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--dry-run", "publish"])
-        self.check_logs(["publish]] INFO 🚚 - Publish artifacts", "15 built tasks"], check_order=True)
+        self.check_logs(["publish]] INFO 🚚 - Publish artifacts", "19 built tasks"], check_order=True)
 
     def test_version(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["version"])
@@ -66,7 +66,7 @@ class TestBasePlugin(NmkBaseTester):
 
     def test_tasks(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["tasks"])
-        self.check_logs(" 👉 tasks         : 🗃  - List all available tasks")
+        self.check_logs(" 👉 tasks           : 🗃  - List all available tasks")
 
     def test_git_version_config(self):
         self.nmk(self.prepare_project("ref_base.yml"), extra_args=["--print", "gitVersion"])

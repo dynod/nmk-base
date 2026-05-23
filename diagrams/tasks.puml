@@ -1,0 +1,46 @@
+@startuml tasks-workflow
+
+<style>
+element {MinimumWidth 130; HorizontalAlignment center}
+</style>
+:setup;
+:build;
+split
+    :tests;
+    kill
+split again
+    :package;
+    :publish;
+    kill
+split again
+    :install;
+    kill
+
+@enduml
+
+@startuml full-workflow
+
+<style>
+element {MinimumWidth 130; HorizontalAlignment center}
+</style>
+:setup;
+:build;
+:tests;
+:package;
+:install;
+:publish;
+
+@enduml
+
+@startuml build-subtasks
+
+<style>
+element {MinimumWidth 130; HorizontalAlignment center}
+</style>
+:build;
+:build.codegen;
+:build.preprocess;
+:build.compile;
+:build.doc;
+
+@enduml
