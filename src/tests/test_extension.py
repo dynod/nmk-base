@@ -1,7 +1,7 @@
 import subprocess
 
 from _pytest.monkeypatch import MonkeyPatch
-from buildenv.extension import BuildEnvInfo  # TODO: Reactivate this test when buildenv 2 is rolled out
+from buildenv.extension import BuildEnvInfo
 from pytest_multilog import TestHelper
 
 from nmk_base._buildenv.extension import NmkBaseBuildEnvExtension

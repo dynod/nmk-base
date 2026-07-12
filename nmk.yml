@@ -44,8 +44,7 @@ config:
       coverage:
         run:
           omit:
-            - src/nmk_base/_buildenv/extension.py # New buildenv extension code
-            - src/nmk_base/_buildenv/template.py # New buildenv template code
+            - src/nmk_base/_buildenv/legacy.py # Old buildenv extension code
 
   # Github issues logged in nmk project
   githubIssuesRepo: nmk

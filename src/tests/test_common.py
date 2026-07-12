@@ -65,7 +65,7 @@ class TestBasePlugin(NmkBaseTester):
         # Verify merged content
         doc = TOMLFile(generated_file).read()
         assert doc["dummy"]["foo"] == "bar"
-        assert doc["dummy"]["bar"] == "venv"
+        assert doc["dummy"]["bar"] == ".venv"
         assert doc["dummy"]["other"] == "1,2,3"
         assert doc["dummy"]["ymlContributedValue"] == "foo"
         assert doc["dummy"]["someIntValue"] == 456
