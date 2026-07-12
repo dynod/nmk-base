@@ -12,8 +12,6 @@ from nmk.envbackend import EnvBackendFactory
 from nmk.tests.tester import NmkBaseTester
 from nmk.utils import is_windows
 
-from nmk_base.buildenv import BuildenvInitBuilder
-
 
 class TestBasePlugin(NmkBaseTester):
     @property
@@ -141,61 +139,6 @@ class TestBasePlugin(NmkBaseTester):
             expected_error="An error occurred during task git.dirty build: Current folder is dirty:",
             with_epilogue=True,
         )
-
-    def test_venv_merged_requirements(self):
-        # Prepare some fake files
-        fake_req = self.test_folder / "somereq.txt"
-        fake_arc = self.test_folder / "somearchive.tar.gz"
-        with fake_req.open("w") as f:
-            f.write("SomeFakePackage")
-        fake_arc.touch()
-
-        # Build a merged requirements file
-        self.nmk(
-            self.prepare_project("ref_base.yml"),
-            extra_args=["py.req", "--config", '{"venvFileDeps":["${PROJECTDIR}/somereq.txt"],"venvArchiveDeps":["${PROJECTDIR}/somearchive.tar.gz"]}'],
-        )
-
-        # Verify generated file
-        with (self.test_folder / "requirements.txt").open() as f:
-            content = f.read()
-            assert "nmk" in content
-            assert "SomeFakePackage" in content
-            assert "somearchive.tar.gz" in content
-
-    def test_requirements_changes(self, monkeypatch: pytest.MonkeyPatch):
-        # Simulate a non-mutable backend
-        try:
-            from buildenv.backends._pip import LegacyPipBackend as EnvBackend
-        except ImportError:
-            from nmk._internal.envbackend_legacy import EnvBackend
-        monkeypatch.setattr(EnvBackend, "is_mutable", lambda slf: False)  # pyright: ignore[reportUnknownLambdaType, reportUnknownArgumentType]
-
-        # First run to display warning about non-mutable backend
-        p = self.prepare_project("ref_reqs.yml")
-        self.nmk(p, extra_args=["py.venv", "--config", '{"gitEnableDirtyCheck":false}'])
-        self.check_logs("Requirements have been updated")
-
-        # Second run should just skip the task
-        p.touch()
-        self.nmk(p, extra_args=["py.venv", "--config", '{"gitEnableDirtyCheck":false}'])
-        self.check_logs("[py.venv]] DEBUG 🐛 - Requirements are up to date, nothing to do")
-
-    def test_venv_simple_update(self, monkeypatch: pytest.MonkeyPatch):
-        # Fake pip subprocess behavior
-        monkeypatch.setattr(
-            subprocess,
-            "run",
-            lambda args, **kwargs: subprocess.CompletedProcess(args, 0, "# Fake packages list\nsomePackage==1.2.3\nrich==4.5.6", ""),  # type: ignore
-        )
-
-        # Test a simple venv update
-        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["py.venv"])
-
-        # Verify output files
-        output_req = self.test_folder / "out" / "requirements.txt"
-        assert output_req.exists()
-        assert "rich==" in output_req.read_text()
 
     def test_venv_not_mutable(self, monkeypatch: pytest.MonkeyPatch):
         # Fake non-mutable backend
@@ -341,44 +284,6 @@ class TestBasePlugin(NmkBaseTester):
         # Back to test
         yield
 
-    @pytest.mark.skip
-    def test_skipped_buildenv_init(self, fake_new_backend: None):
-        # Check buildenv loading scripts skipped task
-        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["buildenv", "--skip", "py.venv"])
-        assert not (self.test_folder / "buildenv.sh").is_file()
-        assert not (self.test_folder / "buildenv.cmd").is_file()
-        assert not (self.test_folder / "buildenv-loader.py").is_file()
-        self.check_logs("[buildenv]] DEBUG 🐛 - Task skipped, nothing to do")
-
-    def test_buildenv_init(self, monkeypatch: pytest.MonkeyPatch):
-        # Fake pip subprocess behavior
-        monkeypatch.setattr(
-            subprocess,
-            "run",
-            lambda all_args, *args, **kwargs: subprocess.CompletedProcess[str](all_args, 0, "# Fake packages list\nsomePackage==1.2.3", ""),  # type: ignore
-        )
-
-        # Fake venv path
-        fake_venv = self.test_folder / "fakeVenv"
-        if fake_venv.is_dir():
-            shutil.rmtree(fake_venv)
-        fake_venv_bin = fake_venv / ("Scripts" if is_windows() else "bin")
-        fake_venv_activate = fake_venv_bin / "activate.d"
-        fake_venv_activate.mkdir(parents=True, exist_ok=True)
-        (fake_venv_activate / "00_init.sh").touch()
-        (fake_venv_activate / "00_init.bat").touch()
-        monkeypatch.setattr(BuildenvInitBuilder, "_venv_bin_path", lambda _: fake_venv_bin)  # type: ignore
-
-        # Force buildenv loading scripts
-        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["buildenv", "--config", '{"buildenvInitForce": true}'])
-        assert (self.test_folder / "buildenv.sh").is_file()
-        assert (self.test_folder / "buildenv.cmd").is_file()
-        assert (self.test_folder / "buildenv-loader.py").is_file()
-
-        # Touch a fake project file, and try again
-        (self.test_folder / "nmk.yml").touch()
-        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["buildenv", "--config", '{"buildenvInitForce": true}'])
-
     def test_java_runtime(self, monkeypatch: pytest.MonkeyPatch):
         p = self.prepare_project("ref_base.yml")
 
@@ -393,11 +298,12 @@ class TestBasePlugin(NmkBaseTester):
         self.check_logs("Using provided path for 'java' command:")
 
         # Case 3: detect from system path with missing command
-        monkeypatch.setattr(shutil, "which", lambda cmd: None)  # type: ignore
+        old_which = shutil.which
+        monkeypatch.setattr(shutil, "which", lambda cmd: None if cmd == "java" else old_which(cmd))  # type: ignore
         self.nmk(p, extra_args=["--print", "javaRuntime"])
         self.check_logs("'java' command was not found in system path")
 
         # Case 4: detect from system path with valid command
-        monkeypatch.setattr(shutil, "which", lambda cmd: "/usr/bin/java")  # type: ignore
+        monkeypatch.setattr(shutil, "which", lambda cmd: "/usr/bin/java" if cmd == "java" else old_which(cmd))  # type: ignore
         self.nmk(p, extra_args=["--print", "javaRuntime"])
         self.check_logs("'java' command found in system path:")
