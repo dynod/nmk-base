@@ -25,7 +25,7 @@ class BuildenvInitBuilder(NmkTaskBuilder):
         Triggers BuildEnvManager init, in order to refresh buildenv loading scripts
         """
 
-        try:
+        try:  # pragma: no cover
             # Prepare manager
             from buildenv import BuildEnvManager
 
