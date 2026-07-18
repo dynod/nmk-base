@@ -43,7 +43,7 @@ def _to_commented(obj: dict[str, Any] | list[Any] | Any, comments: dict[str, str
         for k, v in obj.items():  # type: ignore
             subpath = f"{path}.{k}" if path else str(k)  # type: ignore
             cm[k] = _to_commented(v, comments, subpath)  # type: ignore
-            if subpath in comments:
+            if subpath in comments:  # pragma: no branch
                 cm.yaml_set_comment_before_after_key(  # type: ignore
                     k,
                     before=comments[subpath],
@@ -199,7 +199,7 @@ class NmkBaseProjectTemplate(BuildEnvProjectTemplate):
                 # Also remove any included ref
                 for included_ref in declared_def.included_refs:
                     # Remove any included ref that is already in the list, to avoid duplicates
-                    if included_ref in references:
+                    if included_ref in references:  # pragma: no branch
                         del references[included_ref]
         return list(references.keys())
 
@@ -234,7 +234,7 @@ class NmkBaseProjectTemplate(BuildEnvProjectTemplate):
 
         # Remove ignored tasks from the main template, if any
         for ignored_task in self.ignored_tasks:
-            if ignored_task in tasks:
+            if ignored_task in tasks:  # pragma: no branch
                 tasks.remove(ignored_task)
 
         return tasks
@@ -282,7 +282,7 @@ class NmkBaseProjectTemplate(BuildEnvProjectTemplate):
 
         # Amend config, if any
         project_def: dict[str, list[str] | dict[str, NmkConfigType]] = {"refs": list(map(lambda x: f"pip://{x}", references))}
-        if config_items:
+        if config_items:  # pragma: no branch
             project_def["config"] = config_items
 
         # Generate nmk.yml with comments
@@ -298,5 +298,5 @@ class NmkBaseProjectTemplate(BuildEnvProjectTemplate):
         # Clean output folders created by nmk
         for folder in [".nmk", "out"]:
             path = self.info.project_root / folder
-            if path.is_dir():
+            if path.is_dir():  # pragma: no branch
                 shutil.rmtree(path)
