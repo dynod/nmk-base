@@ -1,4 +1,6 @@
 # Tests for base plugin
+import json
+import logging
 import os
 import re
 import shutil
@@ -140,6 +142,56 @@ class TestBasePlugin(NmkBaseTester):
             with_epilogue=True,
         )
 
+    def test_venv_merged_requirements(self):
+        # Prepare some fake files
+        fake_req = self.test_folder / "somereq.txt"
+        fake_arc = self.test_folder / "somearchive.tar.gz"
+        with fake_req.open("w") as f:
+            f.write("SomeFakePackage")
+        fake_arc.touch()
+
+        # Build a merged requirements file
+        self.nmk(
+            self.prepare_project("ref_base.yml"),
+            extra_args=[
+                "py.req",
+                "--config",
+                json.dumps(
+                    {
+                        "venvFileDeps": ["${PROJECTDIR}/somereq.txt"],
+                        "venvArchiveDeps": ["${PROJECTDIR}/somearchive.tar.gz"],
+                        "backendUseRequirements": True,
+                    }
+                ),
+            ],
+        )
+
+        # Verify generated file
+        with (self.test_folder / "requirements.txt").open() as f:
+            content = f.read()
+            assert "nmk" in content
+            assert "SomeFakePackage" in content
+            assert "somearchive.tar.gz" in content
+
+    def test_venv_simple_update(self, monkeypatch: pytest.MonkeyPatch):
+        # Fake requirements
+        (self.test_folder / "requirements.txt").write_text("rich==4.5.6\n")
+
+        # Fake pip subprocess behavior
+        monkeypatch.setattr(
+            subprocess,
+            "run",
+            lambda args, **kwargs: subprocess.CompletedProcess(args, 0, "# Fake packages list\nsomePackage==1.2.3\nrich==4.5.6", ""),  # type: ignore
+        )
+
+        # Test a simple venv update
+        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["py.venv"])
+
+        # Verify output files
+        output_req = self.test_folder / "out" / "requirements.txt"
+        assert output_req.exists()
+        assert "rich==" in output_req.read_text()
+
     def test_venv_not_mutable(self, monkeypatch: pytest.MonkeyPatch):
         # Fake non-mutable backend
         class FakeBackend:
@@ -164,6 +216,9 @@ class TestBasePlugin(NmkBaseTester):
             def lock(self, venv_status: Path) -> None:
                 pass
 
+            def dump(self, output_file: Path, log_level: int = logging.INFO):
+                output_file.write_text("Fake backend dump")
+
         monkeypatch.setattr(EnvBackendFactory, "detect", lambda *args, **kwargs: FakeBackend(self.test_folder))  # pyright: ignore[reportUnknownLambdaType, reportUnknownArgumentType]
 
         # Test a simple venv update
@@ -173,7 +228,21 @@ class TestBasePlugin(NmkBaseTester):
             extra_args=["py.venv", "--config", '{"gitEnableDirtyCheck":true}'],
             expected_error="An error occurred during task py.venv build: Build stopped",
         )
-        self.check_logs("Requirements have been updated")
+        self.check_logs(["Requirements have been updated", "Updated config item: venvRequirementsUpdated=True"])
+
+        # Force requirements update
+        self.nmk(
+            project,
+            extra_args=["py.req", "--force"],
+        )
+        self.check_logs(["Updated config item: venvRequirementsUpdated=False"])
+
+        # Try again
+        self.nmk(
+            project,
+            extra_args=["py.venv", "--config", '{"gitEnableDirtyCheck":true}'],
+        )
+        self.check_logs("Requirements are up to date, nothing to do")
 
     def test_git_ignore(self):
         # Try 1: generate a new .gitignore

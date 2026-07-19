@@ -157,12 +157,13 @@ class NmkBaseProjectTemplate(BuildEnvProjectTemplate):
         config_items: dict[str, NmkConfigType] = {}
         simple_refs: list[str] = []
         file_refs: list[str] = []
+        assert self.info.project_root
         for package in map(lambda x: x.split(":")[-1], packages):  # Ignore dependency groups, if any (e.g. `dev:package` -> `package`)
             if "." in package:
                 package_path = Path(package)
                 if package_path.is_absolute() and package_path.is_file():
                     file_refs.append(package)
-                elif (Path.cwd() / package).is_file():
+                elif (self.info.project_root / package).is_file():
                     file_refs.append(f"${{PROJECTDIR}}/{package}")
                 else:
                     simple_refs.append(package)
@@ -170,7 +171,7 @@ class NmkBaseProjectTemplate(BuildEnvProjectTemplate):
                 simple_refs.append(package)
 
         # Build settings
-        if simple_refs:
+        if simple_refs:  # pragma: no branch
             config_items["venvPkgDeps"] = simple_refs
         if file_refs:
             config_items["venvArchiveDeps"] = file_refs
@@ -210,7 +211,7 @@ class NmkBaseProjectTemplate(BuildEnvProjectTemplate):
             config_items.update(nmk_template.config_items)
 
         # Remove ignored items from the main template, if any
-        for ignored_item in self.ignored_config_items:
+        for ignored_item in self.ignored_config_items:  # pragma: no cover -- no use case at the moment; for future use
             if ignored_item in config_items:
                 del config_items[ignored_item]
 
