@@ -18,14 +18,25 @@ from nmk.model.builder import NmkTaskBuilder
 from nmk.model.config import NmkStaticConfig
 from nmk.model.keys import NmkRootConfig
 from nmk.utils import run_with_logs
-from rich.progress import BarColumn, DownloadColumn, Progress, TimeRemainingColumn, TransferSpeedColumn
-from tomlkit import TOMLDocument, comment, loads
+from rich.progress import (
+    BarColumn,
+    DownloadColumn,
+    Progress,
+    TimeRemainingColumn,
+    TransferSpeedColumn,
+)
+from tomlkit import TOMLDocument, array, comment, loads
 from tomlkit.toml_file import TOMLFile
 from urllib3.exceptions import InsecureRequestWarning
 
 # Resolvers may be temporarily not available (should not happen in normal usage); ignore and let it fail later if resolvers are actually used
 with contextlib.suppress(ImportError):  # pragma: no cover
-    from .resolvers import MultiChoiceResolver, MultiDictChoiceResolver, MultiListChoiceResolver, MultiStrChoiceResolver  # NOQA: F401 # type: ignore
+    from .resolvers import (  # NOQA: F401 # type: ignore
+        MultiChoiceResolver,
+        MultiDictChoiceResolver,
+        MultiListChoiceResolver,
+        MultiStrChoiceResolver,
+    )
 
 
 class TemplateBuilder(NmkTaskBuilder):
@@ -94,7 +105,13 @@ class TemplateBuilder(NmkTaskBuilder):
         all_kw.update(kwargs)
         return Template(template_source).render(all_kw)
 
-    def build_from_template(self, template: Path, output: Path, kwargs: dict[str, str], file_updated_info: str | None = None) -> str:
+    def build_from_template(
+        self,
+        template: Path,
+        output: Path,
+        kwargs: dict[str, str],
+        file_updated_info: str | None = None,
+    ) -> str:
         """
         Generate file from template
 
@@ -150,7 +167,12 @@ class TemplateBuilder(NmkTaskBuilder):
 
         return rendered_content
 
-    def build(self, template: str, kwargs: dict[str, str] | None = None, file_updated_info: str | None = None):  # pyright: ignore[reportIncompatibleMethodOverride]
+    def build(
+        self,
+        template: str,
+        kwargs: dict[str, str] | None = None,
+        file_updated_info: str | None = None,
+    ):  # pyright: ignore[reportIncompatibleMethodOverride]
         """
         Default build behavior: generate main output file from provided template
 
@@ -160,7 +182,12 @@ class TemplateBuilder(NmkTaskBuilder):
         """
 
         # Just build from template
-        self.build_from_template(Path(template), self.main_output, kwargs if kwargs else {}, file_updated_info=file_updated_info)
+        self.build_from_template(
+            Path(template),
+            self.main_output,
+            kwargs if kwargs else {},
+            file_updated_info=file_updated_info,
+        )
 
 
 class TomlFileBuilder(TemplateBuilder):
@@ -169,11 +196,22 @@ class TomlFileBuilder(TemplateBuilder):
     """
 
     # Handle relative path for all contributions
-    def _check_paths(self, value: Any):
+    def _check_paths(self, value: Any) -> Any:
         if isinstance(value, str):
             return self.relative_path(value)
         if isinstance(value, list):
-            return list(map(self._check_paths, value))
+            new_values = list(map(self._check_paths, value))
+            if len(new_values) > 1:
+                new_array = array()
+                new_array.multiline(True)
+
+                for new_value in new_values:
+                    if isinstance(new_value, str) and new_value.startswith("# "):
+                        new_array.add_line(comment=new_value[2:])
+                    else:
+                        new_array.append(new_value)
+                return new_array
+            return new_values
         if isinstance(value, dict):
             return {k: self._check_paths(v) for k, v in value.items()}
         return value
@@ -210,7 +248,13 @@ class TomlFileBuilder(TemplateBuilder):
                     continue
                 main[k] = self._check_paths(v)
 
-    def build(self, fragment_files: list[str], items: dict, plugin_name: str = "nmk-base", kwargs: dict[str, str] = None):  # type: ignore
+    def build(
+        self,
+        fragment_files: list[str],
+        items: dict,
+        plugin_name: str = "nmk-base",
+        kwargs: dict[str, str] = None,
+    ):  # type: ignore
         """
         Generates toml file from fragments and items
 
@@ -232,7 +276,10 @@ class TomlFileBuilder(TemplateBuilder):
             self._contribute(toml_file, fragment_doc.unwrap())
 
         # Iterate on items contributed through yml project files (only ones contributing non-empty dicts)
-        self._contribute(toml_file, {k: v for k, v in items.items() if (isinstance(v, dict) and len(v) > 0)})
+        self._contribute(
+            toml_file,
+            {k: v for k, v in items.items() if (isinstance(v, dict) and len(v) > 0)},
+        )
 
         # Finally write config to output file
         doc = TOMLDocument()
@@ -319,7 +366,12 @@ class DownloadBuilder(NmkTaskBuilder):
     """
 
     def download(
-        self, url: str, target: Path, request_function: Callable[[str], requests.Response], request_kwargs: dict[str, Any] | None = None, extract: bool = False
+        self,
+        url: str,
+        target: Path,
+        request_function: Callable[[str], requests.Response],
+        request_kwargs: dict[str, Any] | None = None,
+        extract: bool = False,
     ):
         """
         Download file from provided URL and save it as main output
@@ -341,7 +393,10 @@ class DownloadBuilder(NmkTaskBuilder):
 
         # Whatever if we need to extract or not, prepare a temporary directory + start download request in streaming mode
         self.logger.info(cast(str, self.task.emoji), f"Downloading {url}")
-        with TemporaryDirectory() as tmp_dir, request_function(url, **used_kwargs) as req:
+        with (
+            TemporaryDirectory() as tmp_dir,
+            request_function(url, **used_kwargs) as req,
+        ):
             tmp_path = Path(tmp_dir)
 
             # Check response and raise any error status
@@ -351,7 +406,12 @@ class DownloadBuilder(NmkTaskBuilder):
             total_size = int(req.headers.get("content-length") or 0) or None
 
             # Prepare progress bar
-            columns = [DownloadColumn(), BarColumn(bar_width=None), TransferSpeedColumn(), TimeRemainingColumn()]
+            columns = [
+                DownloadColumn(),
+                BarColumn(bar_width=None),
+                TransferSpeedColumn(),
+                TimeRemainingColumn(),
+            ]
             with Progress(*columns, transient=True) as progress:
                 # Prepare task for progress bar
                 task = progress.add_task(f"Downloading {url}", total=total_size)
@@ -374,7 +434,13 @@ class DownloadBuilder(NmkTaskBuilder):
                     raise RuntimeError(f"Error while extracting archive {target_file} to {target}: {e}") from e
                 target.touch()
 
-    def build(self, url: str, request_function: str = "requests.get", request_kwargs: dict[str, Any] | None = None, extract: bool = False):  # type: ignore
+    def build(
+        self,
+        url: str,
+        request_function: str = "requests.get",
+        request_kwargs: dict[str, Any] | None = None,
+        extract: bool = False,
+    ):  # type: ignore
         """
         Build logic: download file from provided URL and save it as main output
 
@@ -394,4 +460,10 @@ class DownloadBuilder(NmkTaskBuilder):
             raise RuntimeError(f"Error while importing request function {request_function}: {e}") from e
 
         # Download file
-        self.download(url=url, target=self.main_output, request_function=imported_get_function, request_kwargs=request_kwargs, extract=extract)
+        self.download(
+            url=url,
+            target=self.main_output,
+            request_function=imported_get_function,
+            request_kwargs=request_kwargs,
+            extract=extract,
+        )
