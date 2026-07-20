@@ -1,6 +1,0 @@
-refs:
-    - pip://nmk-base!plugin.yml
-
-config:
-    venvPkgDeps:
-        - fake
