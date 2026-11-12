@@ -342,22 +342,26 @@ class CleanBuilder(NmkTaskBuilder):
     Generic builder logic to clean a directory
     """
 
-    def build(self, path: str):  # type: ignore
+    def build(self, path: str | list[str]):  # type: ignore
         """
-        Build logic: delete (recursively) provided directory, if it exists
+        Build logic: delete provided directories (recursively) or files; no error are raised if path does not exist
 
-        :param path: Directory to be deleted
+        :param path: path (or list of paths) to be deleted
         """
 
-        # Check path
-        to_delete = Path(path)
-        if to_delete.is_dir():
-            # Clean it
-            self.logger.debug(f"Cleaning folder: {to_delete}")
-            shutil.rmtree(to_delete)
-        else:
-            # Nothing to clean
-            self.logger.debug(f"Nothing to clean (folder not found: {to_delete})")
+        # Iterate on all paths to delete
+        for p in path if isinstance(path, list) else [path]:
+            # Check path
+            to_delete = Path(p)
+            if to_delete.is_dir():
+                self.logger.debug(f"Cleaning folder: {to_delete}")
+                shutil.rmtree(to_delete)
+            elif to_delete.is_file():
+                self.logger.debug(f"Cleaning file: {to_delete}")
+                to_delete.unlink()
+            else:
+                # Nothing to clean
+                self.logger.debug(f"Nothing to clean (path not found: {to_delete})")
 
 
 class DownloadBuilder(NmkTaskBuilder):

@@ -74,3 +74,17 @@ class BuildenvFolderResolver(NmkStrConfigResolver):
         :param is_legacy: If the backend is legacy
         """
         return ".buildenv/" if is_legacy else ""
+
+
+class BackendNameResolver(NmkStrConfigResolver):
+    """
+    Resolver for the backend name.
+    """
+
+    def get_value(self, name: str) -> str:
+        """
+        Get the backend name.
+
+        :param name: The config name
+        """
+        return self.model.env_backend.name

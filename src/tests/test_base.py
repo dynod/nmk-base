@@ -25,8 +25,10 @@ class TestBasePlugin(NmkBaseTester):
         self.check_logs(re.compile('Config dump: { "outputDir": "[^"]+/out" }'))
 
     def test_clean_missing(self):
-        self.nmk(self.prepare_project("ref_base.yml"), extra_args=["clean"])
-        self.check_logs(f"Nothing to clean (folder not found: {self.test_folder / 'out'})")
+        p = self.prepare_project("ref_base.yml")
+        (self.test_folder / "uv.lock").touch()
+        self.nmk(p, extra_args=["clean"])
+        self.check_logs([f"Nothing to clean (path not found: {self.test_folder / 'out'})", "Cleaning file:"])
 
     def test_clean_folder(self):
         fake_out = self.test_folder / "out"
