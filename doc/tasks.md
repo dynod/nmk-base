@@ -184,7 +184,7 @@ The **`help`** task will list the help page URL of **`nmk`** itself, plus all pl
 
 ---
 
-(tasks)=
+(tasks-task)=
 
 ### **`tasks`** -- list known tasks
 
@@ -388,6 +388,21 @@ The **`clean.out`** task will simply remove the {ref}`${outputDir}<outputDir>` f
 > 2022-02-20 14:37:54 (I) [clean.out] 🧹 - Clean build output
 > 2022-02-20 14:37:54 (I) nmk 🏁 - Done
 > ```
+
+---
+
+(clean.lockfile)=
+
+### **`clean.lockfile`** -- lockfile cleaning
+
+| Property | Value/description                                             |
+| -------- | ------------------------------------------------------------- |
+| builder  | {py:class}`nmk_base.common.CleanBuilder`                      |
+| path     | {ref}`${backendCleanedLockfile}<backendCleanedLockfile>` file |
+
+The **`clean.lockfile`** task clean {ref}`${backendCleanedLockfile}<backendCleanedLockfile>`, if set.
+
+_<span style="color:green">Added in version 2.0.0</span>_
 
 ---
 

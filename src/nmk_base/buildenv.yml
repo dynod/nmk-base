@@ -29,13 +29,13 @@ config:
       default: ""
 
   # By default: ignore buildenv backend lockfile in source control
-  backendIgnoredLockfile: true
+  backendIgnoreLockfile: true
 
   # Ignored lockfile
   backendCleanedLockfile:
     __resolver__: nmk_base.resolvers.MultiStrChoiceResolver
     params:
-      key: ${backendIgnoredLockfile}
+      key: ${backendIgnoreLockfile}
       choices:
         true: ${backendLockfile}
       default: ""
@@ -67,7 +67,7 @@ tasks:
   # Clean lock file
   clean.lockfile:
     description: Clean buildenv backend lockfile
-    emoji: ":broom:.:file_folder:"
+    emoji: ":broom:.:locked:"
     builder: nmk_base.common.CleanBuilder
     params:
       path: ${backendCleanedLockfile}
