@@ -8,6 +8,17 @@ Only interface and important behavior changes are listed here.
 The fully detailed changelog is also available on [Github](https://github.com/dynod/nmk-base/releases)
 ```
 
+## Release 2.0.0
+
+- Config items update:
+  - added {ref}`${backendName}<backendName>`: name of current **`buildenv`** environment backend
+  - added {ref}`${backendLockfile}<backendLockfile>`: lockfile path for current **`buildenv`** environment backend, if any
+  - added {ref}`${backendIgnoreLockfile}<backendIgnoreLockfile>`: boolean flag to ignore **`buildenv`** environment backend lockfile in source control
+  - added {ref}`${backendCleanedLockfile}<backendCleanedLockfile>`: lockfile path to be cleaned/ignored
+
+- Tasks update:
+  - added {ref}`${clean.lockfile}<clean.lockfile>`: used to clean {ref}`${backendCleanedLockfile}<backendCleanedLockfile>` file, if set.
+
 ## Release 1.5.0
 
 - Add new build sub-tasks, to help other plugins hooking in the build phase at the right place:

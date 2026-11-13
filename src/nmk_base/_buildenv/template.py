@@ -4,12 +4,11 @@ import shutil
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Self
 
 from buildenv.extension import BuildEnvProjectTemplate, BuildEnvRenderer
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap
-from typing_extensions import Self
 
 _LOGGER = logging.getLogger("nmk-base.template")
 

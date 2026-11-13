@@ -49,3 +49,7 @@ config:
   # Github issues logged in nmk project
   githubIssuesRepo: nmk
   githubIssuesLabel: "plugin:base"
+
+  # Supported python range
+  pythonMinVersion: "3.11"
+  pythonMaxVersion: "3.15"

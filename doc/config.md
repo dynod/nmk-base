@@ -12,9 +12,9 @@ All of them are initiliazed with convenient default values, so that you don't ne
 
 ### **`sourceDir`** -- source base directory
 
-| Type | Default value     |
-| ---- | ----------------- |
-| str  | ${PROJECTDIR}/src |
+| Type | Default value                                                                             |
+| ---- | ----------------------------------------------------------------------------------------- |
+| str  | [${PROJECTDIR}](https://nmk.readthedocs.io/en/stable/file.html#built-in-config-items)/src |
 
 Main source directory for the project (containing source files; used by other plugins).
 
@@ -24,9 +24,9 @@ Main source directory for the project (containing source files; used by other pl
 
 ### **`outputDir`** -- output base directory
 
-| Type | Default value     |
-| ---- | ----------------- |
-| str  | ${PROJECTDIR}/out |
+| Type | Default value                                                                             |
+| ---- | ----------------------------------------------------------------------------------------- |
+| str  | [${PROJECTDIR}](https://nmk.readthedocs.io/en/stable/file.html#built-in-config-items)/out |
 
 Output folder used to generate build artifacts, temporary files, tools reports, etc...
 
@@ -131,9 +131,9 @@ Get version stamp file, updated by **{ref}`git.version<git.version>`** task each
 
 ### **`gitIgnore`** -- generated .gitignore file
 
-| Type | Default value              |
-| ---- | -------------------------- |
-| str  | "${PROJECTDIR}/.gitignore" |
+| Type | Default value                                                                                      |
+| ---- | -------------------------------------------------------------------------------------------------- |
+| str  | "[${PROJECTDIR}](https://nmk.readthedocs.io/en/stable/file.html#built-in-config-items)/.gitignore" |
 
 Target generated **`.gitignore`** file.
 
@@ -143,9 +143,9 @@ Target generated **`.gitignore`** file.
 
 ### **`gitIgnoreTemplate`** -- .gitignore template file
 
-| Type | Default value                    |
-| ---- | -------------------------------- |
-| str  | "${BASEDIR}/templates/gitignore" |
+| Type | Default value                                                                                            |
+| ---- | -------------------------------------------------------------------------------------------------------- |
+| str  | "[${BASEDIR}](https://nmk.readthedocs.io/en/stable/file.html#built-in-config-items)/templates/gitignore" |
 
 Template used by **{ref}`git.ignore<git.ignore>`** task to generate **`.gitignore`** fragment.
 
@@ -167,9 +167,9 @@ Stamp file for generated **`.gitignore`** fragment.
 
 ### **`gitIgnoredFiles`** -- git ignored files list
 
-| Type      | Default value                                                                                                                          |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| list[str] | [ "${PROJECTDIR_NMK}/", "{ref}`${outputDir}<outputDir>`", "{ref}`${venvName}<venvName>`", "{ref}`${buildenvFolder}<buildenvFolder>`" ] |
+| Type      | Default value                                                                                                                                                                                                                                                                          |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| list[str] | [ "[${PROJECTDIR_NMK}](https://nmk.readthedocs.io/en/stable/file.html#built-in-config-items)/",<br>"{ref}`${outputDir}<outputDir>`",<br>"{ref}`${venvName}<venvName>`",<br>"{ref}`${buildenvFolder}<buildenvFolder>`",<br>"{ref}`${backendCleanedLockfile}<backendCleanedLockfile>`" ] |
 
 List of files/folders to be added when generating **`.gitignore`** file.
 
@@ -179,9 +179,9 @@ List of files/folders to be added when generating **`.gitignore`** file.
 
 ### **`gitAttributes`** -- generated .gitattributes file
 
-| Type | Default value                  |
-| ---- | ------------------------------ |
-| str  | "${PROJECTDIR}/.gitattributes" |
+| Type | Default value                                                                                          |
+| ---- | ------------------------------------------------------------------------------------------------------ |
+| str  | "[${PROJECTDIR}](https://nmk.readthedocs.io/en/stable/file.html#built-in-config-items)/.gitattributes" |
 
 Target generated **`.gitattributes`** file.
 
@@ -191,9 +191,9 @@ Target generated **`.gitattributes`** file.
 
 ### **`gitAttributesTemplate`** -- .gitattributes template file
 
-| Type | Default value                        |
-| ---- | ------------------------------------ |
-| str  | "${BASEDIR}/templates/gitattributes" |
+| Type | Default value                                                                                                |
+| ---- | ------------------------------------------------------------------------------------------------------------ |
+| str  | "[${BASEDIR}](https://nmk.readthedocs.io/en/stable/file.html#built-in-config-items)/templates/gitattributes" |
 
 Template used by **{ref}`git.attributes<git.attributes>`** task to generate **`.gitattributes`** fragment.
 
@@ -319,7 +319,7 @@ _<span style="color:green">Added in version 1.2.0</span>_
 | ---- | ------------------ |
 | str  | "requirements.txt" |
 
-Name of the generated merged requirements file for python venv (relative to **`${PROJECTDIR}`**).
+Name of the generated merged requirements file for python venv (relative to **`[${PROJECTDIR}](https://nmk.readthedocs.io/en/stable/file.html#built-in-config-items)`**).
 
 ---
 
@@ -339,9 +339,9 @@ Name of the generated requirements file, containing a dump off all installed pac
 
 ### **`venvRequirementsTemplate`** -- generated requirements file template
 
-| Type | Default value                           |
-| ---- | --------------------------------------- |
-| str  | "${BASEDIR}/templates/requirements.txt" |
+| Type | Default value                                                                                                   |
+| ---- | --------------------------------------------------------------------------------------------------------------- |
+| str  | "[${BASEDIR}](https://nmk.readthedocs.io/en/stable/file.html#built-in-config-items)/templates/requirements.txt" |
 
 Template used to generate {ref}`${venvRequirements}<venvRequirements>` merged requirements file.
 
@@ -375,13 +375,17 @@ Path of the python executable in current project venv.
 
 ### **`venvUpdateInput`** -- input file for venv update task
 
-| Type | Default value                                              |
-| ---- | ---------------------------------------------------------- |
-| str  | ${PROJECTDIR}/{ref}`${venvRequirements}<venvRequirements>` |
+| Type | Default value                                                                                                                      |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| str  | [${PROJECTDIR}](https://nmk.readthedocs.io/en/stable/file.html#built-in-config-items)/{ref}`${venvRequirements}<venvRequirements>` |
 
 Overridable input file pointer for {ref}`py.venv<py.venv>` task.
 
 _<span style="color:green">Added in version 1.2.0</span>_
+
+---
+
+## Environment backend
 
 ---
 
@@ -410,6 +414,66 @@ _<span style="color:green">Added in version 1.2.0</span>_
 State if current environment backend is a legacy implementation (i.e. using **`buildenv`** version < 2) or not.
 
 _<span style="color:green">Added in version 1.2.0</span>_
+
+---
+
+(backendName)=
+
+### **`backendName`** -- Environment backend name
+
+| Type | Default value                                                  |
+| ---- | -------------------------------------------------------------- |
+| str  | Generated by {py:class}`nmk_base.backends.BackendNameResolver` |
+
+Expose current **`buildenv`** [environment backend](https://buildenv.readthedocs.io/en/stable/backends.html) name.
+
+_<span style="color:green">Added in version 2.0.0</span>_
+
+---
+
+(backendLockfile)=
+
+### **`backendLockfile`** -- Environment backend lockfile
+
+| Type | Default value                                                                                                                                                                    |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| str  | Mapping from {ref}`${backendName}<backendName>`:<br>- "uv": [${PROJECTDIR}](https://nmk.readthedocs.io/en/stable/file.html#built-in-config-items)/uv.lock<br>- "uvx": "" (empty) |
+
+Expose current **`buildenv`** [environment backend](https://buildenv.readthedocs.io/en/stable/backends.html) lockfile path, if any.
+
+_<span style="color:green">Added in version 2.0.0</span>_
+
+---
+
+(backendIgnoreLockfile)=
+
+### **`backendIgnoreLockfile`** -- Ignore lockfile in source control
+
+| Type | Default value |
+| ---- | ------------- |
+| bool | `true`        |
+
+Boolean flag to add (or not) the {ref}`${backendLockfile}<backendLockfile>` to git ignored files.
+
+```{note}
+By default, lockfile used by **`buildenv`** [environment backend](https://buildenv.readthedocs.io/en/stable/backends.html) is ignored in source control.
+```
+
+_<span style="color:green">Added in version 2.0.0</span>_
+
+---
+
+(backendCleanedLockfile)=
+
+### **`backendCleanedLockfile`** -- Lockfile to be cleaned/ignored
+
+| Type | Default value                                                                                                                                         |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| str  | Depends on {ref}`${backendIgnoreLockfile}<backendIgnoreLockfile>`:<br>- if true: {ref}`${backendLockfile}<backendLockfile>`<br>- if false: "" (empty) |
+
+Lock file to be cleaned and ignored in source control, depending on {ref}`${backendIgnoreLockfile}<backendIgnoreLockfile>` and {ref}`${backendLockfile}<backendLockfile>` items.
+
+_<span style="color:green">Added in version 2.0.0</span>_
 
 ---
 
