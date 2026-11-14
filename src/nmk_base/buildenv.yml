@@ -1,20 +1,4 @@
 config:
-  # Force init
-  buildenvInitForce: False
-
-  # Backend legacy mode
-  backendLegacy:
-    __resolver__: nmk_base.backends.BackendLegacyResolver
-
-  # Buildenv subfolder (for legacy backend)
-  buildenvFolder:
-    __resolver__: nmk_base.backends.BuildenvFolderResolver
-    params:
-      is_legacy: ${backendLegacy}
-
-  # Enable buildenv scripts refresh
-  buildenvRefresh: ${backendLegacy}
-
   # Buildenv backend name
   backendName:
     __resolver__: nmk_base.backends.BackendNameResolver
@@ -41,29 +25,9 @@ config:
       default: ""
 
   gitIgnoredFiles:
-    - ${buildenvFolder} # Ignore buildenv temporary folder (for legacy backend)
     - ${backendCleanedLockfile} # Ignore buildenv backend lockfile (if clean enabled)
 
 tasks:
-  # Buildenv init
-  buildenv:
-    description: Generate "buildenv" scripts
-    emoji: rocket
-    appendToDeps: setup
-    deps:
-      - py.venv
-      - git.ignore
-      - git.attributes
-    input: ${venvState}
-    output:
-      - ${PROJECTDIR}/buildenv.sh
-      - ${PROJECTDIR}/buildenv.cmd
-      - ${PROJECTDIR}/buildenv-loader.py
-    builder: nmk_base.buildenv.BuildenvInitBuilder
-    params:
-      force: ${buildenvInitForce}
-    if: ${buildenvRefresh}
-
   # Clean lock file
   clean.lockfile:
     description: Clean buildenv backend lockfile

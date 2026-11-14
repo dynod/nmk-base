@@ -1,6 +1,6 @@
 (allTasks)=
 
-# Tasks
+# 🛠️ Tasks
 
 The **`nmk-base`** plugin defines the tasks described below.
 
@@ -214,6 +214,8 @@ The **`tasks`** task will list all the known tasks for the built project.
 
 ---
 
+(git.clean)=
+
 ### **`git.clean`** -- full clean
 
 | Property | Value/description                 |
@@ -229,24 +231,6 @@ The **`git.clean`** task will use git to clean the project folder, i.e. by remov
 ## Setup tasks
 
 All tasks in this chapter are dependencies of the main **{ref}`setup<setup>`** task.
-
----
-
-(buildenv)=
-
-### **`buildenv`** -- buildenv loading scripts generation
-
-| Property | Value/description                                 |
-| -------- | ------------------------------------------------- |
-| builder  | {py:class}`nmk_base.buildenv.BuildenvInitBuilder` |
-| input    | {ref}`${venvState}<venvState>` file               |
-| output   | buildenv loading scripts                          |
-| if       | {ref}`${buildenvRefresh}<buildenvRefresh>`        |
-
-The **`buildenv`** task updates [buildenv](https://buildenv.readthedocs.io) loading scripts, aiming to be persisted in project repository, and allowing to:
-
-- create a local python venv where **`nmk`** (and all python dependencies of the project) will be installed
-- enable this venv
 
 ---
 
@@ -371,6 +355,8 @@ This task simply silently creates the {ref}`${outputDir}<outputDir>` folder. All
 All tasks in this chapter are dependencies of the main **{ref}`clean<clean>`** task.
 
 ---
+
+(clean.out)=
 
 ### **`clean.out`** -- output cleaning
 

@@ -1,4 +1,4 @@
-# Configuration Extension
+# 🧩 Configuration Extension
 
 As for all **`nmk`** projects config items, [**`nmk-base`** ones](config.md) are all overridable by other plug-ins and project files. But the ones described on this page are specifically designed to be extended.
 

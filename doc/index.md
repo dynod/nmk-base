@@ -6,6 +6,7 @@ This plugin provides base features for **`nmk`** build, which by design don't ne
 :caption: 'Contents'
 :maxdepth: 2
 usage
+features
 tasks
 extend
 config

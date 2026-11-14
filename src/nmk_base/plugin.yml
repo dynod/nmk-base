@@ -8,3 +8,4 @@ refs:
   - venv.yml # Python venv handling
   - buildenv.yml # Refresh buildenv files
   - java.yml # Java runtime handling
+  - deprecated.yml # Deprecated configuration options

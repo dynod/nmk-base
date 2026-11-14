@@ -1,0 +1,3 @@
+# Deprecated configuration options for nmk-base plugin
+config:
+  backendLegacy: false

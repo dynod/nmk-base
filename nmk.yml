@@ -23,7 +23,7 @@ config:
   pythonPackageRequirements:
     - Jinja2
     - nmk>=1.4.0
-    - buildenv
+    - buildenv>=2.0.0
     - tomlkit
     - requests
     - rich
@@ -34,22 +34,11 @@ config:
     project:
       description: Base plugin for nmk build system
       entry-points:
-        buildenv_init: # buildenv <2 extension
-          nmk: nmk_base._buildenv.legacy:BuildEnvInit
         buildenv_extension: # buildenv >=2 extension
           nmk: nmk_base._buildenv.extension:NmkBaseBuildEnvExtension
         buildenv_template: # buildenv >=2 template
           nmk: nmk_base._buildenv.template:NmkBaseProjectTemplate
-    tool:
-      coverage:
-        run:
-          omit:
-            - src/nmk_base/_buildenv/legacy.py # Old buildenv extension code
 
   # Github issues logged in nmk project
   githubIssuesRepo: nmk
   githubIssuesLabel: "plugin:base"
-
-  # Supported python range
-  pythonMinVersion: "3.11"
-  pythonMaxVersion: "3.15"
