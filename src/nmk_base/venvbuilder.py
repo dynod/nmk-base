@@ -64,7 +64,7 @@ class VenvUpdateBuilder(NmkTaskBuilder):
     Builder for **py.venv** task
     """
 
-    def build(self, pip_args: str = "", requirements_updated: bool = False, is_ci: bool = False):
+    def build(self, requirements_updated: bool = False, is_ci: bool = False):
         """
         Build logic for **py.venv** task
 
@@ -73,8 +73,8 @@ class VenvUpdateBuilder(NmkTaskBuilder):
         - if the backend is mutable, it simply calls backend upgrade logic to apply changes,
         In all cases, all dependencies are listed in secondary output file.
 
-        :param pip_args: Extra arguments to be used when invoking **pip install**; deprecated, not used anymore
         :param requirements_updated: State if requirements file content was actually updated
+        :param is_ci: State if we are running in CI environment
         """
 
         # If backend is not mutable, just stop here
@@ -82,9 +82,7 @@ class VenvUpdateBuilder(NmkTaskBuilder):
         if not backend.is_mutable():
             # Were requirements *really* updated?
             if requirements_updated:
-                self.logger.warning("Requirements have been updated; please:")
-                self.logger.warning("-- either exit and re-enter the environment to apply changes")
-                self.logger.warning("-- or call 'buildenv upgrade' command to spawn a new upgraded environment")
+                self.logger.warning("Requirements have been updated; please exit and re-enter the environment to apply changes")
 
                 # On CI, fail build as we can't automate sub-shell spawning; otherwise just stop here
                 raise RuntimeError("Build stopped") if is_ci else NmkStopHereError()

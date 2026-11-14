@@ -329,10 +329,8 @@ It also generates a dump ({ref}`${venvState}<venvState>`) of all installed packa
 ```{note}
 _<span style="color:green">Added in version 1.2.0</span>_
 
-If the current environment backend is not mutable (e.g. if it is a temporary venv created by **`pipx`** or **`uvx`** tool), this task won't run and the build will stop.
-Instead, instructions are provided to update the environment:
-- either exit and re-enter the environment to apply changes
-- or call `buildenv upgrade` command to spawn a new upgraded environment
+If the current environment backend is not mutable (e.g. if it is a temporary venv created by **`uvx`** tool), this task won't run and the build will stop.
+The user shall exit and re-enter the environment to apply changes.
 ```
 
 ---
