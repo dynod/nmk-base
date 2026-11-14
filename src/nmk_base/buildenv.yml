@@ -12,29 +12,34 @@ config:
         uv: ${PROJECTDIR}/uv.lock
       default: ""
 
-  # By default: ignore buildenv backend lockfile in source control
-  backendIgnoreLockfile: true
+  # By default: ignore lockfiles in source control
+  ignoreLockfiles: true
 
-  # Ignored lockfile
-  backendCleanedLockfile:
-    __resolver__: nmk_base.resolvers.MultiStrChoiceResolver
+  # Contributed lockfiles by other plugins
+  extraLockfiles: []
+
+  # Ignored lockfiles
+  cleanedLockfiles:
+    __resolver__: nmk_base.resolvers.MultiListChoiceResolver
     params:
-      key: ${backendIgnoreLockfile}
+      key: ${ignoreLockfiles}
       choices:
-        true: ${backendLockfile}
-      default: ""
+        true:
+          - ${backendLockfile}
+          - ${extraLockfiles}
+      default: []
 
   gitIgnoredFiles:
-    - ${backendCleanedLockfile} # Ignore buildenv backend lockfile (if clean enabled)
+    - ${cleanedLockfiles} # Ignore lockfiles (if clean enabled)
 
 tasks:
   # Clean lock file
-  clean.lockfile:
-    description: Clean buildenv backend lockfile
+  clean.lockfiles:
+    description: Clean lockfiles
     emoji: ":broom:.:locked:"
     builder: nmk_base.common.CleanBuilder
     params:
-      path: ${backendCleanedLockfile}
+      path: ${cleanedLockfiles}
     appendToDeps:
       - clean
-    if: ${backendCleanedLockfile}
+    if: ${cleanedLockfiles}

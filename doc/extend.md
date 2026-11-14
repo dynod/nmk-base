@@ -152,3 +152,22 @@ Example:
 ```yaml
 javaRuntimeCustomPath: /tmp/custom/java
 ```
+
+## Lockfiles
+
+Additional lockfiles (to be handled the same way than {ref}`${backendLockfile}<backendLockfile>`) can be contributed to the {ref}`${extraLockfiles}<extraLockfiles>` item.
+
+Example:
+
+```yaml
+extraLockfiles:
+  - ${PROJECTDIR}/cargo.lock
+```
+
+Alternatively, lockfiles handling can be disabled by setting {ref}`${ignoreLockfiles}<ignoreLockfiles>` to `false`.
+
+Example:
+
+```yaml
+ignoreLockfiles: false
+```
