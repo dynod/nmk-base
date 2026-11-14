@@ -73,14 +73,17 @@ tasks:
     description: Update python venv
     emoji: ":snake:.:inbox_tray:"
     deps:
+      - git.version
       - py.req
       - out
     appendToDeps: setup
     output:
       - ${venvRoot}
       - ${venvState}
-    input: ${venvUpdateInput}
+    input:
+      - ${venvUpdateInput}
+      - ${gitVersionStamp}
     builder: nmk_base.venvbuilder.VenvUpdateBuilder
     params:
       requirements_updated: ${venvRequirementsUpdated}
-      is_ci: ${gitEnableDirtyCheck}
+      is_ci: ${isCIBuild}

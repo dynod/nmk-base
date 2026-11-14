@@ -227,7 +227,7 @@ class TestBasePlugin(NmkBaseTester):
         project = self.prepare_project("ref_base.yml")
         self.nmk(
             project,
-            extra_args=["py.venv", "--config", '{"gitEnableDirtyCheck":true}'],
+            extra_args=["py.venv", "--config", '{"isCIBuild":true}'],
             expected_error="An error occurred during task py.venv build: Build stopped",
         )
         self.check_logs(["Requirements have been updated", "Updated config item: venvRequirementsUpdated=True"])
@@ -242,7 +242,7 @@ class TestBasePlugin(NmkBaseTester):
         # Try again
         self.nmk(
             project,
-            extra_args=["py.venv", "--config", '{"gitEnableDirtyCheck":true}'],
+            extra_args=["py.venv", "--config", '{"isCIBuild":true}'],
         )
         self.check_logs("Requirements are up to date, nothing to do")
 
