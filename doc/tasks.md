@@ -377,16 +377,16 @@ The **`clean.out`** task will simply remove the {ref}`${outputDir}<outputDir>` f
 
 ---
 
-(clean.lockfile)=
+(clean.lockfiles)=
 
-### **`clean.lockfile`** -- lockfile cleaning
+### **`clean.lockfiles`** -- lockfile cleaning
 
-| Property | Value/description                                             |
-| -------- | ------------------------------------------------------------- |
-| builder  | {py:class}`nmk_base.common.CleanBuilder`                      |
-| path     | {ref}`${backendCleanedLockfile}<backendCleanedLockfile>` file |
+| Property | Value/description                                  |
+| -------- | -------------------------------------------------- |
+| builder  | {py:class}`nmk_base.common.CleanBuilder`           |
+| path     | {ref}`${cleanedLockfiles}<cleanedLockfiles>` files |
 
-The **`clean.lockfile`** task clean {ref}`${backendCleanedLockfile}<backendCleanedLockfile>`, if set.
+The **`clean.lockfiles`** task clean {ref}`${cleanedLockfiles}<cleanedLockfiles>` files list, if set.
 
 _<span style="color:green">Added in version 2.0.0</span>_
 

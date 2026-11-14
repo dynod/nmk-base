@@ -29,12 +29,13 @@ The fully detailed changelog is also available on [Github](https://github.com/dy
 
 - Added {ref}`${backendName}<backendName>`: name of current **`buildenv`** environment backend
 - Added {ref}`${backendLockfile}<backendLockfile>`: lockfile path for current **`buildenv`** environment backend, if any
-- Added {ref}`${backendIgnoreLockfile}<backendIgnoreLockfile>`: boolean flag to ignore **`buildenv`** environment backend lockfile in source control
-- Added {ref}`${backendCleanedLockfile}<backendCleanedLockfile>`: lockfile path to be cleaned/ignored
+- Added {ref}`${ignoreLockfiles}<ignoreLockfiles>`: boolean flag to ignore lockfiles in source control
+- Added {ref}`${extraLockfiles}<extraLockfiles>`: extra lockfiles paths from other plugins
+- Added {ref}`${cleanedLockfiles}<cleanedLockfiles>`: lockfiles paths to be cleaned/ignored
 
 ### Tasks updates
 
-- Added {ref}`${clean.lockfile}<clean.lockfile>`: used to clean {ref}`${backendCleanedLockfile}<backendCleanedLockfile>` file, if set.
+- Added {ref}`${clean.lockfiles}<clean.lockfiles>`: used to clean {ref}`${cleanedLockfiles}<cleanedLockfiles>` file, if set.
 
 ### Deprecated items
 

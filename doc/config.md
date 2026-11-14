@@ -169,9 +169,9 @@ Stamp file for generated **`.gitignore`** fragment.
 
 ### **`gitIgnoredFiles`** -- git ignored files list
 
-| Type      | Default value                                                                                                                                                                                                                           |
-| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| list[str] | [ "[${PROJECTDIR_NMK}](https://nmk.readthedocs.io/en/stable/file.html#built-in-config-items)/",<br>"{ref}`${outputDir}<outputDir>`",<br>"{ref}`${venvName}<venvName>`",<br>"{ref}`${backendCleanedLockfile}<backendCleanedLockfile>`" ] |
+| Type      | Default value                                                                                                                                                                                                               |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| list[str] | [ "[${PROJECTDIR_NMK}](https://nmk.readthedocs.io/en/stable/file.html#built-in-config-items)/",<br>"{ref}`${outputDir}<outputDir>`",<br>"{ref}`${venvName}<venvName>`",<br>"{ref}`${cleanedLockfiles}<cleanedLockfiles>`" ] |
 
 List of files/folders to be added when generating **`.gitignore`** file.
 
@@ -433,33 +433,47 @@ _<span style="color:green">Added in version 2.0.0</span>_
 
 ---
 
-(backendIgnoreLockfile)=
+## Lockfiles
 
-### **`backendIgnoreLockfile`** -- Ignore lockfile in source control
+---
+
+(ignoreLockfiles)=
+
+### **`ignoreLockfiles`** -- Ignore lockfiles in source control
 
 | Type | Default value |
 | ---- | ------------- |
 | bool | `true`        |
 
-Boolean flag to add (or not) the {ref}`${backendLockfile}<backendLockfile>` to git ignored files.
-
-```{note}
-By default, lockfile used by **`buildenv`** [environment backend](https://buildenv.readthedocs.io/en/stable/backends.html) is ignored in source control.
-```
+Boolean flag to add (or not) {ref}`${cleanedLockfiles}<cleanedLockfiles>` files to git ignored files, and remove them as part of project clean.
 
 _<span style="color:green">Added in version 2.0.0</span>_
 
 ---
 
-(backendCleanedLockfile)=
+(extraLockfiles)=
 
-### **`backendCleanedLockfile`** -- Lockfile to be cleaned/ignored
+### **`extraLockfiles`** -- Extra lockfiles to be handled
 
-| Type | Default value                                                                                                                                         |
-| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| str  | Depends on {ref}`${backendIgnoreLockfile}<backendIgnoreLockfile>`:<br>- if true: {ref}`${backendLockfile}<backendLockfile>`<br>- if false: "" (empty) |
+| Type      | Default value |
+| --------- | ------------- |
+| list[str] | `[]`          |
 
-Lock file to be cleaned and ignored in source control, depending on {ref}`${backendIgnoreLockfile}<backendIgnoreLockfile>` and {ref}`${backendLockfile}<backendLockfile>` items.
+List of extra lockfiles to be ignored in source control, if {ref}`${ignoreLockfiles}<ignoreLockfiles>` is enabled.
+
+_<span style="color:green">Added in version 2.0.0</span>_
+
+---
+
+(cleanedLockfiles)=
+
+### **`cleanedLockfiles`** -- Lockfiles to be cleaned/ignored
+
+| Type | Default value                                                                                                                                                                |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| str  | Depends on {ref}`${ignoreLockfiles}<ignoreLockfiles>`:<br>- if true: [{ref}`${backendLockfile}<backendLockfile>`,{ref}`${extraLockfiles}<extraLockfiles>`]<br>- if false: [] |
+
+Lockfiles to be cleaned and ignored in source control, depending if {ref}`${ignoreLockfiles}<ignoreLockfiles>` is enabled.
 
 _<span style="color:green">Added in version 2.0.0</span>_
 

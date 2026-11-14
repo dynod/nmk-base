@@ -40,7 +40,7 @@ Some tasks are provided to clean project files:
 
 - triggered by the global {ref}`clean<clean>` task
   - {ref}`clean.out<clean.out>`: cleans build {ref}`${outputDir}<outputDir>` folder
-  - {ref}`clean.lockfile<clean.lockfile>`: cleans declared lockfiles
+  - {ref}`clean.lockfiles<clean.lockfiles>`: cleans declared lockfiles
 - to be triggered only on demand:
   - {ref}`git.clean<git.clean>`: calls git command to remove all git ignored files, restoring the project in the same state than if was just cloned
 
@@ -57,7 +57,7 @@ By convention, **`nmk`** projects ignore lock files in source control.
 
 Its goes a bit against reproducible build principle (which is the fundamental purpose of this kind of files), but the preferred behavior is to always grab latest versions when building the project from scratch (in particular in CI environnement). This greatly helps projects to always be kept up to date.
 
-This behavior can be disabled by configuring the {ref}`${backendIgnoreLockfile}<backendIgnoreLockfile>` item to `false`.
+This behavior can be disabled by configuring the {ref}`${ignoreLockfiles}<ignoreLockfiles>` item to `false`.
 
 ## Dirty check
 
